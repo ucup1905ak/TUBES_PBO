@@ -1,9 +1,10 @@
 package dao;
 
-import entity.Project;
 import entity.User;
 import interfaces.IGenericDAO;
+import java.sql.SQLException;
 import java.util.List;
+import javax.swing.JOptionPane;
 import services.DatabaseConnection;
 import utility.Query;
 
@@ -20,10 +21,10 @@ public class UserDAO implements IGenericDAO<User, Integer> {
     }
 
     @Override
-    public int add(User entity) {
+    public int add(User entity) throws SQLException {
         Query sql = new Query();
+
         sql.insertInto("users",
-                "id",
                 "username",
                 "email",
                 "password_hash",
@@ -32,23 +33,25 @@ public class UserDAO implements IGenericDAO<User, Integer> {
                 "profile_picture"
         )
                 .values(
-                        1,
-                        "Farel",
-                        "alexanderkimf@gmail.com",
-                        "asdn115lndlAk2nk",
-                        "Farelino Alexander Kim",
-                        "This is my life full of coding",
-                        "sadfsdsaasdf"
+                        entity.getUsername(),
+                        entity.getEmail(),
+                        entity.getPasswordHash(),
+                        entity.getFullName(),
+                        entity.getBio(),
+                        entity.getProfilePicture()
                 );
         return db.executeUpdate(sql);
     }
+
     @Override
-    public User get(Integer id) {
+    public User get(Integer id) throws SQLException {
 
         Query sql = new Query()
                 .select("*")
                 .from("users")
                 .where("id = ?", id);
+//       System.out.println(sql.build());
+        User user = null;
 
         List<User> listUser = db.executeQuery(sql, rs -> {
             User u = new User();
@@ -70,27 +73,61 @@ public class UserDAO implements IGenericDAO<User, Integer> {
             return null;
         }
 
-        User user = listUser.get(0);
+        user = listUser.get(0);
 
         SocialDAO socialDAO = new SocialDAO(db);
         user.setSocials(socialDAO.findByUserId(user.getId()));
-
         return user;
     }
 
     @Override
-    public List<User> fetchAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public List<User> fetchAll() throws SQLException {
+
+        Query sql = new Query()
+                .select("*")
+                .from("users");
+        return db.executeQuery(sql, rs -> {
+            User u = new User();
+
+            u.setId(rs.getInt("id"));
+            u.setUsername(rs.getString("username"));
+            u.setEmail(rs.getString("email"));
+            u.setPasswordHash(rs.getString("password_hash"));
+            u.setFullName(rs.getString("full_name"));
+            u.setBio(rs.getString("bio"));
+            u.setProfilePicture(rs.getString("profile_picture"));
+            u.setCreatedAt(rs.getTimestamp("created_at"));
+            u.setUpdatedAt(rs.getTimestamp("updated_at"));
+
+            return u;
+        });
     }
 
     @Override
-    public int update(User entity) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public int update(User entity) throws SQLException {
+
+        Query sql = new Query()
+                .update("users")
+                .set("username", entity.getUsername())
+                .set("email", entity.getEmail())
+                .set("password_hash", entity.getPasswordHash())
+                .set("full_name", entity.getFullName())
+                .set("bio", entity.getBio())
+                .set("profile_picture", entity.getProfilePicture())
+                .set("updated_at", entity.getUpdatedAt())
+                .where("id  = ?", entity.getId());
+
+        return db.executeUpdate(sql);
     }
 
     @Override
-    public int delete(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public int delete(Integer id) throws SQLException {
+
+        Query sql = new Query()
+                .deleteFrom("users")
+                .where("id  = ?", id);
+
+        return db.executeUpdate(sql);
     }
 
 }

@@ -15,21 +15,36 @@ public class Log {
     private static final String LOG_FILE = "syslog.txt";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public static synchronized void create(String msg) {
+    private static synchronized void log(String level, String msg, boolean isError) {
         String timestamp = LocalDateTime.now().format(FORMATTER);
-
         String callerInfo = getCallerInfo();
 
-        String logEntry = String.format("[%s] : %s [%s]", timestamp, msg, callerInfo);
+        String logEntry = String.format("[%s] [%s] : %s [%s]",
+                timestamp, level, msg, callerInfo);
 
-        System.out.println(logEntry);
+        // console output
+        if (isError) {
+            System.err.println(logEntry);
+        } else {
+            System.out.println(logEntry);
+        }
 
+        // file output
         try (PrintWriter out = new PrintWriter(new FileWriter(LOG_FILE, true))) {
             out.println(logEntry);
         } catch (IOException e) {
             System.err.println("Failed to write to log file: " + e.getMessage());
         }
     }
+
+    public static void create(String msg) {
+        log("INFO", msg, false);
+    }
+
+    public static void err(String msg) {
+        log("ERROR", msg, true);
+    }
+    
 
     private static String getCallerInfo() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();

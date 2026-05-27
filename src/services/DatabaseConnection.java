@@ -4,6 +4,7 @@
  */
 package services;
 
+import expection.DatabaseConnectionFailedException;
 import expection.QueryTypeMismatchException;
 import interfaces.IDatabaseConnection;
 import java.sql.*;
@@ -37,8 +38,8 @@ public class DatabaseConnection implements IDatabaseConnection {
             this.connection = DriverManager.getConnection(getPath(), USERNAME, PASSWORD);
             Log.create("Database " + DATABASE + " is Connected.");
         } catch (SQLException e) {
-            Log.create(e.getMessage());
-            throw e;
+            Log.err(e.getMessage());
+            throw new DatabaseConnectionFailedException("Connection Failed.");
         }
     }
 
@@ -50,8 +51,8 @@ public class DatabaseConnection implements IDatabaseConnection {
                 Log.create("Database successfully disconnected.");
             }
         } catch (SQLException e) {
-            Log.create("Error disconnecting: " + e.getMessage());
-            Log.create(e.getMessage());
+            Log.err(e.getMessage());
+            throw new DatabaseConnectionFailedException("Disconnect Failed.");
         }
     }
 
@@ -66,7 +67,7 @@ public class DatabaseConnection implements IDatabaseConnection {
     }
 
     @Override
-    public <T> List<T> executeQuery(Query sql, IRowMapper<T> mapper) throws QueryTypeMismatchException {
+    public <T> List<T> executeQuery(Query sql, IRowMapper<T> mapper) throws QueryTypeMismatchException, SQLException {
         if (sql.queryType != Query.Type.SELECT) {
             throw new QueryTypeMismatchException(Query.Type.SELECT);
         }
@@ -75,36 +76,39 @@ public class DatabaseConnection implements IDatabaseConnection {
             connect();
             Statement s = connection.createStatement();
             ResultSet result = s.executeQuery(sql.build());
-            
+
             while (result.next()) {
-                list.add(mapper.mapRow(result));
+                list.add(mapper.map(result));
             }
 
             disconnect();
-            return list;
         } catch (SQLException e) {
-            Log.create(e.getMessage());
+            Log.err(e.getMessage());
+            throw e;
+        } finally {
+            return list;
         }
-        return null;
     }
-    
+
     @Override
-    public int executeUpdate(Query sql) throws QueryTypeMismatchException {
+    public int executeUpdate(Query sql) throws QueryTypeMismatchException, SQLException {
         if (sql.queryType != Query.Type.UPDATE
                 && sql.queryType != Query.Type.DELETE
                 && sql.queryType != Query.Type.INSERT) {
             throw new QueryTypeMismatchException(Query.Type.UPDATE, Query.Type.INSERT, Query.Type.DELETE);
         }
+        int result = 0;
         try {
             connect();
             Statement s = connection.createStatement();
-            int result = s.executeUpdate(sql.toString());
+            result = s.executeUpdate(sql.toString());
             disconnect();
-            return result;
         } catch (SQLException e) {
-            Log.create(e.getMessage());
+            Log.err(e.getMessage());
+            throw e;
+        } finally {
+            return result;
         }
-        return 0;
     }
 
 }

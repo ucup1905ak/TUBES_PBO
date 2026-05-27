@@ -5,6 +5,7 @@
 package interfaces;
 
 import entity.Project;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -14,16 +15,16 @@ import java.util.List;
 public interface IGenericDAO<T, ID> {
 
     // Create
-    public int add(T entity);
+    public int add(T entity)throws SQLException;
 
     // Read
-    public T get(ID id);
+    public T get(ID id)throws SQLException;
 
-    public List<T> fetchAll();
+    public List<T> fetchAll()throws SQLException;
 
     // Update
-    public int update(T entity);
+    public int update(T entity)throws SQLException;
 
     // Delete
-    public int delete(ID id);
+    public int delete(ID id)throws SQLException;
 }

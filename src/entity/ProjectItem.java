@@ -4,15 +4,19 @@
  */
 package entity;
 
+
 /**
  *
- * @author farel
+ * @author Farelino Alexander Kim - 240713000
  */
+import interfaces.IAssignable;
+import interfaces.IAuditable;
+import interfaces.ITaggable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ProjectItem {
+public abstract class ProjectItem implements IAssignable, ITaggable, IAuditable{
 
     private int id;
     private String title;

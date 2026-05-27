@@ -6,7 +6,7 @@ package entity;
 
 /**
  *
- * @author farel
+ * @author Farelino Alexander Kim - 240713000
  */
 import java.sql.Timestamp;
 import java.util.ArrayList;

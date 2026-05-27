@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 27, 2026 at 03:34 PM
+-- Generation Time: May 27, 2026 at 04:28 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,7 +34,7 @@ CREATE TABLE `attachments` (
   `file_path` varchar(255) NOT NULL,
   `file_type` enum('IMAGE','DOCUMENT','VIDEO','ARCHIVE','OTHER') NOT NULL,
   `file_size` bigint(20) NOT NULL,
-  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `uploaded_at` datetime NOT NULL DEFAULT current_timestamp(),
   `uploaded_by` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -48,8 +48,8 @@ CREATE TABLE `events` (
   `project_item_id` int(11) NOT NULL,
   `location` varchar(150) DEFAULT NULL,
   `is_all_day` tinyint(1) DEFAULT 0,
-  `start_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `end_at` timestamp NULL DEFAULT NULL
+  `start_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `end_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -63,8 +63,8 @@ CREATE TABLE `projects` (
   `name` varchar(100) NOT NULL,
   `description` text DEFAULT NULL,
   `color` varchar(20) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -81,8 +81,8 @@ CREATE TABLE `project_items` (
   `project_id` int(11) NOT NULL,
   `created_by` int(11) NOT NULL,
   `updated_by` int(11) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -117,7 +117,22 @@ CREATE TABLE `project_members` (
   `project_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `role` enum('PROJECT_OWNER','TEAM_MEMBER') NOT NULL DEFAULT 'TEAM_MEMBER',
-  `joined_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `joined_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sessions`
+--
+
+CREATE TABLE `sessions` (
+  `id` int(11) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `createdAt` datetime DEFAULT current_timestamp(),
+  `expiresAt` datetime NOT NULL,
+  `isActive` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -143,7 +158,7 @@ CREATE TABLE `tags` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `color` varchar(20) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -156,9 +171,9 @@ CREATE TABLE `tasks` (
   `project_item_id` int(11) NOT NULL,
   `priority` enum('LOW','MEDIUM','HIGH') NOT NULL DEFAULT 'MEDIUM',
   `status` enum('PENDING','IN_PROGRESS','DONE') NOT NULL DEFAULT 'PENDING',
-  `start_date` date DEFAULT NULL,
-  `due_date` date DEFAULT NULL,
-  `completed_at` date DEFAULT NULL
+  `start_date` datetime DEFAULT NULL,
+  `due_date` datetime DEFAULT NULL,
+  `completed_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -175,8 +190,8 @@ CREATE TABLE `users` (
   `full_name` varchar(100) NOT NULL,
   `bio` text DEFAULT NULL,
   `profile_picture` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -234,6 +249,14 @@ ALTER TABLE `project_members`
   ADD KEY `fk_project_member_user` (`user_id`);
 
 --
+-- Indexes for table `sessions`
+--
+ALTER TABLE `sessions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `token` (`token`),
+  ADD KEY `fk_session_user` (`userId`);
+
+--
 -- Indexes for table `social_links`
 --
 ALTER TABLE `social_links`
@@ -280,6 +303,12 @@ ALTER TABLE `projects`
 -- AUTO_INCREMENT for table `project_items`
 --
 ALTER TABLE `project_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `sessions`
+--
+ALTER TABLE `sessions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -345,6 +374,12 @@ ALTER TABLE `project_item_tags`
 ALTER TABLE `project_members`
   ADD CONSTRAINT `fk_project_member_project` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_project_member_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `sessions`
+--
+ALTER TABLE `sessions`
+  ADD CONSTRAINT `fk_session_user` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `social_links`

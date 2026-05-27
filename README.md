@@ -1,11 +1,3 @@
-# TUBES_PBO
-
-Credit:
-240712797@students.uajy.ac.id
-Here is a clean **README.md** based on your document:
-
----
-
 # MagerNoMore
 
 MagerNoMore is a **desktop-based Java Project Management System** designed to help users organize projects, manage tasks, collaborate with team members, and handle scheduling efficiently.

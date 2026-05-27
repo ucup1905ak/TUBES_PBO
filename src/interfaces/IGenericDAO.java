@@ -14,7 +14,7 @@ import java.util.List;
 public interface IGenericDAO<T, ID> {
 
     // Create
-    public boolean add(T entity);
+    public int add(T entity);
 
     // Read
     public T get(ID id);
@@ -22,8 +22,8 @@ public interface IGenericDAO<T, ID> {
     public List<T> fetchAll();
 
     // Update
-    public boolean update(T entity);
+    public int update(T entity);
 
     // Delete
-    public boolean delete(ID id);
+    public int delete(ID id);
 }

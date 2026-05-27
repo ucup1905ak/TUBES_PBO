@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 
 /**
  *
- * @author farel
+ * @author Farelino Alexander Kim / 240713000
  */
 public interface IAuditable {
 

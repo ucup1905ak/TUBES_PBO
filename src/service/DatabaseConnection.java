@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package services;
+package service;
 
 import expection.DatabaseConnectionFailedException;
 import expection.QueryTypeMismatchException;
@@ -15,7 +15,7 @@ import interfaces.IRowMapper;
 
 /**
  *
- * @author farel
+ * @author Farelino Alexander Kim / 240713000
  */
 public class DatabaseConnection implements IDatabaseConnection {
 
@@ -23,8 +23,8 @@ public class DatabaseConnection implements IDatabaseConnection {
     public final static String HOSTNAME = "localhost";
     public final static String DATABASE = "pbo_tubes";
     public final static int PORT = 3306;
-    public final static String USERNAME = "root";
-    public final static String PASSWORD = "";
+    private final static String USERNAME = "root";
+    private final static String PASSWORD = "";
 
     private Connection connection = null;
 

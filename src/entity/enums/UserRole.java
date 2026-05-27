@@ -6,7 +6,7 @@ package entity.enums;
 
 /**
  *
- * @author farel
+ * @author Farelino Alexander Kim / 240713000
  */
 public enum UserRole {
     PROJECT_OWNER,

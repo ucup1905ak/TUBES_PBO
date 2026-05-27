@@ -1,11 +1,11 @@
 
 import dao.UserDAO;
 import entity.User;
-import services.DatabaseConnection;
+import service.DatabaseConnection;
 
 /**
  *
- * @author farel
+ * @author Farelino Alexander Kim / 240713000
  */
 import java.sql.SQLException;
 import utility.Log;

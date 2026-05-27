@@ -6,12 +6,12 @@ import interfaces.IGenericDAO;
 import interfaces.IRowMapper;
 import java.sql.*;
 import java.util.List;
-import services.DatabaseConnection;
+import service.DatabaseConnection;
 import utility.Query;
 
 /**
  *
- * @author farel
+ * @author Farelino Alexander Kim / 240713000
  */
 public class SocialDAO implements IGenericDAO<SocialLink, Integer>, IRowMapper<SocialLink> {
 

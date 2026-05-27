@@ -4,7 +4,7 @@ import entity.enums.SocialPlatform;
 
 /**
  *
- * @author Farelino Alexander Kim - 240713000
+ * @author Farelino Alexander Kim / 240713000ino Alexander Kim - 240713000
  */
 public class SocialLink {
 

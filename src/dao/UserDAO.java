@@ -5,12 +5,12 @@ import interfaces.IGenericDAO;
 import java.sql.SQLException;
 import java.util.List;
 import javax.swing.JOptionPane;
-import services.DatabaseConnection;
+import service.DatabaseConnection;
 import utility.Query;
 
 /**
  *
- * @author farel
+ * @author Farelino Alexander Kim / 240713000
  */
 public class UserDAO implements IGenericDAO<User, Integer> {
 

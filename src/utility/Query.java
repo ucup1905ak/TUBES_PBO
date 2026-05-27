@@ -8,7 +8,7 @@ public class Query {
     private final StringBuilder sql;
     private final List<Object> parameters;
 
-    public enum Type {
+    public static enum Type {
         SELECT, INSERT, UPDATE, DELETE, UNKNOWN
     }
 

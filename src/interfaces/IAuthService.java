@@ -8,7 +8,7 @@ import entity.Session;
 
 /**
  *
- * @author farel
+ * @author Farelino Alexander Kim / 240713000
  */
 public interface IAuthService {
 

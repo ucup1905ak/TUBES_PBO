@@ -10,7 +10,7 @@ import utility.Query;
 
 /**
  *
- * @author farel
+ * @author Farelino Alexander Kim / 240713000
  */
 public class QueryTypeMismatchException extends RuntimeException     {
     public List<Query.Type> expected = new ArrayList<>();

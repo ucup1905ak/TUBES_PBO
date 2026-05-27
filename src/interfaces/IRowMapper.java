@@ -6,7 +6,7 @@ package interfaces;
 
 /**
  *
- * @author farel
+ * @author Farelino Alexander Kim / 240713000
  */
 import java.sql.*;
 

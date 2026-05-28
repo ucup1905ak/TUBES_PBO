@@ -2,9 +2,10 @@ package dao;
 
 import model.User;
 import interfaces.IGenericDAO;
+import interfaces.IRowMapper;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import javax.swing.JOptionPane;
 import service.DatabaseConnection;
 import utility.Query;
 
@@ -14,7 +15,7 @@ import utility.Query;
  */
 
 //TEASTTEFEUFYUE
-public class UserDAO implements IGenericDAO<User, Integer> {
+public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
 
     private final DatabaseConnection db = new DatabaseConnection();
 
@@ -43,36 +44,15 @@ public class UserDAO implements IGenericDAO<User, Integer> {
 
     @Override
     public User get(Integer id) throws SQLException {
-
         Query sql = new Query()
                 .select("*")
                 .from("users")
                 .where("id = ?", id);
-//       System.out.println(sql.build());
-        User user = null;
-
-        List<User> listUser = db.executeQuery(sql, rs -> {
-            User u = new User();
-
-            u.setId(rs.getInt("id"));
-            u.setUsername(rs.getString("username"));
-            u.setEmail(rs.getString("email"));
-            u.setPasswordHash(rs.getString("password_hash"));
-            u.setFullName(rs.getString("full_name"));
-            u.setBio(rs.getString("bio"));
-            u.setProfilePicture(rs.getString("profile_picture"));
-            u.setCreatedAt(rs.getTimestamp("created_at"));
-            u.setUpdatedAt(rs.getTimestamp("updated_at"));
-
-            return u;
-        });
-
+        List<User> listUser = db.executeQuery(sql, this::map);
         if (listUser.isEmpty()) {
             return null;
         }
-
-        user = listUser.get(0);
-        return user;
+        return listUser.get(0);
     }
 
     @Override
@@ -81,22 +61,8 @@ public class UserDAO implements IGenericDAO<User, Integer> {
         Query sql = new Query()
                 .select("*")
                 .from("users");
-        return db.executeQuery(sql, rs -> {
-            User u = new User();
-
-            u.setId(rs.getInt("id"));
-            u.setUsername(rs.getString("username"));
-            u.setEmail(rs.getString("email"));
-            u.setPasswordHash(rs.getString("password_hash"));
-            u.setFullName(rs.getString("full_name"));
-            u.setBio(rs.getString("bio"));
-            u.setProfilePicture(rs.getString("profile_picture"));
-            u.setCreatedAt(rs.getTimestamp("created_at"));
-            u.setUpdatedAt(rs.getTimestamp("updated_at"));
-
-            return u;
-        });
-    }
+        return db.executeQuery(sql, this::map);
+            }
 
     @Override
     public int update(User entity) throws SQLException {
@@ -124,5 +90,33 @@ public class UserDAO implements IGenericDAO<User, Integer> {
 
         return db.executeUpdate(sql);
     }
+    
+//    @Override 
+//    public SocialLink map(ResultSet rs) throws SQLException {
+//        SocialLink link = new SocialLink(
+//                SocialPlatform.valueOf(rs.getString("platform")),
+//                rs.getString("url")
+//        );
+//        
+//        link.setId(rs.getInt("id"));
+//        //awalnya disini ada add usernya ke dalam social. Tapi itu tidak KOHSESI (SOLID)
+//        return link;
+//    }
 
+    
+    public User map(ResultSet rs) throws SQLException{
+        User u = new User();
+
+        u.setId(rs.getInt("id"));
+        u.setUsername(rs.getString("username"));
+        u.setEmail(rs.getString("email"));
+        u.setPasswordHash(rs.getString("password_hash"));
+        u.setFullName(rs.getString("full_name"));
+        u.setBio(rs.getString("bio"));
+        u.setProfilePicture(rs.getString("profile_picture"));
+        u.setCreatedAt(rs.getTimestamp("created_at"));
+        u.setUpdatedAt(rs.getTimestamp("updated_at"));
+        
+        return u;
+    }
 }

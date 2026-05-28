@@ -8,7 +8,7 @@ package model;
  *
  * @author Farelino Alexander Kim / 240713000ino Alexander Kim - 240713000
  */
-import model.enums.AttachmentType;
+import entity.enums.AttachmentType;
 import java.sql.Timestamp;
 
 public class Attachment {

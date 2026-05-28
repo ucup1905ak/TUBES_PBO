@@ -1,6 +1,6 @@
 package model;
 
-import model.enums.SocialPlatform;
+import entity.enums.SocialPlatform;
 
 /**
  *

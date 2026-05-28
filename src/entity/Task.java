@@ -9,8 +9,8 @@ package model;
  *
  * @author Farelino Alexander Kim / 240713000ino Alexander Kim - 240713000
  */
-import model.enums.TaskPriority;
-import model.enums.TaskStatus;
+import entity.enums.TaskPriority;
+import entity.enums.TaskStatus;
 import java.util.Date;
 
 public class Task extends ProjectItem {

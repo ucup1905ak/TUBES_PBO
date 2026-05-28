@@ -10,6 +10,8 @@ import service.DatabaseConnection;
 import java.sql.SQLException;
 import utility.Log;
 
+
+//TEST YEAH
 public class TestDatabaseConnectino {
 
     public static void main(String[] args) {
@@ -20,7 +22,7 @@ public class TestDatabaseConnectino {
         // =========================
         // 1. CREATE TEST USER
         // =========================
-        User user = new User();
+        User user = new User(); 
         user.setUsername("yoi");
         user.setEmail("udin@test.com");
         user.setPasswordHash("123456");

@@ -1,11 +1,11 @@
 package dao;
 
-import model.User;
 import interfaces.IGenericDAO;
 import interfaces.IRowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import model.User;
 import service.DatabaseConnection;
 import utility.Query;
 
@@ -41,7 +41,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
                 );
         return db.executeUpdate(sql);
     }
-
+    //last fixed by : siapa????
     @Override
     public User get(Integer id) throws SQLException {
         Query sql = new Query()

@@ -1,7 +1,7 @@
 package dao;
 
-import entity.SocialLink;
-import entity.enums.SocialPlatform;
+import model.SocialLink;
+import model.enums.SocialPlatform;
 import interfaces.IGenericDAO;
 import interfaces.IRowMapper;
 import java.sql.*;

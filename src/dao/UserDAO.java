@@ -1,7 +1,6 @@
 package dao;
 
-import entity.Project;
-import entity.User;
+import model.User;
 import interfaces.IGenericDAO;
 import interfaces.IRowMapper;
 import java.sql.ResultSet;

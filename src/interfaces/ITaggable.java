@@ -4,7 +4,7 @@
  */
 package interfaces;
 
-import entity.Tag;
+import model.Tag;
 import java.util.List;
 
 /**

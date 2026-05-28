@@ -4,7 +4,7 @@
  */
 package dao;
 
-import entity.Project;
+import model.Project;
 import interfaces.IGenericDAO;
 import java.sql.SQLException;
 import java.util.List;

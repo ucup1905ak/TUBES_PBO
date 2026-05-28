@@ -1,0 +1,24 @@
+Subject: Remote `main` force-reset to `save-us`
+
+Action taken:
+- I force-pushed `save-us` to `origin/main` from this workspace.
+
+Why:
+- You requested the remote `main` be reverted to the `save-us` state.
+
+Impact / Warning:
+- This rewrote `origin/main` history. Any collaborators with previous `main` commits must reset their local branches to avoid merge conflicts.
+
+Recommended steps for collaborators:
+1. `git fetch origin`
+2. `git checkout main`
+3. `git reset --hard origin/main`
+
+If you had local work on `main` that you want to keep, create a safety branch before resetting:
+1. `git checkout main`
+2. `git branch backup-main-local`
+3. `git push origin backup-main-local`
+
+If you want me to open a GitHub issue or PR comment to notify everyone, tell me and I'll draft it.
+
+— Automated message from your workspace

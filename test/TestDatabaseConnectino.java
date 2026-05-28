@@ -17,7 +17,6 @@ public class TestDatabaseConnectino {
     public static void main(String[] args) {
 
         DatabaseConnection db = new DatabaseConnection();
-        UserDAO userDAO = new UserDAO(db);
 
         // =========================
         // 1. CREATE TEST USER

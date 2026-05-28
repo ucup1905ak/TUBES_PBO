@@ -1,11 +1,3 @@
-# TUBES_PBO
-
-Credit:
-240712797@students.uajy.ac.id
-Here is a clean **README.md** based on your document:
-
----
-
 # MagerNoMore
 
 MagerNoMore is a **desktop-based Java Project Management System** designed to help users organize projects, manage tasks, collaborate with team members, and handle scheduling efficiently.
@@ -20,6 +12,8 @@ This project is developed as a **final assignment for the Object-Oriented Progra
 * Silvanus Febrianesha Widyatama — 240712992
 * Aldiondra Ahira Saputra — 240712797
 * Bagus Tito Wijoyo — 240712833
+
+Project Online Workspace : https://drive.google.com/drive/folders/1kbJBbLC0XBNro1HSm-lNsFAglM-vFcQw?usp=drive_link
 
 ---
 

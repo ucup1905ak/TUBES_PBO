@@ -4,7 +4,7 @@
  */
 package interfaces;
 
-import entity.Session;
+import model.Session;
 
 /**
  *

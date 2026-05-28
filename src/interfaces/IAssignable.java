@@ -4,7 +4,7 @@
  */
 package interfaces;
 
-import entity.User;
+import model.User;
 import java.util.List;
 
 /**

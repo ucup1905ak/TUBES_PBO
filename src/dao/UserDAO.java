@@ -1,6 +1,6 @@
 package dao;
 
-import entity.User;
+import model.User;
 import interfaces.IGenericDAO;
 import java.sql.SQLException;
 import java.util.List;

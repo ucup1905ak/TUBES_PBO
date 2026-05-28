@@ -4,7 +4,7 @@
  */
 package interfaces;
 
-import entity.Project;
+import model.Project;
 import java.sql.SQLException;
 import java.util.List;
 

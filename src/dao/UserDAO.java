@@ -12,6 +12,8 @@ import utility.Query;
  *
  * @author Farelino Alexander Kim / 240713000
  */
+
+//TEASTTEFEUFYUE
 public class UserDAO implements IGenericDAO<User, Integer> {
 
     private final DatabaseConnection db = new DatabaseConnection();

@@ -1,6 +1,6 @@
 package dao;
 
-import entity.SocialLink;
+import model.SocialLink;
 import entity.enums.SocialPlatform;
 import interfaces.IGenericDAO;
 import interfaces.IRowMapper;

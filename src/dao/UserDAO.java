@@ -62,7 +62,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
                 .select("*")
                 .from("users");
         return db.executeQuery(sql, this::map);
-            }
+    }
 
     @Override
     public int update(User entity) throws SQLException {

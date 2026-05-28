@@ -1,7 +1,8 @@
 package widi;
 
 import dao.UserDAO;
-import entity.User;
+import model.User;
+import model.User;
 import service.DatabaseConnection;
 
 /**
@@ -20,7 +21,7 @@ public class NewMain {
         
         UserDAO uDao = new UserDAO();
         
-        
+//        uDao.get();
     }
     
 }

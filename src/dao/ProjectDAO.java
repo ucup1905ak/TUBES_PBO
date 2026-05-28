@@ -34,7 +34,8 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
     public int add(Project entity) throws SQLException {
         Query sql = new Query();
 
-        sql.insertInto("name",
+        sql.insertInto("projects",
+                "name",
                 "description",
                 "color"
         )

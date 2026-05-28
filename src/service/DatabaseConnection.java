@@ -4,8 +4,8 @@
  */
 package service;
 
-import expection.DatabaseConnectionFailedException;
-import expection.QueryTypeMismatchException;
+import exception.DatabaseConnectionFailedException;
+import exception.QueryTypeMismatchException;
 import interfaces.IDatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;

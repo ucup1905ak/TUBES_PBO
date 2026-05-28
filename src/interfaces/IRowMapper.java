@@ -13,5 +13,5 @@ import java.sql.*;
 @FunctionalInterface
 public interface IRowMapper<T> {
 
-    T map(ResultSet rs) throws SQLException;
+    public T map(ResultSet rs) throws SQLException;
 }

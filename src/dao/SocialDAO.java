@@ -15,11 +15,8 @@ import utility.Query;
  */
 public class SocialDAO implements IGenericDAO<SocialLink, Integer>, IRowMapper<SocialLink> {
 
-    private final DatabaseConnection db;
+    private final DatabaseConnection db = new DatabaseConnection();
 
-    public SocialDAO(DatabaseConnection db) {
-        this.db = db;
-    }
 
     @Override
     public int add(SocialLink entity) throws SQLException {
@@ -84,17 +81,15 @@ public class SocialDAO implements IGenericDAO<SocialLink, Integer>, IRowMapper<S
 
  
 
-    @Override
+    @Override 
     public SocialLink map(ResultSet rs) throws SQLException {
-        UserDAO user = new UserDAO(db);
         SocialLink link = new SocialLink(
                 SocialPlatform.valueOf(rs.getString("platform")),
                 rs.getString("url")
         );
         
         link.setId(rs.getInt("id"));
-        link.setUser(user.get(rs.getInt("user_id")));
-
+        //awalnya disini ada add usernya ke dalam social. Tapi itu tidak KOHSESI (SOLID)
         return link;
     }
 

@@ -14,11 +14,7 @@ import utility.Query;
  */
 public class UserDAO implements IGenericDAO<User, Integer> {
 
-    private final DatabaseConnection db;
-
-    public UserDAO(DatabaseConnection db) {
-        this.db = db;
-    }
+    private final DatabaseConnection db = new DatabaseConnection();
 
     @Override
     public int add(User entity) throws SQLException {
@@ -74,9 +70,6 @@ public class UserDAO implements IGenericDAO<User, Integer> {
         }
 
         user = listUser.get(0);
-
-        SocialDAO socialDAO = new SocialDAO(db);
-        user.setSocials(socialDAO.findByUserId(user.getId()));
         return user;
     }
 

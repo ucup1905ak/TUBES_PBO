@@ -39,6 +39,7 @@ public class Query {
 
     // ================= WHERE =================
     public Query where(String condition, Object... values) {
+        cleanTrailingComma();
         sql.append("WHERE ").append(condition).append(" ");
         addParams(values);
         return this;

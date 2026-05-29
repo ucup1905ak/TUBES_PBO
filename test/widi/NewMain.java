@@ -1,5 +1,6 @@
 package widi;
 
+import dao.TesterDAO;
 import dao.UserDAO;
 import model.User;
 import model.User;
@@ -15,13 +16,19 @@ public class NewMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-        DatabaseConnection db = new DatabaseConnection();
-        User u = null;
         
-        UserDAO uDao = new UserDAO();
-        
-//        uDao.get();
+//        TesterDAO.testUserCreate();
+//        TesterDAO.testUserReadAll();
+//        TesterDAO.testUserUpdate();
+//        TesterDAO.testUserDelete(9);
+
+/**
+ * (29/5)
+ * 
+ * DAO user done yessssssssssssssssssssssss
+ * - Widi
+ * 
+ */ 
     }
     
 }

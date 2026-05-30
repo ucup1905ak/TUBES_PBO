@@ -27,11 +27,11 @@ public class TesterDAO {
             UserDAO dao = new UserDAO();
 
             User user = new User();
-            user.setUsername("test123");
-            user.setEmail("test@gmail.com");
+            user.setUsername("tes6767");
+            user.setEmail("tes4747@gmail.com");
             user.setPasswordHash("kolak");
-            user.setFullName("Kolak Pisang");
-            user.setBio("Hi ganteng");
+            user.setFullName("Kolak Durian");
+            user.setBio("Hi manis");
             user.setProfilePicture("profile.jpg");
 
             dao.add(user);
@@ -89,4 +89,8 @@ public class TesterDAO {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * SocialDAO
+     * /
 }

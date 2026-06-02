@@ -4,15 +4,17 @@
  */
 package exception.database;
 
-import java.sql.SQLException;
-
 /**
  *
  * @author Farelino Alexander Kim / 240713000
  */
-public class DatabaseConnectionFailedException extends SQLException{
-    
-    public DatabaseConnectionFailedException(String msg){
-        super("Connection failed : " + msg);
+public class DatabaseConnectionFailedException extends DatabaseException {
+
+    public DatabaseConnectionFailedException(String message) {
+        super(message);
+    }
+
+    public DatabaseConnectionFailedException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

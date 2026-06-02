@@ -2,20 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package exception.authorization;
+package exception.common;
 
 /**
  *
  * @author farel
  */
 
-public class AccessDeniedException extends AuthorizationException {
+public class TaskAssignmentException extends Exception {
 
-    public AccessDeniedException(String message) {
+    public TaskAssignmentException(String message) {
         super(message);
-    }
-
-    public AccessDeniedException(String message, Throwable cause) {
-        super(message, cause);
     }
 }

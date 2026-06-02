@@ -4,8 +4,7 @@
  */
 package service;
 
-import exception.database.DatabaseConnectionFailedException;
-import exception.database.QueryTypeMismatchException;
+import exception.database.*;
 import interfaces.IDatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
@@ -32,18 +31,18 @@ public class DatabaseConnection implements IDatabaseConnection {
         return SCHEME + HOSTNAME + ":" + PORT + "/" + DATABASE;
     }
 
-    private void connect() throws SQLException {
+    private void connect() throws DatabaseException {
         Log.create("Connecting to Database " + getPath());
         try {
             this.connection = DriverManager.getConnection(getPath(), USERNAME, PASSWORD);
             Log.create("Database " + DATABASE + " is Connected.");
         } catch (SQLException e) {
             Log.err(e.getMessage());
-            throw new DatabaseConnectionFailedException("Connection Failed.");
+            throw new DatabaseConnectionFailedException("Connection Failed.", e);
         }
     }
 
-    private void disconnect() throws SQLException {
+    private void disconnect() throws DatabaseException {
         Log.create("Disconnecting from Database " + getPath());
         try {
             if (this.connection != null && !this.connection.isClosed()) {
@@ -52,7 +51,7 @@ public class DatabaseConnection implements IDatabaseConnection {
             }
         } catch (SQLException e) {
             Log.err(e.getMessage());
-            throw new DatabaseConnectionFailedException("Disconnect Failed.");
+            throw new DatabaseConnectionFailedException("Disconnect Failed.", e);
         }
     }
 
@@ -67,7 +66,7 @@ public class DatabaseConnection implements IDatabaseConnection {
     }
 
     @Override
-    public <T> List<T> executeQuery(Query sql, IRowMapper<T> mapper) throws QueryTypeMismatchException, SQLException {
+    public <T> List<T> executeQuery(Query sql, IRowMapper<T> mapper) throws DatabaseException {
         if (sql.queryType != Query.Type.SELECT) {
             throw new QueryTypeMismatchException(Query.Type.SELECT);
         }
@@ -84,14 +83,14 @@ public class DatabaseConnection implements IDatabaseConnection {
             disconnect();
         } catch (SQLException e) {
             Log.err(e.getMessage());
-            throw e;
+            throw new QueryExecutionException(sql.toString(), e);
         } finally {
             return list;
         }
     }
 
     @Override
-    public int executeUpdate(Query sql) throws QueryTypeMismatchException, SQLException {
+    public int executeUpdate(Query sql) throws DatabaseException {
         if (sql.queryType != Query.Type.UPDATE
                 && sql.queryType != Query.Type.DELETE
                 && sql.queryType != Query.Type.INSERT) {
@@ -105,7 +104,7 @@ public class DatabaseConnection implements IDatabaseConnection {
             disconnect();
         } catch (SQLException e) {
             Log.err(e.getMessage());
-            throw e;
+            throw new QueryExecutionException(sql.toString(), e);
         } finally {
             return result;
         }

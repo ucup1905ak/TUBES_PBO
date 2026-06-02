@@ -17,38 +17,38 @@ import utility.Query;
  *
  * @author Silvanus
  */
-public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Session> {
+public class AttachmentDAO implements IGenericDAO<Attachment, Integer>, IRowMapper<Attachment>{
     private final DatabaseConnection db = new DatabaseConnection();
     
     @Override
-    public int add(Session entity) throws SQLException {
+    public int add(Attachment entity) throws SQLException {
         Query sql = new Query();
 
-        sql.insertInto("sessions").values();
+        sql.insertInto("attachment").values();
         //isi
         return db.executeUpdate(sql);
     }
 
     @Override
-    public Session get(Integer id) throws SQLException {
+    public Attachment get(Integer id) throws SQLException {
         Query sql = new Query();
         //isi
-        List<Session> listSession = db.executeQuery(sql, this::map);
-        if (listSession.isEmpty()) {
+        List<Attachment> listAttachment = db.executeQuery(sql, this::map);
+        if (listAttachment.isEmpty()) {
             return null;
         }
-        return listSession.get(0);
+        return listAttachment.get(0);
     }
 
     @Override
-    public List<Session> fetchAll() throws SQLException {
+    public List<Attachment> fetchAll() throws SQLException {
         Query sql = new Query();
         //isi
         return db.executeQuery(sql, this::map);
     }
 
     @Override
-    public int update(Session entity) throws SQLException {
+    public int update(Attachment entity) throws SQLException {
         Query sql = new Query();
         //isi
         return db.executeUpdate(sql);
@@ -61,8 +61,8 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
         return db.executeUpdate(sql);
     }
     
-    public Session map(ResultSet rs) throws SQLException{
-        Session p = new Session();
+    public Attachment map(ResultSet rs) throws SQLException{
+        Attachment p = new Attachment();
 
         //isi
         return p;

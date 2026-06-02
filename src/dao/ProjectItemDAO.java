@@ -17,38 +17,38 @@ import utility.Query;
  *
  * @author Silvanus
  */
-public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Session> {
+public class ProjectItemDAO implements IGenericDAO<ProjectItem, Integer>, IRowMapper<ProjectItem>{
     private final DatabaseConnection db = new DatabaseConnection();
     
     @Override
-    public int add(Session entity) throws SQLException {
+    public int add(ProjectItem entity) throws SQLException {
         Query sql = new Query();
 
-        sql.insertInto("sessions").values();
+        sql.insertInto("project_item").values();
         //isi
         return db.executeUpdate(sql);
     }
 
     @Override
-    public Session get(Integer id) throws SQLException {
+    public ProjectItem get(Integer id) throws SQLException {
         Query sql = new Query();
         //isi
-        List<Session> listSession = db.executeQuery(sql, this::map);
-        if (listSession.isEmpty()) {
+        List<ProjectItem> listProjectItem = db.executeQuery(sql, this::map);
+        if (listProjectItem.isEmpty()) {
             return null;
         }
-        return listSession.get(0);
+        return listProjectItem.get(0);
     }
 
     @Override
-    public List<Session> fetchAll() throws SQLException {
+    public List<ProjectItem> fetchAll() throws SQLException {
         Query sql = new Query();
         //isi
         return db.executeQuery(sql, this::map);
     }
 
     @Override
-    public int update(Session entity) throws SQLException {
+    public int update(ProjectItem entity) throws SQLException {
         Query sql = new Query();
         //isi
         return db.executeUpdate(sql);
@@ -61,8 +61,9 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
         return db.executeUpdate(sql);
     }
     
-    public Session map(ResultSet rs) throws SQLException{
-        Session p = new Session();
+    @Override
+    public ProjectItem map(ResultSet rs) throws SQLException{
+        ProjectItem p = new Task();
 
         //isi
         return p;

@@ -17,38 +17,38 @@ import utility.Query;
  *
  * @author Silvanus
  */
-public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Session> {
+public class TagDAO implements IGenericDAO<Tag, Integer>, IRowMapper<Tag>{
     private final DatabaseConnection db = new DatabaseConnection();
     
     @Override
-    public int add(Session entity) throws SQLException {
+    public int add(Tag entity) throws SQLException {
         Query sql = new Query();
 
-        sql.insertInto("sessions").values();
+        sql.insertInto("tag").values();
         //isi
         return db.executeUpdate(sql);
     }
 
     @Override
-    public Session get(Integer id) throws SQLException {
+    public Tag get(Integer id) throws SQLException {
         Query sql = new Query();
         //isi
-        List<Session> listSession = db.executeQuery(sql, this::map);
-        if (listSession.isEmpty()) {
+        List<Tag> listTag = db.executeQuery(sql, this::map);
+        if (listTag.isEmpty()) {
             return null;
         }
-        return listSession.get(0);
+        return listTag.get(0);
     }
 
     @Override
-    public List<Session> fetchAll() throws SQLException {
+    public List<Tag> fetchAll() throws SQLException {
         Query sql = new Query();
         //isi
         return db.executeQuery(sql, this::map);
     }
 
     @Override
-    public int update(Session entity) throws SQLException {
+    public int update(Tag entity) throws SQLException {
         Query sql = new Query();
         //isi
         return db.executeUpdate(sql);
@@ -61,8 +61,8 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
         return db.executeUpdate(sql);
     }
     
-    public Session map(ResultSet rs) throws SQLException{
-        Session p = new Session();
+    public Tag map(ResultSet rs) throws SQLException{
+        Tag p = new Tag();
 
         //isi
         return p;

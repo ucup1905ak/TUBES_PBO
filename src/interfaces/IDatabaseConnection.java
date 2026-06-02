@@ -8,7 +8,7 @@ package interfaces;
  *
  * @author Farelino Alexander Kim / 240713000
  */
-import exception.QueryTypeMismatchException;
+import exception.database.QueryTypeMismatchException;
 import java.sql.SQLException;
 import java.util.List;
 import utility.Query;

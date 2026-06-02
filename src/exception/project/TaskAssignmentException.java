@@ -2,12 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package control;
+package exception.project;
 
 /**
  *
- * @author Farelino Alexander Kim - 240713000
+ * @author farel
  */
-public class AttachmentControl {
-    
+
+public class TaskAssignmentException extends Exception {
+
+    public TaskAssignmentException(String message) {
+        super(message);
+    }
 }

@@ -4,6 +4,8 @@
  */
 package dao;
 
+import exception.database.DatabaseException;
+import exception.database.ResultSetParsingException;
 import model.Project;
 import interfaces.IGenericDAO;
 import interfaces.IRowMapper;
@@ -17,21 +19,19 @@ import utility.Query;
  *
  * @author Silvanus
  */
-public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Project>{
-    
+public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Project> {
+
     private final DatabaseConnection db = new DatabaseConnection();
-    
+
     /**
      * (28/5)
-     * 
-     * Semua method di sini konsepnya sama kayak UserDAO
-     * Dengan meninggikan nama Yesus, semoga bekerja
-     * - Widi
-     * 
+     *
+     * Semua method di sini konsepnya sama kayak UserDAO Dengan meninggikan nama
+     * Yesus, semoga bekerja - Widi
+     *
      */
-    
     @Override
-    public int add(Project entity) throws SQLException {
+    public int add(Project entity) throws DatabaseException {
         Query sql = new Query();
 
         sql.insertInto("projects",
@@ -48,12 +48,12 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
     }
 
     @Override
-    public Project get(Integer id) throws SQLException {
+    public Project get(Integer id) throws DatabaseException {
         Query sql = new Query()
                 .select("*")
                 .from("projects")
                 .where("id = ?", id);
-        
+
         List<Project> listProject = db.executeQuery(sql, this::map);
         if (listProject.isEmpty()) {
             return null;
@@ -62,7 +62,7 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
     }
 
     @Override
-    public List<Project> fetchAll() throws SQLException {
+    public List<Project> fetchAll() throws DatabaseException {
         Query sql = new Query()
                 .select("*")
                 .from("projects");
@@ -70,38 +70,44 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
     }
 
     @Override
-    public int update(Project entity) throws SQLException {
+    public int update(Project entity) throws DatabaseException {
         Query sql = new Query()
-                    .update("projects")
-                    .set("name", entity.getName())
-                    .set("description", entity.getDescription())
-                    .set("color", entity.getColor())
-                    .set("updated_at", entity.getUpdatedAt())
-                    .where("id = ?", entity.getId());
-        
+                .update("projects")
+                .set("name", entity.getName())
+                .set("description", entity.getDescription())
+                .set("color", entity.getColor())
+                .set("updated_at", entity.getUpdatedAt())
+                .where("id = ?", entity.getId());
+
         return db.executeUpdate(sql);
     }
 
     @Override
-    public int delete(Integer id) throws SQLException {
+    public int delete(Integer id) throws DatabaseException {
         Query sql = new Query()
                 .deleteFrom("projects")
                 .where("id  = ?", id);
 
         return db.executeUpdate(sql);
     }
-    
-    public Project map(ResultSet rs) throws SQLException{
-        Project p = new Project();
 
-        p.setId(rs.getInt("id"));
-        p.setName(rs.getString("name"));
-        p.setDescription(rs.getString("description"));
-        p.setColor(rs.getString("color"));
-        p.setCreatedAt(rs.getTimestamp("created_at"));
-        p.setUpdatedAt(rs.getTimestamp("updated_at"));
-        
+    public Project map(ResultSet rs) throws DatabaseException {
+        Project p = new Project();
+        try {
+            p.setId(rs.getInt("id"));
+            p.setName(rs.getString("name"));
+            p.setDescription(rs.getString("description"));
+            p.setColor(rs.getString("color"));
+            p.setCreatedAt(rs.getTimestamp("created_at"));
+            p.setUpdatedAt(rs.getTimestamp("updated_at"));
+        } catch (SQLException e) {
+            throw new ResultSetParsingException(
+                    "Failed to parse User from ResultSet",
+                    e
+            );
+
+        }
         return p;
     }
-    
+
 }

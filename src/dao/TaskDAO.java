@@ -1,6 +1,7 @@
 package dao;
 
-import model.enums.TaskPriority;
+import exception.database.DatabaseException;
+import exception.database.ResultSetParsingException;
 import model.enums.TaskPriority;
 import interfaces.IGenericDAO;
 import interfaces.IRowMapper;
@@ -16,10 +17,10 @@ import utility.Query;
  *
  * @author Silvanus
  */
-public class TaskDAO implements IGenericDAO<Task, Integer>, IRowMapper<Task>{
+public class TaskDAO implements IGenericDAO<Task, Integer>, IRowMapper<Task> {
 
     private final DatabaseConnection db = new DatabaseConnection();
-    
+
     /*
         (28/5)
         
@@ -30,16 +31,15 @@ public class TaskDAO implements IGenericDAO<Task, Integer>, IRowMapper<Task>{
         Semoga bisa ygy
     
         - Widi
-    */
-    
+     */
     @Override
-    public int add(Task entity) throws SQLException {
+    public int add(Task entity) throws DatabaseException {
         Query sql = new Query();
 
         sql.insertInto("tasks",
                 "priority",
                 "status"
-                )
+        )
                 .values(
                         entity.getPriority(),
                         entity.getStatus()
@@ -48,12 +48,12 @@ public class TaskDAO implements IGenericDAO<Task, Integer>, IRowMapper<Task>{
     }
 
     @Override
-    public Task get(Integer id) throws SQLException {
+    public Task get(Integer id) throws DatabaseException {
         Query sql = new Query()
                 .select("*")
                 .from("tasks")
                 .where("project_item_id = ?", id);
-        
+
         List<Task> listTask = db.executeQuery(sql, this::map);
         if (listTask.isEmpty()) {
             return null;
@@ -62,7 +62,7 @@ public class TaskDAO implements IGenericDAO<Task, Integer>, IRowMapper<Task>{
     }
 
     @Override
-    public List<Task> fetchAll() throws SQLException {
+    public List<Task> fetchAll() throws DatabaseException {
         Query sql = new Query()
                 .select("*")
                 .from("tasks");
@@ -70,21 +70,21 @@ public class TaskDAO implements IGenericDAO<Task, Integer>, IRowMapper<Task>{
     }
 
     @Override
-    public int update(Task entity) throws SQLException {
+    public int update(Task entity) throws DatabaseException {
         Query sql = new Query()
-                    .update("tasks")
-                    .set("priority", entity.getPriority())
-                    .set("status", entity.getStatus())
-                    .set("start_date", entity.getStartDate())
-                    .set("due_date", entity.getDueDate())
-                    .set("completed_date", entity.getCompletedAt())
-                    .where("project_item_id = ?", entity.getId());
-        
+                .update("tasks")
+                .set("priority", entity.getPriority())
+                .set("status", entity.getStatus())
+                .set("start_date", entity.getStartDate())
+                .set("due_date", entity.getDueDate())
+                .set("completed_date", entity.getCompletedAt())
+                .where("project_item_id = ?", entity.getId());
+
         return db.executeUpdate(sql);
     }
 
     @Override
-    public int delete(Integer id) throws SQLException {
+    public int delete(Integer id) throws DatabaseException {
         Query sql = new Query()
                 .deleteFrom("tasks")
                 .where("project_item_id = ?", id);
@@ -92,18 +92,23 @@ public class TaskDAO implements IGenericDAO<Task, Integer>, IRowMapper<Task>{
         return db.executeUpdate(sql);
     }
 
-    
     @Override
-    public Task map(ResultSet rs) throws SQLException {
+    public Task map(ResultSet rs) throws DatabaseException {
         Task t = new Task();
+        try {
+            t.setId(rs.getInt("project_item_id"));
+            t.setPriority(TaskPriority.valueOf(rs.getString("priority").toUpperCase()));
+            t.setStatus(TaskStatus.valueOf(rs.getString("status").toUpperCase()));
+            t.setStartDate(rs.getTimestamp("start_date"));
+            t.setDueDate(rs.getTimestamp("due_date"));
+            t.setCompletedAt(rs.getTimestamp("completed_at"));
+        } catch (SQLException e) {
+            throw new ResultSetParsingException(
+                    "Failed to parse User from ResultSet",
+                    e
+            );
 
-        t.setId(rs.getInt("project_item_id"));
-        t.setPriority(TaskPriority.valueOf(rs.getString("priority").toUpperCase()));
-        t.setStatus(TaskStatus.valueOf(rs.getString("status").toUpperCase()));
-        t.setStartDate(rs.getTimestamp("start_date"));
-        t.setDueDate(rs.getTimestamp("due_date"));
-        t.setCompletedAt(rs.getTimestamp("completed_at"));
-        
+        }
         return t;
     }
 }

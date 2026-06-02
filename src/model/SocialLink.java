@@ -1,6 +1,6 @@
-package entity;
+package model;
 
-import entity.enums.SocialPlatform;
+import model.enums.SocialPlatform;
 
 /**
  *
@@ -19,7 +19,7 @@ public class SocialLink {
         this.url = url;
     }
 
-    public SocialLink( SocialPlatform platform, String url) {
+    public SocialLink(SocialPlatform platform, String url) {
     
         this.platform = platform;
         this.url = url;

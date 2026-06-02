@@ -2,15 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package entity;
+package model;
 
 
 /**
  *
  * @author Farelino Alexander Kim / 240713000ino Alexander Kim - 240713000
  */
-import entity.enums.TaskPriority;
-import entity.enums.TaskStatus;
+import model.enums.TaskPriority;
+import model.enums.TaskStatus;
 import java.util.Date;
 
 public class Task extends ProjectItem {

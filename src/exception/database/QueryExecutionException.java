@@ -16,9 +16,9 @@ public class QueryExecutionException extends DatabaseException {
         super(message);
     }
 
-    public QueryExecutionException(String message, Throwable cause) {
-        super(message, cause);
-    }
+//    public QueryExecutionException(String message, Throwable cause) {
+//        super(message, cause);
+//    }
 
     public QueryExecutionException(String query, Throwable cause) {
         super("Failed to execute query: " + query, cause);

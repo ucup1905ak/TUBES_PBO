@@ -8,6 +8,9 @@ package exception.common;
  *
  * @author farel
  */
-public class EntityNotFoundException {
-    
+public class EntityNotFoundException extends CommonException {
+
+    public EntityNotFoundException(String message) {
+        super(message);
+    }
 }

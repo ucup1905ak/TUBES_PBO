@@ -29,6 +29,11 @@ public class NewMain {
  * - Widi
  * 
  */ 
+
+        TesterDAO.testSocialCreate();
+        TesterDAO.testSocialReadAll();
+        TesterDAO.testSocialUpdate(0);
+        TesterDAO.testSocialDelete(0);
     }
     
 }

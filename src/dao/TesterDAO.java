@@ -2,6 +2,7 @@ package dao;
 
 import java.util.List;
 import model.*;
+import model.enums.SocialPlatform;
 
 /**
  *
@@ -27,11 +28,11 @@ public class TesterDAO {
             UserDAO dao = new UserDAO();
 
             User user = new User();
-            user.setUsername("test123");
-            user.setEmail("test@gmail.com");
+            user.setUsername("tes6767");
+            user.setEmail("tes4747@gmail.com");
             user.setPasswordHash("kolak");
-            user.setFullName("Kolak Pisang");
-            user.setBio("Hi ganteng");
+            user.setFullName("Kolak Durian");
+            user.setBio("Hi manis");
             user.setProfilePicture("profile.jpg");
 
             dao.add(user);
@@ -89,4 +90,179 @@ public class TesterDAO {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * SocialDAO
+     */
+    
+    public static void testSocialCreate() {
+        try {
+            UserDAO userDAO = new UserDAO();
+            SocialDAO socialDAO = new SocialDAO();
+
+            User user = userDAO.get(1); // pastikan user id 1 ada
+
+            SocialLink social = new SocialLink(
+                    SocialPlatform.GITHUB,
+                    "https://github.com/testuser"
+            );
+
+            social.setUser(user);
+
+            socialDAO.add(social);
+
+            System.out.println("CREATE SELESAI");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void testSocialReadAll() {
+        try {
+            SocialDAO dao = new SocialDAO();
+
+            List<SocialLink> socials = dao.fetchAll();
+
+            System.out.println("Jumlah social link: " + socials.size());
+
+            for (SocialLink social : socials) {
+                System.out.println(social);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void testSocialUpdate(int id) {
+        try {
+            SocialDAO dao = new SocialDAO();
+
+            SocialLink social = dao.get(id);
+
+            social.setPlatform(SocialPlatform.LINKEDIN);
+            social.setUrl("https://linkedin.com/in/update-test");
+
+            dao.update(social);
+
+            System.out.println("UPDATE SELESAI");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void testSocialDelete(int id) {
+        try {
+            SocialDAO dao = new SocialDAO();
+
+            dao.delete(id);
+
+            System.out.println("DELETE SELESAI");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * ProjectDAO
+     */
+    
+    public static void testProjectCreate() {
+        try {
+            ProjectDAO dao = new ProjectDAO();
+
+            Project project = new Project();
+            project.setName("TUBES PBO");
+            project.setDescription("Project manajemen tugas kelompok");
+            project.setColor("#2196F3");
+
+            dao.add(project);
+
+            System.out.println("CREATE SELESAI");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void testProjectReadAll() {
+        try {
+            ProjectDAO dao = new ProjectDAO();
+
+            List<Project> projects = dao.fetchAll();
+
+            System.out.println("Jumlah project: " + projects.size());
+
+            for (Project project : projects) {
+                System.out.println(project);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void testProjectReadById(int id) {
+        try {
+            ProjectDAO dao = new ProjectDAO();
+
+            Project project = dao.get(id);
+
+            if (project == null) {
+                System.out.println("Project tidak ditemukan");
+                return;
+            }
+
+            System.out.println(project);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void testProjectUpdate() {
+        try {
+            ProjectDAO dao = new ProjectDAO();
+
+            Project project = dao.get(1);
+
+            if (project == null) {
+                System.out.println("Project tidak ditemukan");
+                return;
+            }
+
+            project.setName("UPDATE PROJECT");
+            project.setDescription("Deskripsi setelah update");
+            project.setColor("#FF5722");
+
+            dao.update(project);
+
+            System.out.println("UPDATE SELESAI");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void testProjectDelete(int id) {
+        try {
+            ProjectDAO dao = new ProjectDAO();
+
+            dao.delete(id);
+
+            System.out.println("DELETE SELESAI");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * TaskDAO
+     */
+    
+    
 }

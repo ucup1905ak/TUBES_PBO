@@ -4,22 +4,21 @@ package exception.validation;
  *
  * @author farel
  */
+public class EmptyFieldException extends ValidationException {
 
-public class EmptyFieldException extends Exception {
+    private final String fieldName;
 
-    public EmptyFieldException() {
-        super();
+//    public EmptyFieldException(String message) {
+//        super(message);
+//        this.fieldName = null;
+//    }
+
+    public EmptyFieldException(String fieldName) {
+        super(fieldName + " cannot be empty.");
+        this.fieldName = fieldName;
     }
 
-    public EmptyFieldException(String message) {
-        super(message);
-    }
-
-    public EmptyFieldException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public EmptyFieldException(Throwable cause) {
-        super(cause);
+    public String getFieldName() {
+        return fieldName;
     }
 }

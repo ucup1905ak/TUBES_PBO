@@ -2,14 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package exception.project;
+package exception.common;
 
 /**
  *
  * @author farel
  */
 
-public class InvalidTaskStateException extends Exception {
+public class InvalidTaskStateException extends CommonException {
 
     public InvalidTaskStateException(String message) {
         super(message);

@@ -8,10 +8,13 @@ package exception.common;
  *
  * @author farel
  */
+public class CommonException extends Exception {
 
-public class UserAlreadyMemberException extends CommonException {
-
-    public UserAlreadyMemberException(String message) {
+    public CommonException(String message) {
         super(message);
+    }
+
+    public CommonException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

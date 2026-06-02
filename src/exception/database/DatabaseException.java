@@ -3,18 +3,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package exception.database;
-
+import java.sql.SQLException;
 /**
  *
- * @author Farelino Alexander Kim / 240713000
+ * @author farel
  */
-public class DatabaseConnectionFailedException extends DatabaseException {
 
-    public DatabaseConnectionFailedException(String message) {
+public class DatabaseException extends SQLException {
+
+    public DatabaseException(String message) {
         super(message);
     }
 
-    public DatabaseConnectionFailedException(String message, Throwable cause) {
+    public DatabaseException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -4,11 +4,7 @@ package exception.authentication;
  * @author farel
  */
 
-public class InvalidLoginCredentialException extends Exception {
-
-    public InvalidLoginCredentialException() {
-        super();
-    }
+public class InvalidLoginCredentialException extends AuthenticationException {
 
     public InvalidLoginCredentialException(String message) {
         super(message);
@@ -16,9 +12,5 @@ public class InvalidLoginCredentialException extends Exception {
 
     public InvalidLoginCredentialException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    public InvalidLoginCredentialException(Throwable cause) {
-        super(cause);
     }
 }

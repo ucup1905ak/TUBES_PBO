@@ -9,11 +9,7 @@ package exception.authorization;
  * @author farel
  */
 
-public class AccessDeniedException extends Exception {
-
-    public AccessDeniedException() {
-        super();
-    }
+public class AccessDeniedException extends AuthorizationException {
 
     public AccessDeniedException(String message) {
         super(message);
@@ -21,9 +17,5 @@ public class AccessDeniedException extends Exception {
 
     public AccessDeniedException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    public AccessDeniedException(Throwable cause) {
-        super(cause);
     }
 }

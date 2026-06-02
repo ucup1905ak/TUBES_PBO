@@ -9,21 +9,31 @@ package exception.validation;
  * @author farel
  */
 
-public class InvalidFormatException extends Exception {
+public class InvalidFormatException extends ValidationException {
 
-    public InvalidFormatException() {
-        super();
-    }
+    private final String fieldName;
+    private final String expectedFormat;
 
     public InvalidFormatException(String message) {
         super(message);
+        this.fieldName = null;
+        this.expectedFormat = null;
     }
 
-    public InvalidFormatException(String message, Throwable cause) {
-        super(message, cause);
+    public InvalidFormatException(
+            String fieldName,
+            String expectedFormat
+    ) {
+        super(fieldName + " has invalid format. Expected: " + expectedFormat);
+        this.fieldName = fieldName;
+        this.expectedFormat = expectedFormat;
     }
 
-    public InvalidFormatException(Throwable cause) {
-        super(cause);
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public String getExpectedFormat() {
+        return expectedFormat;
     }
 }

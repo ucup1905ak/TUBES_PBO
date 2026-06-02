@@ -1,5 +1,7 @@
 package dao;
 
+import exception.database.DatabaseException;
+import exception.database.ResultSetParsingException;
 import interfaces.IGenericDAO;
 import interfaces.IRowMapper;
 import java.sql.ResultSet;
@@ -13,14 +15,13 @@ import utility.Query;
  *
  * @author Farelino Alexander Kim / 240713000
  */
-
 //TEASTTEFEUFYUE
-public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
+public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
 
     private final DatabaseConnection db = new DatabaseConnection();
 
     @Override
-    public int add(User entity) throws SQLException {
+    public int add(User entity) throws DatabaseException {
         Query sql = new Query();
 
         sql.insertInto("users",
@@ -41,9 +42,10 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
                 );
         return db.executeUpdate(sql);
     }
+
     //last fixed by : siapa????
     @Override
-    public User get(Integer id) throws SQLException {
+    public User get(Integer id) throws DatabaseException {
         Query sql = new Query()
                 .select("*")
                 .from("users")
@@ -56,7 +58,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
     }
 
     @Override
-    public List<User> fetchAll() throws SQLException {
+    public List<User> fetchAll() throws DatabaseException {
 
         Query sql = new Query()
                 .select("*")
@@ -65,7 +67,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
     }
 
     @Override
-    public int update(User entity) throws SQLException {
+    public int update(User entity) throws DatabaseException {
 
         Query sql = new Query()
                 .update("users")
@@ -82,7 +84,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
     }
 
     @Override
-    public int delete(Integer id) throws SQLException {
+    public int delete(Integer id) throws DatabaseException {
 
         Query sql = new Query()
                 .deleteFrom("users")
@@ -90,7 +92,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
 
         return db.executeUpdate(sql);
     }
-    
+
 //    @Override 
 //    public SocialLink map(ResultSet rs) throws SQLException {
 //        SocialLink link = new SocialLink(
@@ -102,21 +104,26 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
 //        //awalnya disini ada add usernya ke dalam social. Tapi itu tidak KOHSESI (SOLID)
 //        return link;
 //    }
-
-    
-    public User map(ResultSet rs) throws SQLException{
+    public User map(ResultSet rs) throws DatabaseException {
         User u = new User();
+        try {
+            u.setId(rs.getInt("id"));
+            u.setUsername(rs.getString("username"));
+            u.setEmail(rs.getString("email"));
+            u.setPasswordHash(rs.getString("password_hash"));
+            u.setFullName(rs.getString("full_name"));
+            u.setBio(rs.getString("bio"));
+            u.setProfilePicture(rs.getString("profile_picture"));
+            u.setCreatedAt(rs.getTimestamp("created_at"));
+            u.setUpdatedAt(rs.getTimestamp("updated_at"));
+        } catch (SQLException e) {
+            throw new ResultSetParsingException(
+                    "Failed to parse User from ResultSet",
+                    e
+            );
 
-        u.setId(rs.getInt("id"));
-        u.setUsername(rs.getString("username"));
-        u.setEmail(rs.getString("email"));
-        u.setPasswordHash(rs.getString("password_hash"));
-        u.setFullName(rs.getString("full_name"));
-        u.setBio(rs.getString("bio"));
-        u.setProfilePicture(rs.getString("profile_picture"));
-        u.setCreatedAt(rs.getTimestamp("created_at"));
-        u.setUpdatedAt(rs.getTimestamp("updated_at"));
-        
+        }
+
         return u;
     }
 }

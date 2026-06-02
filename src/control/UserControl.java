@@ -2,6 +2,7 @@ package control;
 
 import dao.UserDAO;
 import exception.database.DatabaseConnectionFailedException;
+import exception.database.DatabaseException;
 import interfaces.IGenericControl;
 import java.util.List;
 import model.User;
@@ -12,18 +13,13 @@ import model.User;
  */
 public class UserControl implements IGenericControl<User, Integer> {
 
-    private UserDAO dao;
+    private UserDAO dao = new UserDAO();;
 
-    public UserControl() {
-        this.dao = new UserDAO();
-    }
+
 
     @Override
-    public int add(User entity) {
-        try {
-        } catch (DatabaseConnectionFailedException e) {
-        }
-        return dao.add(entity);
+    public int add(User user) throws DatabaseException{
+        return dao.add(user);
     }
 
     @Override
@@ -37,8 +33,8 @@ public class UserControl implements IGenericControl<User, Integer> {
     }
 
     @Override
-    public int update(User entity) {
-        return dao.update(entity);
+    public int update(User user) {
+        return dao.update(user);
     }
 
     @Override

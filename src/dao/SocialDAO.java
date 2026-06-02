@@ -1,5 +1,7 @@
 package dao;
 
+import exception.database.DatabaseException;
+import exception.database.ResultSetParsingException;
 import model.SocialLink;
 import model.enums.SocialPlatform;
 import interfaces.IGenericDAO;
@@ -17,9 +19,8 @@ public class SocialDAO implements IGenericDAO<SocialLink, Integer>, IRowMapper<S
 
     private final DatabaseConnection db = new DatabaseConnection();
 
-
     @Override
-    public int add(SocialLink entity) throws SQLException {
+    public int add(SocialLink entity) throws DatabaseException {
         Query sql = new Query()
                 .insertInto("social_links",
                         "user_id", "platform", "url")
@@ -32,7 +33,7 @@ public class SocialDAO implements IGenericDAO<SocialLink, Integer>, IRowMapper<S
     }
 
     @Override
-    public SocialLink get(Integer id) throws SQLException {
+    public SocialLink get(Integer id) throws DatabaseException {
         Query sql = new Query()
                 .select("*")
                 .from("social_links")
@@ -42,7 +43,7 @@ public class SocialDAO implements IGenericDAO<SocialLink, Integer>, IRowMapper<S
     }
 
     @Override
-    public List<SocialLink> fetchAll() throws SQLException {
+    public List<SocialLink> fetchAll() throws DatabaseException {
         Query sql = new Query()
                 .select("*")
                 .from("social_links");
@@ -51,7 +52,7 @@ public class SocialDAO implements IGenericDAO<SocialLink, Integer>, IRowMapper<S
     }
 
     @Override
-    public int update(SocialLink entity) throws SQLException {
+    public int update(SocialLink entity) throws DatabaseException {
         Query sql = new Query()
                 .update("social_links")
                 .set("platform", entity.getPlatform().name())
@@ -62,7 +63,7 @@ public class SocialDAO implements IGenericDAO<SocialLink, Integer>, IRowMapper<S
     }
 
     @Override
-    public int delete(Integer id) throws SQLException {
+    public int delete(Integer id) throws DatabaseException {
         Query sql = new Query()
                 .deleteFrom("social_links")
                 .where("id", id);
@@ -79,18 +80,24 @@ public class SocialDAO implements IGenericDAO<SocialLink, Integer>, IRowMapper<S
         return db.executeQuery(sql, this::map);
     }
 
- 
+    @Override
+    public SocialLink map(ResultSet rs) throws DatabaseException {
+        try {
 
-    @Override 
-    public SocialLink map(ResultSet rs) throws SQLException {
-        SocialLink link = new SocialLink(
-                SocialPlatform.valueOf(rs.getString("platform")),
-                rs.getString("url")
-        );
-        
-        link.setId(rs.getInt("id"));
-        //awalnya disini ada add usernya ke dalam social. Tapi itu tidak KOHSESI (SOLID)
-        return link;
+            SocialLink link = new SocialLink(
+                    SocialPlatform.valueOf(rs.getString("platform")),
+                    rs.getString("url")
+            );
+
+            link.setId(rs.getInt("id"));
+            //awalnya disini ada add usernya ke dalam social. Tapi itu tidak KOHSESI (SOLID)
+            return link;
+        } catch (SQLException e) {
+            throw new ResultSetParsingException(
+                    "Failed to parse User from ResultSet",
+                    e
+            );
+        }
     }
 
 }

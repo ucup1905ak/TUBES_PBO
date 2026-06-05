@@ -14,10 +14,6 @@ public class UserControl implements IGenericControl<User, Integer> {
 
     private UserDAO dao = new UserDAO();
 
-    
-
-
-
     @Override
     public int add(User user) throws DatabaseException {
         return dao.add(user);
@@ -47,12 +43,9 @@ public class UserControl implements IGenericControl<User, Integer> {
         return dao.search(keyword);
     }
 
-//    public User getByEmail(String email) {
-//        return dao.getByEmail(email);
-//    }
 
 
-    public int updateProfile(User user) {
+    public int updateProfile(User user) throws DatabaseException{
         User existingUser = get(user.getId());
 
         if (existingUser == null) {
@@ -67,15 +60,4 @@ public class UserControl implements IGenericControl<User, Integer> {
         return update(existingUser);
     }
 
-    public int changePassword(Integer id, String newPassword) {
-        User user = get(id);
-
-        if (user == null) {
-            return 0;
-        }
-
-        user.setPasswordHash(newPassword);
-
-        return update(user);
-    }
 }

@@ -1,6 +1,6 @@
 package widi;
 
-import dao.TesterDAO;
+import TestDAO.TesterDAO;
 import dao.UserDAO;
 import model.User;
 import model.User;

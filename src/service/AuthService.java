@@ -2,7 +2,9 @@ package service;
 
 import dao.SessionDAO;
 import dao.UserDAO;
+import exception.authentication.InvalidLoginCredentialException;
 import exception.database.DatabaseException;
+import java.util.List;
 import model.Session;
 import model.User;
 import utility.PasswordHasher;
@@ -19,19 +21,21 @@ public class AuthService {
     private final PasswordHasher passwordHasher = new PasswordHasher();
 
 
-    public Session authenticate(String email, String password) throws DatabaseException {
+    public Session authenticate(String email, String password) throws DatabaseException, InvalidLoginCredentialException {
         if (email == null || password == null) {
             return null;
         }
 
         try {
-            User user = userDAO.search(email);
+            User user = userDAO.getByEmail(email);
             if (user == null) {
-                return null;  // User not found
+                throw new InvalidLoginCredentialException("User not found");
             }
+           
 
             if (!passwordHasher.verify(password, user.getPasswordHash())) {
-                return null;  // Password incorrect
+                throw  new InvalidLoginCredentialException("Password incorrect");
+                
             }
 
             String token = generateToken(user.getId());

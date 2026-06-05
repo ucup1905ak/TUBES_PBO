@@ -5,9 +5,9 @@
 package TestDAO;
 
 import control.UserControl;
-import exception.database.DatabaseException;
-import java.util.List;
+import java.util.Scanner;
 import model.User;
+import utility.BCrypt;
 import utility.Log;
 
 /**
@@ -19,7 +19,6 @@ public class testCaseUSer {
     /**
      * @param args the command line arguments
      */
-    
     /*
         Test Notes: (2026 - 06 - 05) Farel
         - Create User           : PASS
@@ -28,34 +27,40 @@ public class testCaseUSer {
         - Update User           : PASS
         - Search User           : PASS
         - Update Profile        : PASS
-    */
+     */
     public static void main(String[] args) {
-        User farel = new User();
-//        farel.setUsername("Farel");
-//        farel.setEmail("udin@example.com");
-//        farel.setPasswordHash("$2a$12$hashedpassword123");
-//        farel.setFullName("Farelino Alexander Kim");
-//        farel.setBio("Software Developer");
-//        farel.setProfilePicture("profile_farel.jpg");
+        createUser();
+    }
+    private static void createUser() {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Username: ");
+        String username = sc.nextLine();
+
+        System.out.print("Full Name: ");
+        String fullName = sc.nextLine();
+
+        System.out.print("Email: ");
+        String email = sc.nextLine();
+
+        System.out.print("Password: ");
+        String password = sc.nextLine();
+
+        User user = new User(
+                username,
+                fullName,
+                email,
+                BCrypt.hashpw(password, BCrypt.gensalt())
+        );
 
         UserControl control = new UserControl();
-        try {
-            List<User> x = control.search("udin");
-            if (x == null) {
-                throw new NullPointerException("User not found");
-            }
-//            for (User u : x) {
-//                System.out.println("USER: \n" + u);
-//                control.delete(u.getId());
-//            }
-            farel = x.get(0);
-            farel.setBio("OI INI BIO GW");
-            control.updateProfile(farel);
 
+        try {
+            control.add(user);
+            System.out.println("User created successfully!");
         } catch (Exception e) {
             Log.err(e.getMessage());
         }
-
     }
-
 }

@@ -8,6 +8,7 @@ package control;
  *
  * @author farel
  */
+import exception.authentication.InvalidLoginCredentialException;
 import exception.database.DatabaseException;
 import exception.validation.InvalidFormatException;
 import model.Session;
@@ -16,23 +17,23 @@ import service.AuthService;
 
 public class SessionControl {
 
-    private Session currentSession = null;
+    private static Session currentSession = null;
     private final AuthService authService = new AuthService();
 
-    public boolean login(String email, String password) throws DatabaseException, InvalidFormatException {
+    public boolean login(String email, String password) throws DatabaseException, InvalidFormatException, InvalidLoginCredentialException {
         if (email == null || email.trim().isEmpty()
                 || password == null || password.trim().isEmpty()) {
             return false;
         }
 
         try {
-            Session session = authService.authenticate(email, password);
+            Session session = authService.authenticate(email, password) ;
             
             if (session != null && session.isValid()) {
                 this.currentSession = session;
                 return true;
             }
-        } catch (DatabaseException e) {
+        } catch (Exception e) {
             throw e;
         }
 

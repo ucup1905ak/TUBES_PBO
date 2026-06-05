@@ -4,31 +4,27 @@
  */
 package dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import exception.database.DatabaseException;
 import java.util.List;
-import javax.management.relation.Role;
 import model.*;
-import service.DatabaseConnection;
-import utility.Query;
 /**
  *
  * @author Silvanus
  */
 public class ProjectItemTagDAO{
-    public int assignTag(Integer projectItemId, Integer tagId) throws SQLException {
+    public int assignTag(Integer projectItemId, Integer tagId) throws DatabaseException {
         return 0;
     }
 
-    public int removeTag(Integer projectItemId, Integer tagId) throws SQLException {
+    public int removeTag(Integer projectItemId, Integer tagId) throws DatabaseException {
         return 0;
     }
 
-    public List<Tag> getTags(Integer projectItemId) throws SQLException {
+    public List<Tag> getTags(Integer projectItemId) throws DatabaseException {
         return null;
     }
 
-    public List<ProjectItem> getTaggedItems(Integer tagId) throws SQLException {
+    public List<ProjectItem> getTaggedItems(Integer tagId) throws DatabaseException {
         return null;
     }
 }

@@ -4,10 +4,10 @@
  */
 package dao;
 
+import exception.database.DatabaseException;
 import interfaces.IGenericDAO;
 import interfaces.IRowMapper;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import model.*;
 import service.DatabaseConnection;
@@ -21,7 +21,7 @@ public class AttachmentDAO implements IGenericDAO<Attachment, Integer>, IRowMapp
     private final DatabaseConnection db = new DatabaseConnection();
     
     @Override
-    public int add(Attachment entity) throws SQLException {
+    public int add(Attachment entity) throws DatabaseException {
         Query sql = new Query();
 
         sql.insertInto("attachment").values();
@@ -30,7 +30,7 @@ public class AttachmentDAO implements IGenericDAO<Attachment, Integer>, IRowMapp
     }
 
     @Override
-    public Attachment get(Integer id) throws SQLException {
+    public Attachment get(Integer id) throws DatabaseException {
         Query sql = new Query();
         //isi
         List<Attachment> listAttachment = db.executeQuery(sql, this::map);
@@ -41,27 +41,27 @@ public class AttachmentDAO implements IGenericDAO<Attachment, Integer>, IRowMapp
     }
 
     @Override
-    public List<Attachment> fetchAll() throws SQLException {
+    public List<Attachment> fetchAll() throws DatabaseException {
         Query sql = new Query();
         //isi
         return db.executeQuery(sql, this::map);
     }
 
     @Override
-    public int update(Attachment entity) throws SQLException {
+    public int update(Attachment entity) throws DatabaseException {
         Query sql = new Query();
         //isi
         return db.executeUpdate(sql);
     }
 
     @Override
-    public int delete(Integer id) throws SQLException {
+    public int delete(Integer id) throws DatabaseException {
         Query sql = new Query();
         //isi
         return db.executeUpdate(sql);
     }
     
-    public Attachment map(ResultSet rs) throws SQLException{
+    public Attachment map(ResultSet rs) throws DatabaseException{
         Attachment p = new Attachment();
 
         //isi

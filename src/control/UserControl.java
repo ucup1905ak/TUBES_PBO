@@ -1,11 +1,11 @@
 package control;
 
 import dao.UserDAO;
-import exception.database.DatabaseConnectionFailedException;
 import exception.database.DatabaseException;
 import interfaces.IGenericControl;
 import java.util.List;
 import model.User;
+import utility.Log;
 
 /**
  *
@@ -13,58 +13,45 @@ import model.User;
  */
 public class UserControl implements IGenericControl<User, Integer> {
 
-    private UserDAO dao = new UserDAO();;
-
-
+    private UserDAO dao = new UserDAO();
 
     @Override
-    public int add(User user) throws DatabaseException{
+    public int add(User user) throws DatabaseException {
+        Log.create("[Control] : Add User");
         return dao.add(user);
     }
 
     @Override
-    public User get(Integer id) {
+    public User get(Integer id) throws DatabaseException {
+        Log.create("[Control] : Get 1 User");
         return dao.get(id);
     }
 
     @Override
-    public List<User> fetchAll() {
+    public List<User> fetchAll() throws DatabaseException {
+         Log.create("[Control] : Fetch All User");
         return dao.fetchAll();
     }
 
     @Override
-    public int update(User user) {
+    public int update(User user) throws DatabaseException {
+         Log.create("[Control] : Update User");
         return dao.update(user);
     }
 
     @Override
-    public int delete(Integer id) {
+    public int delete(Integer id) throws DatabaseException {
+         Log.create("[Control] : Delete User From");
         return dao.delete(id);
     }
 
-    public User getByUsername(String username) {
-        return dao.getByUsername(username);
+    public List<User> search(String keyword) throws DatabaseException {
+         Log.create("[Control] : Search User from");
+        return dao.search(keyword);
     }
 
-    public User getByEmail(String email) {
-        return dao.getByEmail(email);
-    }
-
-    public User authenticate(String email, String password) {
-        User user = dao.getByEmail(email);
-
-        if (user == null) {
-            return null;
-        }
-
-        if (user.getPasswordHash().equals(password)) {
-            return user;
-        }
-
-        return null;
-    }
-
-    public int updateProfile(User user) {
+    public int updateProfile(User user) throws DatabaseException {
+         Log.create("[Control] : Update Profile User");
         User existingUser = get(user.getId());
 
         if (existingUser == null) {
@@ -79,15 +66,4 @@ public class UserControl implements IGenericControl<User, Integer> {
         return update(existingUser);
     }
 
-    public int changePassword(Integer id, String newPassword) {
-        User user = get(id);
-
-        if (user == null) {
-            return 0;
-        }
-
-        user.setPasswordHash(newPassword);
-
-        return update(user);
-    }
 }

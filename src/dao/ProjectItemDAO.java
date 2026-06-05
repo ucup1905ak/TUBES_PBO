@@ -4,6 +4,7 @@
  */
 package dao;
 
+import exception.database.DatabaseException;
 import interfaces.IGenericDAO;
 import interfaces.IRowMapper;
 import java.sql.ResultSet;
@@ -21,7 +22,7 @@ public class ProjectItemDAO implements IGenericDAO<ProjectItem, Integer>, IRowMa
     private final DatabaseConnection db = new DatabaseConnection();
     
     @Override
-    public int add(ProjectItem entity) throws SQLException {
+    public int add(ProjectItem entity) throws DatabaseException {
         Query sql = new Query();
 
         sql.insertInto("project_item").values();
@@ -30,7 +31,7 @@ public class ProjectItemDAO implements IGenericDAO<ProjectItem, Integer>, IRowMa
     }
 
     @Override
-    public ProjectItem get(Integer id) throws SQLException {
+    public ProjectItem get(Integer id) throws DatabaseException {
         Query sql = new Query();
         //isi
         List<ProjectItem> listProjectItem = db.executeQuery(sql, this::map);
@@ -41,28 +42,28 @@ public class ProjectItemDAO implements IGenericDAO<ProjectItem, Integer>, IRowMa
     }
 
     @Override
-    public List<ProjectItem> fetchAll() throws SQLException {
+    public List<ProjectItem> fetchAll() throws DatabaseException {
         Query sql = new Query();
         //isi
         return db.executeQuery(sql, this::map);
     }
 
     @Override
-    public int update(ProjectItem entity) throws SQLException {
+    public int update(ProjectItem entity) throws DatabaseException {
         Query sql = new Query();
         //isi
         return db.executeUpdate(sql);
     }
 
     @Override
-    public int delete(Integer id) throws SQLException {
+    public int delete(Integer id) throws DatabaseException {
         Query sql = new Query();
         //isi
         return db.executeUpdate(sql);
     }
     
     @Override
-    public ProjectItem map(ResultSet rs) throws SQLException{
+    public ProjectItem map(ResultSet rs) throws DatabaseException{
         ProjectItem p = new Task();
 
         //isi

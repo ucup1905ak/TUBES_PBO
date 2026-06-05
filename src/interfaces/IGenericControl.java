@@ -1,5 +1,6 @@
 package interfaces;
 
+import exception.database.DatabaseException;
 import java.util.List;
 
 /**
@@ -8,14 +9,14 @@ import java.util.List;
  */
 public interface IGenericControl<T, ID> {
 
-    public int add(T entity);
+    public int add(T entity) throws DatabaseException;
 
-    public T get(ID id);
+    public T get(ID id) throws DatabaseException;
 
-    public List<T> fetchAll();
+    public List<T> fetchAll() throws DatabaseException;
 
-    public int update(T entity);
+    public int update(T entity)throws DatabaseException ;
 
-    public int delete(ID id);
+    public int delete(ID id) throws DatabaseException;
 
 }

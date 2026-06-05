@@ -28,14 +28,13 @@ public class Log {
 
     private static synchronized void log(String level, String msg, boolean isError) {
         String timestamp = LocalDateTime.now().format(LOG_FORMAT);
-        String callerInfo = getCallerInfo();
+        String callerInfo = getCallerInfo(); //gak dipake dulu
 
         String logEntry = String.format(
-                "[%s] [%s] : %s [%s]",
+                "[%s] [%s] : %s",
                 timestamp,
                 level,
-                msg,
-                callerInfo
+                msg
         );
 
         // Console output

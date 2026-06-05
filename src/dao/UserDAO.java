@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 import model.User;
 import service.DatabaseConnection;
+import utility.Log;
 import utility.Query;
 
 /**
@@ -20,7 +21,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
 
     private final DatabaseConnection db = new DatabaseConnection();
 
-    public User search(String searchTerm) throws DatabaseException {
+    public List<User> search(String searchTerm) throws DatabaseException {
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
             return null;
         }
@@ -35,7 +36,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
                         searchPattern, searchPattern, tryParseInt(trimmedTerm));
 
         List<User> results = db.executeQuery(sql, this::map);
-        return results.isEmpty() ? null : results.get(0);
+        return results.isEmpty() ? null : results;
     }
 
 
@@ -44,7 +45,6 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
     @Override
     public int add(User entity) throws DatabaseException {
         Query sql = new Query();
-
         sql.insertInto("users",
                 "username",
                 "email",
@@ -62,6 +62,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
                         entity.getProfilePicture()
                 );
         return db.executeUpdate(sql);
+        
     }
 
     //last fixed by : siapa????

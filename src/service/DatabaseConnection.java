@@ -81,6 +81,7 @@ public class DatabaseConnection implements IDatabaseConnection {
             }
 
             disconnect();
+            Log.create("Queried " +list.size()+ " row." );
         } catch (SQLException e) {
             Log.err(e.getMessage());
             throw new QueryExecutionException(sql.toString(), e);
@@ -102,6 +103,7 @@ public class DatabaseConnection implements IDatabaseConnection {
             Statement s = connection.createStatement();
             result = s.executeUpdate(sql.toString());
             disconnect();
+            Log.create("Updated " +result+ " row." );
         } catch (SQLException e) {
             Log.err(e.getMessage());
             throw new QueryExecutionException(sql.toString(), e);

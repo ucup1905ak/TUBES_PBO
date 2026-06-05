@@ -5,6 +5,7 @@ import exception.database.DatabaseException;
 import interfaces.IGenericControl;
 import java.util.List;
 import model.User;
+import utility.Log;
 
 /**
  *
@@ -16,36 +17,41 @@ public class UserControl implements IGenericControl<User, Integer> {
 
     @Override
     public int add(User user) throws DatabaseException {
+        Log.create("[Control] : Add User");
         return dao.add(user);
     }
 
     @Override
     public User get(Integer id) throws DatabaseException {
+        Log.create("[Control] : Get 1 User");
         return dao.get(id);
     }
 
     @Override
     public List<User> fetchAll() throws DatabaseException {
+         Log.create("[Control] : Fetch All User");
         return dao.fetchAll();
     }
 
     @Override
     public int update(User user) throws DatabaseException {
+         Log.create("[Control] : Update User");
         return dao.update(user);
     }
 
     @Override
     public int delete(Integer id) throws DatabaseException {
+         Log.create("[Control] : Delete User From");
         return dao.delete(id);
     }
 
-    public User search(String keyword) throws DatabaseException {
+    public List<User> search(String keyword) throws DatabaseException {
+         Log.create("[Control] : Search User from");
         return dao.search(keyword);
     }
 
-
-
-    public int updateProfile(User user) throws DatabaseException{
+    public int updateProfile(User user) throws DatabaseException {
+         Log.create("[Control] : Update Profile User");
         User existingUser = get(user.getId());
 
         if (existingUser == null) {

@@ -20,6 +20,27 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
 
     private final DatabaseConnection db = new DatabaseConnection();
 
+    public User search(String searchTerm) throws DatabaseException {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return null;
+        }
+
+        String trimmedTerm = searchTerm.trim();
+        String searchPattern = "%" + trimmedTerm + "%";
+
+        Query sql = new Query()
+                .select("*")
+                .from("users")
+                .where("username LIKE ? OR email LIKE ? OR id = ?",
+                        searchPattern, searchPattern, tryParseInt(trimmedTerm));
+
+        List<User> results = db.executeQuery(sql, this::map);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+
+
+
     @Override
     public int add(User entity) throws DatabaseException {
         Query sql = new Query();
@@ -125,5 +146,13 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
         }
 
         return u;
+    }
+    
+        private int tryParseInt(String str) {
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return 0; 
+        }
     }
 }

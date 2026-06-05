@@ -4,6 +4,7 @@
  */
 package dao;
 
+import exception.database.DatabaseException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -17,19 +18,19 @@ import utility.Query;
  * @author Silvanus
  */
 public class ProjectItemAsigneeDAO{
-    public int assignUser(Integer projectItemId, Integer userId) throws SQLException {
+    public int assignUser(Integer projectItemId, Integer userId) throws DatabaseException {
         return 0;
     }
 
-    public int removeAssignee(Integer projectItemId, Integer userId) throws SQLException {
+    public int removeAssignee(Integer projectItemId, Integer userId) throws DatabaseException {
         return 0;
     }
 
-    public List<User> getAssignees(Integer projectItemId) throws SQLException {
+    public List<User> getAssignees(Integer projectItemId) throws DatabaseException {
         return null;
     }
 
-    public List<ProjectItem> getAssignedItems(Integer userId) throws SQLException {
+    public List<ProjectItem> getAssignedItems(Integer userId) throws DatabaseException {
         return null;
     }
 }

@@ -1,7 +1,6 @@
 package control;
 
 import dao.UserDAO;
-import exception.database.DatabaseConnectionFailedException;
 import exception.database.DatabaseException;
 import interfaces.IGenericControl;
 import java.util.List;
@@ -13,56 +12,45 @@ import model.User;
  */
 public class UserControl implements IGenericControl<User, Integer> {
 
-    private UserDAO dao = new UserDAO();;
+    private UserDAO dao = new UserDAO();
+
+    
 
 
 
     @Override
-    public int add(User user) throws DatabaseException{
+    public int add(User user) throws DatabaseException {
         return dao.add(user);
     }
 
     @Override
-    public User get(Integer id) {
+    public User get(Integer id) throws DatabaseException {
         return dao.get(id);
     }
 
     @Override
-    public List<User> fetchAll() {
+    public List<User> fetchAll() throws DatabaseException {
         return dao.fetchAll();
     }
 
     @Override
-    public int update(User user) {
+    public int update(User user) throws DatabaseException {
         return dao.update(user);
     }
 
     @Override
-    public int delete(Integer id) {
+    public int delete(Integer id) throws DatabaseException {
         return dao.delete(id);
     }
 
-    public User getByUsername(String username) {
-        return dao.getByUsername(username);
+    public User search(String keyword) throws DatabaseException {
+        return dao.search(keyword);
     }
 
-    public User getByEmail(String email) {
-        return dao.getByEmail(email);
-    }
+//    public User getByEmail(String email) {
+//        return dao.getByEmail(email);
+//    }
 
-    public User authenticate(String email, String password) {
-        User user = dao.getByEmail(email);
-
-        if (user == null) {
-            return null;
-        }
-
-        if (user.getPasswordHash().equals(password)) {
-            return user;
-        }
-
-        return null;
-    }
 
     public int updateProfile(User user) {
         User existingUser = get(user.getId());

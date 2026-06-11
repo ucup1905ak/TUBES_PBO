@@ -4,12 +4,12 @@
  */
 package dao;
 
-import interfaces.IRowMapper;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import exception.database.DatabaseException;
 import java.util.List;
 import javax.management.relation.Role;
-import model.Attachment;
+import model.Project;
+import model.User;
+import model.enums.UserRole;
 import service.DatabaseConnection;
 import utility.Query;
 
@@ -17,52 +17,60 @@ import utility.Query;
  *
  * @author Silvanus
  */
-public class ProjectMemberDAO implements IRowMapper<ProjectMemberDAO>{
-    private final DatabaseConnection db = new DatabaseConnection();
-    
-    public int add(ProjectMemberDAO member) throws SQLException{
-        Query sql = new Query();
+public class ProjectMemberDAO {
 
+    private final DatabaseConnection db = new DatabaseConnection();
+
+    public int add(Integer projectId, Integer userId, UserRole roles) throws DatabaseException {
+        Query sql = new Query();
+        //Kasih IF ELSE YA 
+        if (roles == UserRole.TEAM_MEMBER) {
+
+        } else if (roles == UserRole.PROJECT_OWNER) {
+
+        }
         sql.insertInto("project_member").values();
         //isi
         return db.executeUpdate(sql);
     }
-    
-    public int remove(Integer projectId, Integer userId) throws SQLException{
+
+    public int remove(Integer projectId, Integer userId) throws DatabaseException {
         Query sql = new Query();
         //isi
         return db.executeUpdate(sql);
     }
 
-    public List<ProjectMemberDAO> getByProject(Integer projectId) throws SQLException{
+    public List<User> getUserByProject(Integer projectId) throws DatabaseException {
         Query sql = new Query();
         //isi
-        List<ProjectMemberDAO> listProjectMember = db.executeQuery(sql, this::map);
-        if (listProjectMember.isEmpty()) {
+        List<User> list = db.executeQuery(sql, /* INI ISI DENGAN USER MAPPER*/);
+        if (list.isEmpty()) {
             return null;
         }
-        return listProjectMember;
-    }
-    
-    public List<ProjectMemberDAO> getByUser(Integer userId) throws SQLException{
-        Query sql = new Query();
-        //isi
-        List<ProjectMemberDAO> listProjectMember = db.executeQuery(sql, this::map);
-        if (listProjectMember.isEmpty()) {
-            return null;
-        }
-        return listProjectMember;
+        return list;
     }
 
-    public int updateRole(Integer projectId, Integer userId, Role role) throws SQLException{
+    public List<Project> getProjectByUser(Integer userId) throws DatabaseException {
+        Query sql = new Query();
+        //isi
+        List<list> list = db.executeQuery(sql, /* INI ISI DENGAN PROJECT MAPPER*/);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list;
+    }
+
+    public UserRole getRole(Integer projectId, Integer userId) throws DatabaseException {
+        Query sql = new Query();
+        
+        //ISI
+        
+        return UserRole.PROJECT_OWNER;
+    }
+
+    public int updateRole(Integer projectId, Integer userId, Role role) throws DatabaseException {
         //isi
         return 1;
     }
-    
-    public ProjectMemberDAO map(ResultSet rs) throws SQLException{
-        ProjectMemberDAO p = new ProjectMemberDAO();
-        
-        //isi
-        return p;
-    }
+
 }

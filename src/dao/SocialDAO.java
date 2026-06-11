@@ -71,12 +71,11 @@ public class SocialDAO implements IGenericDAO<Social, Integer>, IRowMapper<Socia
         return db.executeUpdate(sql);
     }
 
-    public List<Social> findByUserId(int userId) throws SQLException {
+    public List<Social> findByUserId(int userId) throws DatabaseException {
         Query sql = new Query()
                 .select("*")
                 .from("social_links")
                 .where("user_id", userId);
-
         return db.executeQuery(sql, this::map);
     }
 

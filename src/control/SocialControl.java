@@ -42,4 +42,9 @@ public class SocialControl implements IGenericControl<Social, Integer>{
         return dao.delete(id);
     }
     
+    
+    public List<Social> findByUserId(Integer user_id) throws DatabaseException {
+        return dao.findByUserId(user_id);
+    }
+    
 }

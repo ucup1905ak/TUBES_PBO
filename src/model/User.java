@@ -4,7 +4,6 @@
  */
 package model;
 
-
 /**
  *
  * @author Farelino Alexander Kim / 240713000ino Alexander Kim - 240713000
@@ -22,12 +21,16 @@ public class User {
     private String fullName;
     private String bio;
     private String profilePicture;
-    private List<SocialLink> socials;
+    private List<SocialLink> socials = new ArrayList<>();
+    ;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
-    public User() {
-        this.socials = new ArrayList<>();
+    public User(String username, String fullname, String email, String passwordHash) {
+        this.username = username;
+        this.email = email;
+        this.fullName = fullname;
+        this.passwordHash = passwordHash;
     }
 
     public int getId() {
@@ -120,16 +123,16 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", bio='" + bio + '\'' +
-                ", profilePicture='" + profilePicture + '\'' +
-                ", socials=" + socials +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
+        return "User{"
+                + "id=" + id
+                + ", username='" + username + '\''
+                + ", email='" + email + '\''
+                + ", fullName='" + fullName + '\''
+                + ", bio='" + bio + '\''
+                + ", profilePicture='" + profilePicture + '\''
+                + ", socials=" + socials
+                + ", createdAt=" + createdAt
+                + ", updatedAt=" + updatedAt
+                + '}';
     }
 }

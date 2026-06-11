@@ -1,5 +1,7 @@
 package dao;
 
+import exception.database.DatabaseException;
+import exception.database.ResultSetParsingException;
 import interfaces.IGenericDAO;
 import interfaces.IRowMapper;
 import java.sql.ResultSet;
@@ -7,22 +9,38 @@ import java.sql.SQLException;
 import java.util.List;
 import model.User;
 import service.DatabaseConnection;
+import utility.Log;
 import utility.Query;
 
 /**
  *
  * @author Farelino Alexander Kim / 240713000
  */
-
-//TEASTTEFEUFYUE
-public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
+public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
 
     private final DatabaseConnection db = new DatabaseConnection();
 
-    @Override
-    public int add(User entity) throws SQLException {
-        Query sql = new Query();
+    public List<User> search(String searchTerm) throws DatabaseException {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return null;
+        }
 
+        String trimmedTerm = searchTerm.trim();
+        String searchPattern = "%" + trimmedTerm + "%";
+
+        Query sql = new Query()
+                .select("*")
+                .from("users")
+                .where("username LIKE ? OR email LIKE ? OR id = ?",
+                        searchPattern, searchPattern, tryParseInt(trimmedTerm));
+
+        List<User> results = db.executeQuery(sql, this::map);
+        return results.isEmpty() ? null : results;
+    }
+
+    @Override
+    public int add(User entity) throws DatabaseException {
+        Query sql = new Query();
         sql.insertInto("users",
                 "username",
                 "email",
@@ -40,10 +58,12 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
                         entity.getProfilePicture()
                 );
         return db.executeUpdate(sql);
+
     }
+
     //last fixed by : siapa????
     @Override
-    public User get(Integer id) throws SQLException {
+    public User get(Integer id) throws DatabaseException {
         Query sql = new Query()
                 .select("*")
                 .from("users")
@@ -56,7 +76,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
     }
 
     @Override
-    public List<User> fetchAll() throws SQLException {
+    public List<User> fetchAll() throws DatabaseException {
 
         Query sql = new Query()
                 .select("*")
@@ -65,7 +85,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
     }
 
     @Override
-    public int update(User entity) throws SQLException {
+    public int update(User entity) throws DatabaseException {
 
         Query sql = new Query()
                 .update("users")
@@ -82,7 +102,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
     }
 
     @Override
-    public int delete(Integer id) throws SQLException {
+    public int delete(Integer id) throws DatabaseException {
 
         Query sql = new Query()
                 .deleteFrom("users")
@@ -90,33 +110,65 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>{
 
         return db.executeUpdate(sql);
     }
-    
-//    @Override 
-//    public SocialLink map(ResultSet rs) throws SQLException {
-//        SocialLink link = new SocialLink(
-//                SocialPlatform.valueOf(rs.getString("platform")),
-//                rs.getString("url")
-//        );
-//        
-//        link.setId(rs.getInt("id"));
-//        //awalnya disini ada add usernya ke dalam social. Tapi itu tidak KOHSESI (SOLID)
-//        return link;
-//    }
 
-    
-    public User map(ResultSet rs) throws SQLException{
-        User u = new User();
+    public User getByEmail(String email) throws DatabaseException {
+ 
 
-        u.setId(rs.getInt("id"));
-        u.setUsername(rs.getString("username"));
-        u.setEmail(rs.getString("email"));
-        u.setPasswordHash(rs.getString("password_hash"));
-        u.setFullName(rs.getString("full_name"));
-        u.setBio(rs.getString("bio"));
-        u.setProfilePicture(rs.getString("profile_picture"));
-        u.setCreatedAt(rs.getTimestamp("created_at"));
-        u.setUpdatedAt(rs.getTimestamp("updated_at"));
+        Query sql = new Query()
+                .select("*")
+                .from("users")
+                .where("email = ?", email);
+//        System.out.println(sql.build());
+        List<User> results = db.executeQuery(sql, this::map);
         
+        return results.isEmpty() ? null : results.get(0);
+
+    }
+
+    public User getByUsername(String username) throws DatabaseException {
+        if (username == null || username.trim().isEmpty()) {
+            return null;
+        }
+
+        Query sql = new Query()
+                .select("*")
+                .from("users")
+                .where("username = ?", username);
+
+        List<User> results = db.executeQuery(sql, this::map);
+        return results.isEmpty() ? null : results.get(0);
+
+    }
+
+    @Override
+    public User map(ResultSet rs) throws DatabaseException {
+        User u = null;
+        try {
+            u = new User(rs.getString("username"),
+                    rs.getString("full_name"),
+                    rs.getString("email"),
+                    rs.getString("password_hash"));
+            u.setId(rs.getInt("id"));
+            u.setBio(rs.getString("bio"));
+            u.setProfilePicture(rs.getString("profile_picture"));
+            u.setCreatedAt(rs.getTimestamp("created_at"));
+            u.setUpdatedAt(rs.getTimestamp("updated_at"));
+        } catch (SQLException e) {
+            throw new ResultSetParsingException(
+                    "Failed to parse User from ResultSet",
+                    e
+            );
+
+        }
+
         return u;
+    }
+
+    private int tryParseInt(String str) {
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 }

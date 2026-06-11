@@ -6,20 +6,20 @@ import model.enums.SocialPlatform;
  *
  * @author Farelino Alexander Kim / 240713000ino Alexander Kim - 240713000
  */
-public class SocialLink {
+public class Social {
 
     private int id;
     private User user;
     private SocialPlatform platform;
     private String url;
 
-    public SocialLink(User user, SocialPlatform platform, String url) {
+    public Social(User user, SocialPlatform platform, String url) {
         this.user = user;
         this.platform = platform;
         this.url = url;
     }
 
-    public SocialLink(SocialPlatform platform, String url) {
+    public Social(SocialPlatform platform, String url) {
     
         this.platform = platform;
         this.url = url;

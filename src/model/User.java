@@ -21,7 +21,7 @@ public class User {
     private String fullName;
     private String bio;
     private String profilePicture;
-    private List<SocialLink> socials = new ArrayList<>();
+    private List<Social> socials = new ArrayList<>();
     ;
     private Timestamp createdAt;
     private Timestamp updatedAt;
@@ -89,19 +89,19 @@ public class User {
         this.profilePicture = profilePicture;
     }
 
-    public List<SocialLink> getSocials() {
+    public List<Social> getSocials() {
         return socials;
     }
 
-    public void setSocials(List<SocialLink> socials) {
+    public void setSocials(List<Social> socials) {
         this.socials = socials;
     }
 
-    public void addSocial(SocialLink social) {
+    public void addSocial(Social social) {
         this.socials.add(social);
     }
 
-    public void removeSocial(SocialLink social) {
+    public void removeSocial(Social social) {
         this.socials.remove(social);
     }
 

@@ -5,10 +5,10 @@
 package dao;
 
 import exception.database.DatabaseException;
-import java.sql.ResultSet;
+import exception.database.ResultSetParsingException;
 import java.sql.SQLException;
 import java.util.List;
-import javax.management.relation.Role;
+import jdk.jshell.spi.ExecutionControl.NotImplementedException;
 import model.*;
 import service.DatabaseConnection;
 import utility.Query;
@@ -17,20 +17,55 @@ import utility.Query;
  *
  * @author Silvanus
  */
-public class ProjectItemAsigneeDAO{
+public class ProjectItemAsigneeDAO {
+
+    private DatabaseConnection db = new DatabaseConnection();
+
     public int assignUser(Integer projectItemId, Integer userId) throws DatabaseException {
-        return 0;
+        Query sql = new Query();
+        sql.insertInto("project_item_assignees", "project_item_id", "user_id").values(projectItemId, userId);
+        return db.executeUpdate(sql);
     }
 
     public int removeAssignee(Integer projectItemId, Integer userId) throws DatabaseException {
-        return 0;
+
+        Query sql = new Query();
+        sql.deleteFrom("project_item_assignees")
+                .where("project_item_id = ? AND user_id = ? ", projectItemId, userId);
+        return db.executeUpdate(sql);
     }
 
     public List<User> getAssignees(Integer projectItemId) throws DatabaseException {
-        return null;
+        Query sql = new Query();
+
+        return db.executeQuery(sql, rs -> {
+                    User u = null;
+                    try {
+                        u = new User(rs.getString("username"),
+                                rs.getString("full_name"),
+                                rs.getString("email"),
+                                rs.getString("password_hash"));
+                        u.setId(rs.getInt("id"));
+                        u.setBio(rs.getString("bio"));
+                        u.setProfilePicture(rs.getString("profile_picture"));
+                        u.setCreatedAt(rs.getTimestamp("created_at"));
+                        u.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    } catch (SQLException e) {
+                        throw new ResultSetParsingException(
+                                "Failed to parse User from ResultSet",
+                                e
+                        );
+
+                    }
+                    return u;
+        });
     }
 
-    public List<ProjectItem> getAssignedItems(Integer userId) throws DatabaseException {
-        return null;
+    public List<ProjectItem> getAssignedItems(Integer userId) throws DatabaseException{
+//        Query sql = new Query();
+//
+//        return db.executeQuery(sql);
+           throw new UnsupportedOperationException("ProjectItem Asignee : getAssigend Items");
     }
+
 }

@@ -9,18 +9,18 @@ import java.sql.SQLException;
 import java.util.List;
 import model.User;
 import service.DatabaseConnection;
+import utility.Log;
 import utility.Query;
 
 /**
  *
  * @author Farelino Alexander Kim / 240713000
  */
-//TEASTTEFEUFYUE
 public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
 
     private final DatabaseConnection db = new DatabaseConnection();
 
-    public User search(String searchTerm) throws DatabaseException {
+    public List<User> search(String searchTerm) throws DatabaseException {
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
             return null;
         }
@@ -35,16 +35,12 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
                         searchPattern, searchPattern, tryParseInt(trimmedTerm));
 
         List<User> results = db.executeQuery(sql, this::map);
-        return results.isEmpty() ? null : results.get(0);
+        return results.isEmpty() ? null : results;
     }
-
-
-
 
     @Override
     public int add(User entity) throws DatabaseException {
         Query sql = new Query();
-
         sql.insertInto("users",
                 "username",
                 "email",
@@ -62,6 +58,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
                         entity.getProfilePicture()
                 );
         return db.executeUpdate(sql);
+
     }
 
     //last fixed by : siapa????
@@ -114,25 +111,44 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
         return db.executeUpdate(sql);
     }
 
-//    @Override 
-//    public SocialLink map(ResultSet rs) throws SQLException {
-//        SocialLink link = new SocialLink(
-//                SocialPlatform.valueOf(rs.getString("platform")),
-//                rs.getString("url")
-//        );
-//        
-//        link.setId(rs.getInt("id"));
-//        //awalnya disini ada add usernya ke dalam social. Tapi itu tidak KOHSESI (SOLID)
-//        return link;
-//    }
+    public User getByEmail(String email) throws DatabaseException {
+ 
+
+        Query sql = new Query()
+                .select("*")
+                .from("users")
+                .where("email = ?", email);
+//        System.out.println(sql.build());
+        List<User> results = db.executeQuery(sql, this::map);
+        
+        return results.isEmpty() ? null : results.get(0);
+
+    }
+
+    public User getByUsername(String username) throws DatabaseException {
+        if (username == null || username.trim().isEmpty()) {
+            return null;
+        }
+
+        Query sql = new Query()
+                .select("*")
+                .from("users")
+                .where("username = ?", username);
+
+        List<User> results = db.executeQuery(sql, this::map);
+        return results.isEmpty() ? null : results.get(0);
+
+    }
+
+    @Override
     public User map(ResultSet rs) throws DatabaseException {
-        User u = new User();
+        User u = null;
         try {
+            u = new User(rs.getString("username"),
+                    rs.getString("full_name"),
+                    rs.getString("email"),
+                    rs.getString("password_hash"));
             u.setId(rs.getInt("id"));
-            u.setUsername(rs.getString("username"));
-            u.setEmail(rs.getString("email"));
-            u.setPasswordHash(rs.getString("password_hash"));
-            u.setFullName(rs.getString("full_name"));
             u.setBio(rs.getString("bio"));
             u.setProfilePicture(rs.getString("profile_picture"));
             u.setCreatedAt(rs.getTimestamp("created_at"));
@@ -147,12 +163,12 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
 
         return u;
     }
-    
-        private int tryParseInt(String str) {
+
+    private int tryParseInt(String str) {
         try {
             return Integer.parseInt(str);
         } catch (NumberFormatException e) {
-            return 0; 
+            return 0;
         }
     }
 }

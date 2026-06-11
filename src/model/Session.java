@@ -15,7 +15,21 @@ public class Session {
     private Timestamp expiresAt;
     private boolean isActive;
 
-    public Session() {}
+    public Session(){}
+    public Session(User user, String token) {
+        this.user = user;
+        this.token = token;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+        this.isActive = true;
+    }
+
+    public Session(User user, String token, Timestamp expiresAt) {
+        this.user = user;
+        this.token = token;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+        this.expiresAt = expiresAt;
+        this.isActive = true;
+    }
 
     public int getId() {
         return id;
@@ -76,13 +90,13 @@ public class Session {
 
     @Override
     public String toString() {
-        return "Session{" +
-                "id=" + id +
-                ", token='" + token + '\'' +
-                ", user=" + (user != null ? user.getUsername() : "null") +
-                ", createdAt=" + createdAt +
-                ", expiresAt=" + expiresAt +
-                ", isActive=" + isActive +
-                '}';
+        return "Session{"
+                + "id=" + id
+                + ", token='" + token + '\''
+                + ", user=" + (user != null ? user.getUsername() : "null")
+                + ", createdAt=" + createdAt
+                + ", expiresAt=" + expiresAt
+                + ", isActive=" + isActive
+                + '}';
     }
 }

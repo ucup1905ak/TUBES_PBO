@@ -8,6 +8,8 @@ package control;
  *
  * @author Farelino Alexander Kim - 240713000
  */
-public class EventControl {
+public class EventControl extends ProjectControl{
+    
+//    private 
     
 }

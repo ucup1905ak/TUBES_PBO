@@ -103,7 +103,7 @@ public class TesterDAO {
 
             User user = userDAO.get(13); // pastikan user id 1 ada
 
-            SocialLink social = new SocialLink(
+            Social social = new Social(
                     SocialPlatform.GITHUB,
                     "https://github.com/testuser"
             );
@@ -123,11 +123,11 @@ public class TesterDAO {
         try {
             SocialDAO dao = new SocialDAO();
 
-            List<SocialLink> socials = dao.fetchAll();
+            List<Social> socials = dao.fetchAll();
 
             System.out.println("Jumlah social link: " + socials.size());
 
-            for (SocialLink social : socials) {
+            for (Social social : socials) {
                 System.out.println(social);
             }
 
@@ -140,7 +140,7 @@ public class TesterDAO {
         try {
             SocialDAO dao = new SocialDAO();
 
-            SocialLink social = dao.get(id);
+            Social social = dao.get(id);
 
             social.setPlatform(SocialPlatform.LINKEDIN);
             social.setUrl("https://linkedin.com/in/update-test");

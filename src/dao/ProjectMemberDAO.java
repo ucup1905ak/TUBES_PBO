@@ -17,10 +17,10 @@ import utility.Query;
  *
  * @author Silvanus
  */
-public class ProjectMember implements IRowMapper<ProjectMember>{
+public class ProjectMemberDAO implements IRowMapper<ProjectMemberDAO>{
     private final DatabaseConnection db = new DatabaseConnection();
     
-    public int add(ProjectMember member) throws SQLException{
+    public int add(ProjectMemberDAO member) throws SQLException{
         Query sql = new Query();
 
         sql.insertInto("project_member").values();
@@ -34,20 +34,20 @@ public class ProjectMember implements IRowMapper<ProjectMember>{
         return db.executeUpdate(sql);
     }
 
-    public List<ProjectMember> getByProject(Integer projectId) throws SQLException{
+    public List<ProjectMemberDAO> getByProject(Integer projectId) throws SQLException{
         Query sql = new Query();
         //isi
-        List<ProjectMember> listProjectMember = db.executeQuery(sql, this::map);
+        List<ProjectMemberDAO> listProjectMember = db.executeQuery(sql, this::map);
         if (listProjectMember.isEmpty()) {
             return null;
         }
         return listProjectMember;
     }
     
-    public List<ProjectMember> getByUser(Integer userId) throws SQLException{
+    public List<ProjectMemberDAO> getByUser(Integer userId) throws SQLException{
         Query sql = new Query();
         //isi
-        List<ProjectMember> listProjectMember = db.executeQuery(sql, this::map);
+        List<ProjectMemberDAO> listProjectMember = db.executeQuery(sql, this::map);
         if (listProjectMember.isEmpty()) {
             return null;
         }
@@ -59,8 +59,8 @@ public class ProjectMember implements IRowMapper<ProjectMember>{
         return 1;
     }
     
-    public ProjectMember map(ResultSet rs) throws SQLException{
-        ProjectMember p = new ProjectMember();
+    public ProjectMemberDAO map(ResultSet rs) throws SQLException{
+        ProjectMemberDAO p = new ProjectMemberDAO();
         
         //isi
         return p;

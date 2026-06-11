@@ -18,55 +18,58 @@ import utility.Query;
  *
  * @author Silvanus
  */
-public class ProjectItemDAO implements IGenericDAO<ProjectItem, Integer>, IRowMapper<ProjectItem>{
-    private final DatabaseConnection db = new DatabaseConnection();
-    
-    @Override
-    public int add(ProjectItem entity) throws DatabaseException {
+public abstract class ProjectItemDAO {
+
+    protected final DatabaseConnection db = new DatabaseConnection();
+
+    protected int addProjectItem(ProjectItem item) throws DatabaseException {
         Query sql = new Query();
 
-        sql.insertInto("project_item").values();
-        //isi
+        sql.insertInto(
+                "project_items",
+                "title",
+                "description",
+                "color",
+                "project_id",
+                "created_by",
+                "updated_by"
+        ).values(
+                item.getTitle(),
+                item.getDescription(),
+                item.getColor(),
+                item.getProject().getId(),
+                item.getCreatedBy().getId(),
+                item.getUpdatedBy() != null
+                        ? item.getUpdatedBy().getId()
+                        : null
+        );
+
+        return db.executeInsert(sql);
+    }
+
+    protected int updateProjectItem(ProjectItem item) throws DatabaseException {
+        Query sql = new Query();
+
+        sql.update("project_items")
+                .set("title", item.getTitle())
+                .set("description", item.getDescription())
+                .set("color", item.getColor())
+                .set("project_id", item.getProject().getId())
+                .set(
+                        "updated_by",
+                        item.getUpdatedBy() != null ? item.getUpdatedBy().getId() : null
+                )
+                .where("id = " + item.getId());
+
         return db.executeUpdate(sql);
     }
 
-    @Override
-    public ProjectItem get(Integer id) throws DatabaseException {
+    protected int deleteProjectItem(Integer id) throws DatabaseException {
         Query sql = new Query();
-        //isi
-        List<ProjectItem> listProjectItem = db.executeQuery(sql, this::map);
-        if (listProjectItem.isEmpty()) {
-            return null;
-        }
-        return listProjectItem.get(0);
-    }
 
-    @Override
-    public List<ProjectItem> fetchAll() throws DatabaseException {
-        Query sql = new Query();
-        //isi
-        return db.executeQuery(sql, this::map);
-    }
+        sql.deleteFrom("project_items")
+                .where("id = " + id);
 
-    @Override
-    public int update(ProjectItem entity) throws DatabaseException {
-        Query sql = new Query();
-        //isi
         return db.executeUpdate(sql);
-    }
-
-    @Override
-    public int delete(Integer id) throws DatabaseException {
-        Query sql = new Query();
-        //isi
-        return db.executeUpdate(sql);
-    }
-    
-    @Override
-    public ProjectItem map(ResultSet rs) throws DatabaseException{
-        ProjectItem p = new Task();
-
-        //isi
-        return p;
     }
 }

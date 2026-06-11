@@ -52,30 +52,30 @@ public class UserControl implements IGenericControl<User, Integer> {
 //    }
 
 
-    public int updateProfile(User user) {
-        User existingUser = get(user.getId());
-
-        if (existingUser == null) {
-            return 0;
-        }
-
-        existingUser.setFullName(user.getFullName());
-        existingUser.setBio(user.getBio());
-        existingUser.setProfilePicture(user.getProfilePicture());
-        existingUser.setSocials(user.getSocials());
-
-        return update(existingUser);
-    }
-
-    public int changePassword(Integer id, String newPassword) {
-        User user = get(id);
-
-        if (user == null) {
-            return 0;
-        }
-
-        user.setPasswordHash(newPassword);
-
-        return update(user);
-    }
+//    public int updateProfile(User user) {
+//        User existingUser = get(user.getId());
+//
+//        if (existingUser == null) {
+//            return 0;
+//        }
+//
+//        existingUser.setFullName(user.getFullName());
+//        existingUser.setBio(user.getBio());
+//        existingUser.setProfilePicture(user.getProfilePicture());
+//        existingUser.setSocials(user.getSocials());
+//
+//        return update(existingUser);
+//    }
+//
+//    public int changePassword(Integer id, String newPassword) {
+//        User user = get(id);
+//
+//        if (user == null) {
+//            return 0;
+//        }
+//
+//        user.setPasswordHash(newPassword);
+//
+//        return update(user);
+//    }
 }

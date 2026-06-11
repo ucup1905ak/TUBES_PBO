@@ -30,10 +30,38 @@ public class NewMain {
  * 
  */ 
 
-        TesterDAO.testSocialCreate();
-        TesterDAO.testSocialReadAll();
-        TesterDAO.testSocialUpdate(0);
-        TesterDAO.testSocialDelete(0);
+//        TesterDAO.testSocialCreate();
+//        TesterDAO.testSocialReadAll();
+//        TesterDAO.testSocialUpdate(1);
+//        TesterDAO.testSocialDelete(1);
+
+/**
+ * (5/6)
+ * 
+ * DAO SOcial done heheh
+ * - Widi
+ * 
+ */
+
+//        TesterDAO.testProjectCreate();
+//        TesterDAO.testProjectReadAll();
+//        TesterDAO.testProjectReadById(2);
+//        TesterDAO.testProjectUpdate();
+//        TesterDAO.testProjectDelete(1);
+
+/**
+ * (5/6)
+ * 
+ * DAO Project done yeah
+ * - Widi
+ * 
+ */
+
+//     TesterDAO.testTaskCreate(2, 10);
+//     TesterDAO.testTaskReadAll();
+//     TesterDAO.testTaskReadById(3);
+//     TesterDAO.testTaskUpdate(3);
+//     TesterDAO.testTaskDelete(3);
     }
     
 }

@@ -111,5 +111,43 @@ public class DatabaseConnection implements IDatabaseConnection {
             return result;
         }
     }
+    
+    
+    //executeInsert
+    //Last updated by : Widi (5/6)
+    @Override
+    public int executeInsert(Query sql) throws DatabaseException {
+
+        if (sql.queryType != Query.Type.INSERT) {
+            throw new QueryTypeMismatchException(Query.Type.INSERT);
+        }
+
+        try {
+            connect();
+
+            try (Statement s = connection.createStatement()) {
+
+                s.executeUpdate(
+                        sql.toString(),
+                        Statement.RETURN_GENERATED_KEYS
+                );
+
+                try (ResultSet rs = s.getGeneratedKeys()) {
+
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+
+                    return -1;
+                }
+            }
+            
+        } catch (SQLException e) {
+            Log.err(e.getMessage());
+            throw new QueryExecutionException(sql.toString(), e);
+        } finally {
+            disconnect();
+        }
+    }
 
 }

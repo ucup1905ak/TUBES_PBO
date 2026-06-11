@@ -8,6 +8,7 @@ package interfaces;
  *
  * @author Farelino Alexander Kim / 240713000
  */
+import exception.database.DatabaseException;
 import exception.database.QueryTypeMismatchException;
 import java.sql.SQLException;
 import java.util.List;
@@ -20,4 +21,8 @@ public interface IDatabaseConnection {
     public <T> List<T> executeQuery(Query sql, IRowMapper<T> mapper) throws QueryTypeMismatchException, SQLException;
 
     public <T> int executeUpdate(Query sql) throws QueryTypeMismatchException, SQLException;
+    
+    //executeInsert
+    //Last updated by : Widi (5/6)
+    public int executeInsert(Query sql) throws DatabaseException;
 }

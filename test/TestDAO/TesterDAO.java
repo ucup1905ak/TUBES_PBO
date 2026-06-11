@@ -5,7 +5,7 @@ import dao.SocialDAO;
 import dao.UserDAO;
 import java.util.List;
 import model.*;
-import model.enums.SocialPlatform;
+import model.enums.*;
 
 /**
  *
@@ -103,7 +103,7 @@ public class TesterDAO {
             UserDAO userDAO = new UserDAO();
             SocialDAO socialDAO = new SocialDAO();
 
-            User user = userDAO.get(1); // pastikan user id 1 ada
+            User user = userDAO.get(13); // pastikan user id 1 ada
 
             SocialLink social = new SocialLink(
                     SocialPlatform.GITHUB,
@@ -267,5 +267,108 @@ public class TesterDAO {
      * TaskDAO
      */
     
+    public static void testTaskCreate(int idProject, int idUser) {
+        try {
+            TaskDAO dao = new TaskDAO();
+
+            Task task = new Task();
+
+            task.setTitle("Implement DAO");
+            task.setDescription("Mengerjakan DAO Task");
+            task.setColor("#2196F3");
+
+            Project project = new Project();
+            project.setId(idProject);
+            task.setProject(project);
+
+            User user = new User();
+            user.setId(idUser);
+
+            task.setCreatedBy(user);
+            task.setUpdatedBy(user);
+
+            task.setPriority(TaskPriority.HIGH);
+            task.setStatus(TaskStatus.PENDING);
+
+            dao.add(task);
+
+            System.out.println("CREATE SELESAI");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
+    public static void testTaskReadAll() {
+        try {
+            TaskDAO dao = new TaskDAO();
+
+            List<Task> tasks = dao.fetchAll();
+
+            System.out.println("Jumlah task: " + tasks.size());
+
+            for (Task task : tasks) {
+                System.out.println(task);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void testTaskReadById(int id) {
+        try {
+            TaskDAO dao = new TaskDAO();
+
+            Task task = dao.get(id);
+
+            if (task == null) {
+                System.out.println("Task tidak ditemukan");
+                return;
+            }
+
+            System.out.println(task);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void testTaskUpdate(int id) {
+        try {
+            TaskDAO dao = new TaskDAO();
+
+            Task task = dao.get(id);
+
+            if (task == null) {
+                System.out.println("Task tidak ditemukan");
+                return;
+            }
+
+            task.setTitle("UPDATE TASK");
+            task.setDescription("Deskripsi setelah update");
+            task.setStatus(TaskStatus.IN_PROGRESS);
+            task.setPriority(TaskPriority.MEDIUM);
+            
+            dao.update(task);
+
+            System.out.println("UPDATE SELESAI");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static void testTaskDelete(int id) {
+        try {
+            TaskDAO dao = new TaskDAO();
+
+            dao.delete(id);
+
+            System.out.println("DELETE SELESAI");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

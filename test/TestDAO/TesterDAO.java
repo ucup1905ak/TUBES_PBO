@@ -1,8 +1,6 @@
 package TestDAO;
 
-import dao.ProjectDAO;
-import dao.SocialDAO;
-import dao.UserDAO;
+import dao.*;
 import java.util.List;
 import model.*;
 import model.enums.*;

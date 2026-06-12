@@ -25,7 +25,11 @@ public class User {
     ;
     private Timestamp createdAt;
     private Timestamp updatedAt;
-
+    
+    public User(){
+        
+    }
+    
     public User(String username, String fullname, String email, String passwordHash) {
         this.username = username;
         this.email = email;

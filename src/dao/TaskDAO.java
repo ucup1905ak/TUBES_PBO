@@ -106,8 +106,6 @@ public class TaskDAO extends ProjectItemDAO implements IGenericDAO<Task, Integer
                 .set("completed_at", entity.getCompletedAt())
                 .where("project_item_id = ?", entity.getId());
         
-        //DEBUG SQL
-        System.out.println(sql.build());
         
         return db.executeUpdate(sql);
     }
@@ -129,6 +127,8 @@ public class TaskDAO extends ProjectItemDAO implements IGenericDAO<Task, Integer
             t.setTitle(rs.getString("title"));
             t.setDescription(rs.getString("description"));
             t.setColor(rs.getString("color"));
+            t.setCreatedAt(rs.getTimestamp("created_at"));
+            t.setUpdatedAt(rs.getTimestamp("updated_at"));
 
             // Task
             t.setPriority(
@@ -150,6 +150,10 @@ public class TaskDAO extends ProjectItemDAO implements IGenericDAO<Task, Integer
             Project project = new Project();
             project.setId(rs.getInt("project_id"));
             t.setProject(project);
+            
+            User createdBy = new User();
+            createdBy.setId(rs.getInt("created_by"));
+            t.setCreatedBy(createdBy);
             
             int updatedById = rs.getInt("updated_by");
 

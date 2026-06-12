@@ -18,7 +18,7 @@ import utility.Query;
  * @author Silvanus
  */
 public class AttachmentDAO implements IGenericDAO<Attachment, Integer>, IRowMapper<Attachment>{
-    private final DatabaseConnection db = new DatabaseConnection();
+//    private final DatabaseConnection DB = new DatabaseConnection();
     
     @Override
     public int add(Attachment entity) throws DatabaseException {
@@ -26,14 +26,14 @@ public class AttachmentDAO implements IGenericDAO<Attachment, Integer>, IRowMapp
 
         sql.insertInto("attachment").values();
         //isi
-        return db.executeUpdate(sql);
+        return DB.executeUpdate(sql);
     }
 
     @Override
     public Attachment get(Integer id) throws DatabaseException {
         Query sql = new Query();
         //isi
-        List<Attachment> listAttachment = db.executeQuery(sql, this::map);
+        List<Attachment> listAttachment = DB.executeQuery(sql, this::map);
         if (listAttachment.isEmpty()) {
             return null;
         }
@@ -44,21 +44,21 @@ public class AttachmentDAO implements IGenericDAO<Attachment, Integer>, IRowMapp
     public List<Attachment> fetchAll() throws DatabaseException {
         Query sql = new Query();
         //isi
-        return db.executeQuery(sql, this::map);
+        return DB.executeQuery(sql, this::map);
     }
 
     @Override
     public int update(Attachment entity) throws DatabaseException {
         Query sql = new Query();
         //isi
-        return db.executeUpdate(sql);
+        return DB.executeUpdate(sql);
     }
 
     @Override
     public int delete(Integer id) throws DatabaseException {
         Query sql = new Query();
         //isi
-        return db.executeUpdate(sql);
+        return DB.executeUpdate(sql);
     }
     
     public Attachment map(ResultSet rs) throws DatabaseException{

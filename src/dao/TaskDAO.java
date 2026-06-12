@@ -4,35 +4,38 @@ import exception.database.DatabaseException;
 import exception.database.ResultSetParsingException;
 import model.enums.TaskPriority;
 import interfaces.IGenericDAO;
+import interfaces.IProjectItemDAO;
 import interfaces.IRowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import model.Task;
 import model.User;
 import model.Project;
+import model.ProjectItem;
 import model.enums.TaskStatus;
-import service.DatabaseConnection;
 import utility.Query;
 
 /**
  *
  * @author Silvanus
  */
-public class TaskDAO extends ProjectItemDAO implements IGenericDAO<Task, Integer>, IRowMapper<Task>  {
-
-
-    /*
-        (5/6)
+public class TaskDAO implements IProjectItemDAO, IRowMapper<Task> {
     
-        Ini Turunan dari ProjectItemDAO
-        semoga work amin
-    
-        - Widi
-     */
     
     @Override
-    public int add(Task entity) throws DatabaseException {
+    public List<ProjectItem> fetchByProject(Project id) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<User> fetchAsignee(ProjectItem id) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public int add(ProjectItem entity) throws DatabaseException {
         int projectItemId = addProjectItem(entity);
 
         Query sql = new Query();
@@ -54,122 +57,48 @@ public class TaskDAO extends ProjectItemDAO implements IGenericDAO<Task, Integer
                 entity.getCompletedAt()
         );
 
-        db.executeUpdate(sql);
+        DB.executeUpdate(sql);
 
         return projectItemId;
+
     }
 
     @Override
-    public Task get(Integer id) throws DatabaseException {
-
-        Query sql = new Query()
-                .select("*")
-                .from("tasks t")
-                .join(
-                        "project_items pi",
-                        "t.project_item_id = pi.id"
-                )
-                .where("t.project_item_id = ?", id);
-
-        List<Task> listTask = db.executeQuery(sql, this::map);
-
-        return listTask.isEmpty()
-                ? null
-                : listTask.get(0);
+    public ProjectItem get(Integer id) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public List<Task> fetchAll() throws DatabaseException {
-
-        Query sql = new Query()
-                .select("*")
-                .from("tasks t")
-                .join(
-                        "project_items pi",
-                        "t.project_item_id = pi.id"
-                );
-
-        return db.executeQuery(sql, this::map);
+    public List<ProjectItem> fetchAll() throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public int update(Task entity) throws DatabaseException {
-
-        updateProjectItem(entity);
-
-        Query sql = new Query()
-                .update("tasks")
-                .set("priority", entity.getPriority())
-                .set("status", entity.getStatus())
-                .set("start_date", entity.getStartDate())
-                .set("due_date", entity.getDueDate())
-                .set("completed_at", entity.getCompletedAt())
-                .where("project_item_id = ?", entity.getId());
-        
-        
-        return db.executeUpdate(sql);
+    public int update(ProjectItem entity) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public int delete(Integer id) throws DatabaseException {
-        return deleteProjectItem(id);
+    public int delete(Integer id) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Task map(ResultSet rs) throws DatabaseException {
-
-        try {
-
-            Task t = new Task();
-
-            // ProjectItem
-            t.setId(rs.getInt("id"));
-            t.setTitle(rs.getString("title"));
-            t.setDescription(rs.getString("description"));
-            t.setColor(rs.getString("color"));
-            t.setCreatedAt(rs.getTimestamp("created_at"));
-            t.setUpdatedAt(rs.getTimestamp("updated_at"));
-
-            // Task
-            t.setPriority(
-                    TaskPriority.valueOf(
-                            rs.getString("priority").toUpperCase()
-                    )
-            );
-
-            t.setStatus(
-                    TaskStatus.valueOf(
-                            rs.getString("status").toUpperCase()
-                    )
-            );
-
-            t.setStartDate(rs.getTimestamp("start_date"));
-            t.setDueDate(rs.getTimestamp("due_date"));
-            t.setCompletedAt(rs.getTimestamp("completed_at"));
-            
-            Project project = new Project();
-            project.setId(rs.getInt("project_id"));
-            t.setProject(project);
-            
-            User createdBy = new User();
-            createdBy.setId(rs.getInt("created_by"));
-            t.setCreatedBy(createdBy);
-            
-            int updatedById = rs.getInt("updated_by");
-
-            if (!rs.wasNull()) {
-                User updatedBy = new User();
-                updatedBy.setId(updatedById);
-                t.setUpdatedBy(updatedBy);
-            }
-
-            return t;
-
-        } catch (SQLException e) {
-            throw new ResultSetParsingException(
-                    "Failed to parse Task from ResultSet",
-                    e
-            );
-        }
+    public Task map(ResultSet rs) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+
+
+    /*
+        (5/6)
+    
+        Ini Turunan dari ProjectItemDAO
+        semoga work amin
+    
+        - Widi
+     */
+    
+    
+    
+    
 }

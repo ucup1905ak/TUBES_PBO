@@ -3,6 +3,7 @@ package interfaces;
 import model.Project;
 import java.sql.SQLException;
 import java.util.List;
+import service.DatabaseConnection;
 
 /**
  *
@@ -10,6 +11,7 @@ import java.util.List;
  */
 public interface IGenericDAO<T, ID> {
 
+    DatabaseConnection DB = new DatabaseConnection();
     // Create
     public int add(T entity)throws SQLException;
 

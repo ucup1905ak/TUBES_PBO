@@ -17,7 +17,7 @@ import utility.Query;
  */
 public abstract class ProjectItemDAO {
 
-    protected final DatabaseConnection db = new DatabaseConnection();
+//    protected final DatabaseConnection DB = new DatabaseConnection();
 
     protected int addProjectItem(ProjectItem item) throws DatabaseException {
         Query sql = new Query();
@@ -41,7 +41,7 @@ public abstract class ProjectItemDAO {
                         : null
         );
 
-        return db.executeInsert(sql);
+        return DB.executeInsert(sql);
     }
 
     protected int updateProjectItem(ProjectItem item) throws DatabaseException {
@@ -58,7 +58,7 @@ public abstract class ProjectItemDAO {
                 )
                 .where("id = " + item.getId());
 
-        return db.executeUpdate(sql);
+        return DB.executeUpdate(sql);
     }
 
     protected int deleteProjectItem(Integer id) throws DatabaseException {
@@ -67,6 +67,14 @@ public abstract class ProjectItemDAO {
         sql.deleteFrom("project_items")
                 .where("id = " + id);
 
-        return db.executeUpdate(sql);
+        return DB.executeUpdate(sql);
+    }
+    
+    
+    
+    protected ProjectItem getProjectItemDetailById(Integer id){
+    
+        //fetch dari id
+        return new ProjectItem();
     }
 }

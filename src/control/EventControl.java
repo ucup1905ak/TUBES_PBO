@@ -7,6 +7,7 @@ package control;
 import dao.EventDAO;
 import dao.ProjectItemAsigneeDAO;
 import exception.database.DatabaseException;
+import interfaces.IGenericControl;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -22,7 +23,7 @@ import utility.Log;
  *
  * @author Farelino Alexander Kim - 240713000
  */
-public class EventControl extends ProjectControl {
+public class EventControl implements IGenericControl<Event, Integer> {
 
     private final EventDAO eventDAO;
     private final ProjectItemAsigneeDAO assigneeDAO;

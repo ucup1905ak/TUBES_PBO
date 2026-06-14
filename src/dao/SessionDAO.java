@@ -27,10 +27,10 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
             Query sql = new Query();
             sql.insertInto("sessions",
                 "token",
-                "userId",
-                "createdAt",
-                "expiresAt",
-                "isActive"
+                "user_id",
+                "created_at",
+                "expires_at",
+                "is_active"
             )
                 .values(
                     entity.getToken(),
@@ -88,8 +88,8 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
             Query sql = new Query()
                     .update("sessions")
                     .set("token", entity.getToken())
-                    .set("expiresAt", entity.getExpiresAt())
-                    .set("isActive", entity.isActive())
+                    .set("expires_at", entity.getExpiresAt())
+                    .set("is_active", entity.isActive())
                     .where("id = ?", entity.getId());
             int rows = db.executeUpdate(sql);
             Log.create("SessionDAO.update updated " + rows + " row(s).");
@@ -121,9 +121,9 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
             Session session = new Session();
             session.setId(rs.getInt("id"));
             session.setToken(rs.getString("token"));
-            session.setCreatedAt(rs.getTimestamp("createdAt"));
-            session.setExpiresAt(rs.getTimestamp("expiresAt"));
-            session.setActive(rs.getBoolean("isActive"));
+            session.setCreatedAt(rs.getTimestamp("created_at"));
+            session.setExpiresAt(rs.getTimestamp("expires_at"));
+            session.setActive(rs.getBoolean("is_active"));
             return session;
         } catch (SQLException e) {
             Log.err("SessionDAO.map failed: " + e.getMessage());
@@ -150,7 +150,7 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
         Query sql = new Query()
                 .select("*")
                 .from("sessions")
-                .where("userId = ?", userId);
+                .where("user_id = ?", userId);
         try {
             List<Session> sessions = db.executeQuery(sql, this::map);
             Log.create("SessionDAO.getByUserId queried " + sessions.size() + " row(s).");
@@ -165,7 +165,7 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
         try {
             Query sql = new Query()
                     .update("sessions")
-                    .set("isActive", false)
+                    .set("is_active", false)
                     .where("token = ?", token);
             int rows = db.executeUpdate(sql);
             Log.create("SessionDAO.invalidate updated " + rows + " row(s).");
@@ -179,8 +179,8 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
         try {
             Query sql = new Query()
                     .update("sessions")
-                    .set("isActive", false)
-                    .where("userId = ?", userId);
+                    .set("is_active", false)
+                    .where("user_id = ?", userId);
             int rows = db.executeUpdate(sql);
             Log.create("SessionDAO.invalidateAllUserSessions updated " + rows + " row(s).");
         } catch (DatabaseException e) {

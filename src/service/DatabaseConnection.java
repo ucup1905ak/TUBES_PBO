@@ -18,12 +18,29 @@ import interfaces.IRowMapper;
  */
 public class DatabaseConnection implements IDatabaseConnection {
 
-    public final static String SCHEME = "jdbc:mysql://";
-    public final static String HOSTNAME = "localhost";
-    public final static String DATABASE = "pbo_tubes";
-    public final static int PORT = 3306;
-    private final static String USERNAME = "root";
-    private final static String PASSWORD = "";
+    public static String SCHEME = "jdbc:mysql://";
+    public static String HOSTNAME = "localhost";
+    public static String DATABASE = "pbo_tubes";
+    public static int PORT = 3306;
+    private static String USERNAME = "root";
+    private static String PASSWORD = "";
+
+    static {
+        try (java.io.InputStream input = new java.io.FileInputStream("database.properties")) {
+            java.util.Properties prop = new java.util.Properties();
+            prop.load(input);
+            SCHEME = prop.getProperty("db.scheme", SCHEME);
+            HOSTNAME = prop.getProperty("db.hostname", HOSTNAME);
+            PORT = Integer.parseInt(prop.getProperty("db.port", String.valueOf(PORT)));
+            DATABASE = prop.getProperty("db.database", DATABASE);
+            USERNAME = prop.getProperty("db.username", USERNAME);
+            PASSWORD = prop.getProperty("db.password", PASSWORD);
+        } catch (java.io.IOException ex) {
+            System.err.println("Could not load database.properties. Using default values.");
+        } catch (NumberFormatException ex) {
+            System.err.println("Invalid port format in database.properties. Using default port.");
+        }
+    }
 
     private Connection connection = null;
 
@@ -62,7 +79,16 @@ public class DatabaseConnection implements IDatabaseConnection {
         } catch (SQLException e) {
             return false;
         }
+    }
 
+    public boolean testConnection() {
+        try {
+            connect();
+            disconnect();
+            return true;
+        } catch (DatabaseException e) {
+            return false;
+        }
     }
 
     @Override
@@ -80,12 +106,12 @@ public class DatabaseConnection implements IDatabaseConnection {
                 list.add(mapper.map(result));
             }
 
-            disconnect();
-            Log.create("Queried " +list.size()+ " row." );
+            Log.create("Queried " + list.size() + " row.");
         } catch (SQLException e) {
             Log.err(e.getMessage());
             throw new QueryExecutionException(sql.toString(), e);
         } finally {
+            disconnect();
             return list;
         }
     }
@@ -102,17 +128,16 @@ public class DatabaseConnection implements IDatabaseConnection {
             connect();
             Statement s = connection.createStatement();
             result = s.executeUpdate(sql.toString());
-            disconnect();
-            Log.create("Updated " +result+ " row." );
+            Log.create("Updated " + result + " row.");
         } catch (SQLException e) {
             Log.err(e.getMessage());
             throw new QueryExecutionException(sql.toString(), e);
         } finally {
+            disconnect();
             return result;
         }
     }
-    
-    
+
     //executeInsert
     //Last updated by : Widi (5/6)
     @Override
@@ -141,7 +166,7 @@ public class DatabaseConnection implements IDatabaseConnection {
                     return -1;
                 }
             }
-            
+
         } catch (SQLException e) {
             Log.err(e.getMessage());
             throw new QueryExecutionException(sql.toString(), e);

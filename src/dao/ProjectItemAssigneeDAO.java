@@ -13,80 +13,87 @@ import model.*;
 import service.DatabaseConnection;
 import utility.Log;
 import utility.Query;
+
 /**
  *
  * @author Silvanus
  */
-public class ProjectItemTagDAO {
+public class ProjectItemAssigneeDAO {
+
     private final DatabaseConnection db = new DatabaseConnection();
 
-    public int assignTag(Integer projectItemId, Integer tagId) throws DatabaseException {
+    public int assignUser(Integer projectItemId, Integer userId) throws DatabaseException {
         try {
             Query sql = new Query()
-                    .insertInto("project_item_tags", "project_item_id", "tag_id")
-                    .values(projectItemId, tagId);
-
+                    .insertInto("project_item_assignees", "project_item_id", "user_id")
+                    .values(projectItemId, userId);
             int rows = db.executeUpdate(sql);
-            Log.create("ProjectItemTagDAO.assignTag updated " + rows + " row(s).");
+            Log.create("ProjectItemAsigneeDAO.assignUser updated " + rows + " row(s).");
             return rows;
         } catch (DatabaseException e) {
-            Log.err("ProjectItemTagDAO.assignTag failed: " + e.getMessage());
+            Log.err("ProjectItemAsigneeDAO.assignUser failed: " + e.getMessage());
             throw e;
         }
     }
 
-    public int removeTag(Integer projectItemId, Integer tagId) throws DatabaseException {
+    public int removeAssignee(Integer projectItemId, Integer userId) throws DatabaseException {
+
         try {
             Query sql = new Query()
-                    .deleteFrom("project_item_tags")
-                    .where("project_item_id = ? AND tag_id = ? ", projectItemId, tagId);
-
+                .deleteFrom("project_item_assignees")
+                .where("project_item_id = ? AND user_id = ? ", projectItemId, userId);
             int rows = db.executeUpdate(sql);
-            Log.create("ProjectItemTagDAO.removeTag updated " + rows + " row(s).");
+            Log.create("ProjectItemAsigneeDAO.removeAssignee updated " + rows + " row(s).");
             return rows;
         } catch (DatabaseException e) {
-            Log.err("ProjectItemTagDAO.removeTag failed: " + e.getMessage());
+            Log.err("ProjectItemAsigneeDAO.removeAssignee failed: " + e.getMessage());
             throw e;
         }
     }
 
-    public List<Tag> getTags(Integer projectItemId) throws DatabaseException {
+    public List<User> getAssignees(Integer projectItemId) throws DatabaseException {
         if (projectItemId == null) {
             return new ArrayList<>();
         }
 
         Query sql = new Query()
-                .select("t.*")
-                .from("project_item_tags pit")
-                .join("tags t", "t.id = pit.tag_id")
-                .where("pit.project_item_id = ?", projectItemId);
+            .select("u.*")
+            .from("project_item_assignees pia")
+            .join("users u", "u.id = pia.user_id")
+            .where("pia.project_item_id = ?", projectItemId);
 
         try {
-            List<Tag> tags = db.executeQuery(sql, rs -> {
-            try {
-                Tag tag = new Tag();
-                tag.setId(rs.getInt("id"));
-                tag.setName(rs.getString("name"));
-                tag.setColor(rs.getString("color"));
-                tag.setCreatedAt(rs.getTimestamp("created_at"));
-                return tag;
-            } catch (SQLException e) {
-                throw new ResultSetParsingException(
-                        "Failed to parse Tag from ResultSet",
-                        e
-                );
-            }
+            List<User> assignees = db.executeQuery(sql, rs -> {
+                    User u = null;
+                    try {
+                        u = new User(rs.getString("username"),
+                                rs.getString("full_name"),
+                                rs.getString("email"),
+                                rs.getString("password_hash"));
+                        u.setId(rs.getInt("id"));
+                        u.setBio(rs.getString("bio"));
+                        u.setProfilePicture(rs.getString("profile_picture"));
+                        u.setCreatedAt(rs.getTimestamp("created_at"));
+                        u.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    } catch (SQLException e) {
+                        throw new ResultSetParsingException(
+                                "Failed to parse User from ResultSet",
+                                e
+                        );
+
+                    }
+                    return u;
         });
-            Log.create("ProjectItemTagDAO.getTags queried " + tags.size() + " row(s).");
-            return tags;
+            Log.create("ProjectItemAsigneeDAO.getAssignees queried " + assignees.size() + " row(s).");
+            return assignees;
         } catch (DatabaseException e) {
-            Log.err("ProjectItemTagDAO.getTags failed: " + e.getMessage());
+            Log.err("ProjectItemAsigneeDAO.getAssignees failed: " + e.getMessage());
             throw e;
         }
     }
 
-    public List<ProjectItem> getTaggedItems(Integer tagId) throws DatabaseException {
-        if (tagId == null) {
+    public List<ProjectItem> getAssignedItems(Integer userId) throws DatabaseException{
+        if (userId == null) {
             return new ArrayList<>();
         }
 
@@ -102,9 +109,9 @@ public class ProjectItemTagDAO {
                         "pi.created_at as created_at",
                         "pi.updated_at as updated_at"
                 )
-                .from("project_item_tags pit")
-                .join("project_items pi", "pi.id = pit.project_item_id")
-                .where("pit.tag_id = ?", tagId);
+                .from("project_item_assignees pia")
+                .join("project_items pi", "pi.id = pia.project_item_id")
+                .where("pia.user_id = ?", userId);
 
         try {
             List<ProjectItem> items = db.executeQuery(sql, rs -> {
@@ -144,11 +151,12 @@ public class ProjectItemTagDAO {
                 );
             }
         });
-            Log.create("ProjectItemTagDAO.getTaggedItems queried " + items.size() + " row(s).");
+            Log.create("ProjectItemAsigneeDAO.getAssignedItems queried " + items.size() + " row(s).");
             return items;
         } catch (DatabaseException e) {
-            Log.err("ProjectItemTagDAO.getTaggedItems failed: " + e.getMessage());
+            Log.err("ProjectItemAsigneeDAO.getAssignedItems failed: " + e.getMessage());
             throw e;
         }
     }
+
 }

@@ -1,8 +1,8 @@
 package interfaces;
 
-import model.Project;
-import java.sql.SQLException;
+import exception.database.DatabaseException;
 import java.util.List;
+import service.DatabaseConnection;
 
 /**
  *
@@ -10,17 +10,18 @@ import java.util.List;
  */
 public interface IGenericDAO<T, ID> {
 
+    DatabaseConnection DB = new DatabaseConnection();
     // Create
-    public int add(T entity)throws SQLException;
+    public int add(T entity)throws DatabaseException;
 
     // Read
-    public T get(ID id)throws SQLException;
+    public T get(ID id)throws DatabaseException;
 
-    public List<T> fetchAll()throws SQLException;
+    public List<T> fetchAll()throws DatabaseException;
 
     // Update
-    public int update(T entity)throws SQLException;
+    public int update(T entity)throws DatabaseException;
 
     // Delete
-    public int delete(ID id)throws SQLException;
+    public int delete(ID id)throws DatabaseException;
 }

@@ -15,6 +15,7 @@ import interfaces.ITaggable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import model.enums.TaskPriority;
 
 public abstract class ProjectItem implements IAssignable, ITaggable, IAuditable{
 
@@ -30,6 +31,7 @@ public abstract class ProjectItem implements IAssignable, ITaggable, IAuditable{
     private Timestamp updatedAt;
     private User updatedBy;
     private List<User> assignee;
+    
 
     public ProjectItem() {
         this.tags = new ArrayList<>();

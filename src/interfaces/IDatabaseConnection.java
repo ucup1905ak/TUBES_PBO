@@ -24,5 +24,5 @@ public interface IDatabaseConnection {
     
     //executeInsert
     //Last updated by : Widi (5/6)
-//    public int executeInsert(Query sql) throws DatabaseException;
+    public int executeInsert(Query sql) throws DatabaseException;
 }

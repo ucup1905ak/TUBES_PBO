@@ -37,8 +37,8 @@ public class EventControl implements IGenericControl<Event, Integer> {
     public int add(Event entity) throws DatabaseException {
         Log.create("[Control] : Add Event");
 
-        if (entity == null || entity.getId() <= 0) {
-            Log.err("[Control] : Add Event failed - entity is null or invalid id");
+        if (entity == null) {
+            Log.err("[Control] : Add Event failed - entity is null");
             return 0;
         }
 

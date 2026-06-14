@@ -104,8 +104,27 @@ public class TaskDAO implements IProjectItemDAO<Task>, IRowMapper<Task> {
     @Override
     public int add(Task entity) throws DatabaseException {
         try {
-            Query sql = new Query();
-            sql.insertInto(
+            Query sql1 = new Query();
+            sql1.insertInto(
+                "project_items",
+                "title",
+                "description",
+                "project_id",
+                "created_by"
+            ).values(
+                entity.getTitle(),
+                entity.getDescription(),
+                entity.getProject() != null ? entity.getProject().getId() : null,
+                entity.getCreatedBy() != null ? entity.getCreatedBy().getId() : null
+            );
+            int generatedId = DB.executeInsert(sql1);
+            if (generatedId == -1) {
+                throw new DatabaseException("Failed to insert ProjectItem for Task");
+            }
+            entity.setId(generatedId);
+
+            Query sql2 = new Query();
+            sql2.insertInto(
                     "tasks",
                     "project_item_id",
                     "priority",
@@ -122,7 +141,7 @@ public class TaskDAO implements IProjectItemDAO<Task>, IRowMapper<Task> {
                     toTimestamp(entity.getCompletedAt())
             );
 
-            int rows = DB.executeUpdate(sql);
+            int rows = DB.executeUpdate(sql2);
             Log.create("TaskDAO.add updated " + rows + " row(s).");
             return rows;
         } catch (DatabaseException e) {

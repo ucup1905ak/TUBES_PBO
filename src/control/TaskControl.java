@@ -15,27 +15,16 @@ import model.enums.TaskStatus;
  */
 public class TaskControl extends ProjectControl {
 
-    public boolean add(Task entity) {
-        // insert task into database
-        return false;
-    }
-
-    public Task get(Integer id) {
-        // SELECT * FROM task WHERE id = ?
-        return null;
-    }
-
-    public List<Task> fetchAll() {
-        return null;
-    }
-
+    
+    
+    
+    
+    
     public boolean update(Task entity) {
         return false;
     }
 
-    public boolean delete(Integer id) {
-        return false;
-    }
+
 
     public List<Task> findByProject(Integer projectId) {
         return null;

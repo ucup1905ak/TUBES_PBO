@@ -62,7 +62,16 @@ public class DatabaseConnection implements IDatabaseConnection {
         } catch (SQLException e) {
             return false;
         }
+    }
 
+    public boolean testConnection() {
+        try {
+            connect();
+            disconnect();
+            return true;
+        } catch (DatabaseException e) {
+            return false;
+        }
     }
 
     @Override

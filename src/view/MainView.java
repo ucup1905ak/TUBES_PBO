@@ -36,6 +36,7 @@ public class MainView extends javax.swing.JFrame {
     private void showLoginPanel(){
         LoginPagePanel login = new LoginPagePanel();
         login.setOnRegisterListener(e -> showRegisterPanel());
+        login.setOnLoginSuccessListener(userId -> showChangePasswordPanel(userId));
         setForm(login);
     }
     
@@ -43,6 +44,13 @@ public class MainView extends javax.swing.JFrame {
         RegisterPagePanel regist = new RegisterPagePanel();
         regist.setOnLoginListener(e -> showLoginPanel());
         setForm(regist);
+    }
+
+    public void showChangePasswordPanel(int userId) {
+        ChangePasswordPanel changePassword = new ChangePasswordPanel();
+        changePassword.setCurrentUserId(userId);
+        changePassword.setOnBackListener(e -> showLoginPanel()); // Temporary routing back to login
+        setForm(changePassword);
     }
 
     @SuppressWarnings("unchecked")

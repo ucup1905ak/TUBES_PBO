@@ -3,6 +3,9 @@ package panel;
 import component.*;
 import view.*;
 import javax.swing.JComponent;
+import service.AuthService;
+import exception.database.DatabaseException;
+import javax.swing.JOptionPane;
 
 public class RegisterPagePanel extends javax.swing.JPanel {
 
@@ -15,6 +18,7 @@ public class RegisterPagePanel extends javax.swing.JPanel {
         METHOD
      */
     private java.awt.event.ActionListener onLoginListener;
+    private AuthService authService = new AuthService();
 
     public void setOnLoginListener(java.awt.event.ActionListener listener) {
         this.onLoginListener = listener;
@@ -27,8 +31,10 @@ public class RegisterPagePanel extends javax.swing.JPanel {
         backgroundPanel = new javax.swing.JPanel();
         masukButton = new javax.swing.JButton();
         emailtxt = new RoundedTextField(30);
+        usernameTxt = new RoundedTextField(30);
         namaLengkaptxt = new RoundedTextField(30);
-        KataSandiTxt = new RoundedTextField(30);
+        KataSandiTxt = new RoundedPasswordField(30);
+        KataSandiTxt.setEchoChar((char) 0);
         buatAkunLabel = new javax.swing.JLabel();
         askLabel = new javax.swing.JLabel();
         welcomeLabel = new javax.swing.JLabel();
@@ -43,7 +49,8 @@ public class RegisterPagePanel extends javax.swing.JPanel {
         masukButton.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         masukButton.setForeground(new java.awt.Color(237, 237, 244));
         masukButton.setText("Buat Akun");
-        backgroundPanel.add(masukButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 501, 426, 37));
+        masukButton.addActionListener(e -> masukButtonActionPerformed(e));
+        backgroundPanel.add(masukButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 551, 426, 37));
 
         emailtxt.setBackground(new java.awt.Color(164, 164, 164));
         emailtxt.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
@@ -61,7 +68,25 @@ public class RegisterPagePanel extends javax.swing.JPanel {
                 emailtxtFocusLost(evt);
             }
         });
-        backgroundPanel.add(emailtxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 410, 426, 35));
+        backgroundPanel.add(emailtxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 457, 426, 35));
+
+        usernameTxt.setBackground(new java.awt.Color(164, 164, 164));
+        usernameTxt.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
+        usernameTxt.setForeground(new java.awt.Color(237, 237, 244));
+        usernameTxt.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        usernameTxt.setText("Nama Pengguna");
+        usernameTxt.setBorder(javax.swing.BorderFactory.createEmptyBorder(2, 10, 2, 10));
+        usernameTxt.setMargin(new java.awt.Insets(2, 15, 2, 6));
+        usernameTxt.setPreferredSize(new java.awt.Dimension(426, 37));
+        usernameTxt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                usernameTxtFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                usernameTxtFocusLost(evt);
+            }
+        });
+        backgroundPanel.add(usernameTxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 363, 426, 35));
 
         namaLengkaptxt.setBackground(new java.awt.Color(164, 164, 164));
         namaLengkaptxt.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
@@ -84,7 +109,7 @@ public class RegisterPagePanel extends javax.swing.JPanel {
                 namaLengkaptxtActionPerformed(evt);
             }
         });
-        backgroundPanel.add(namaLengkaptxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 363, 426, 35));
+        backgroundPanel.add(namaLengkaptxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 410, 426, 35));
 
         KataSandiTxt.setBackground(new java.awt.Color(164, 164, 164));
         KataSandiTxt.setFont(new java.awt.Font("Arial", 0, 20)); // NOI18N
@@ -102,7 +127,7 @@ public class RegisterPagePanel extends javax.swing.JPanel {
                 KataSandiTxtFocusLost(evt);
             }
         });
-        backgroundPanel.add(KataSandiTxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 457, 426, 37));
+        backgroundPanel.add(KataSandiTxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 504, 426, 37));
 
         buatAkunLabel.setFont(new java.awt.Font("Arial", 0, 24)); // NOI18N
         buatAkunLabel.setForeground(new java.awt.Color(33, 148, 255));
@@ -163,6 +188,33 @@ public class RegisterPagePanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_buatAkunLabelMouseClicked
 
+    private void masukButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        String username = usernameTxt.getText();
+        String fullName = namaLengkaptxt.getText();
+        String email = emailtxt.getText();
+        String password = String.valueOf(KataSandiTxt.getPassword());
+        
+        if (username.isEmpty() || username.equals("Nama Pengguna") ||
+            fullName.isEmpty() || fullName.equals("Nama Lengkap") ||
+            email.isEmpty() || email.equals("Email") ||
+            password.isEmpty() || password.equals("Kata Sandi")) {
+            JOptionPane.showMessageDialog(this, "Harap lengkapi semua bidang.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        try {
+            authService.register(username, fullName, email, password);
+            JOptionPane.showMessageDialog(this, "Akun berhasil dibuat! Silakan masuk.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            if (onLoginListener != null) {
+                onLoginListener.actionPerformed(null);
+            }
+        } catch (exception.validation.ValidationException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Gagal", JOptionPane.ERROR_MESSAGE);
+        } catch (DatabaseException e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan pada database.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private void namaLengkaptxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_namaLengkaptxtFocusGained
         if (namaLengkaptxt.getText().equals("Nama Lengkap")) {
             namaLengkaptxt.setText("");
@@ -176,6 +228,20 @@ public class RegisterPagePanel extends javax.swing.JPanel {
             namaLengkaptxt.setForeground(new java.awt.Color(237, 237, 244));
         }
     }//GEN-LAST:event_namaLengkaptxtFocusLost
+
+    private void usernameTxtFocusGained(java.awt.event.FocusEvent evt) {
+        if (usernameTxt.getText().equals("Nama Pengguna")) {
+            usernameTxt.setText("");
+            usernameTxt.setForeground(new java.awt.Color(20, 20, 20));
+        }
+    }
+
+    private void usernameTxtFocusLost(java.awt.event.FocusEvent evt) {
+        if (usernameTxt.getText().equals("")) {
+            usernameTxt.setText("Nama Pengguna");
+            usernameTxt.setForeground(new java.awt.Color(237, 237, 244));
+        }
+    }
 
     private void backgroundMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backgroundMouseClicked
         backgroundPanel.requestFocusInWindow();
@@ -196,16 +262,18 @@ public class RegisterPagePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_emailtxtFocusLost
 
     private void KataSandiTxtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_KataSandiTxtFocusGained
-        if (KataSandiTxt.getText().equals("Kata Sandi")) {
+        if (String.valueOf(KataSandiTxt.getPassword()).equals("Kata Sandi")) {
             KataSandiTxt.setText("");
             KataSandiTxt.setForeground(new java.awt.Color(20, 20, 20));
+            KataSandiTxt.setEchoChar('\u2022');
         }
     }//GEN-LAST:event_KataSandiTxtFocusGained
 
     private void KataSandiTxtFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_KataSandiTxtFocusLost
-        if (KataSandiTxt.getText().equals("")) {
+        if (String.valueOf(KataSandiTxt.getPassword()).equals("")) {
             KataSandiTxt.setText("Kata Sandi");
-            KataSandiTxt.setForeground(new java.awt.Color(20, 20, 20));
+            KataSandiTxt.setForeground(new java.awt.Color(237, 237, 244));
+            KataSandiTxt.setEchoChar((char) 0);
         }
     }//GEN-LAST:event_KataSandiTxtFocusLost
 
@@ -215,7 +283,7 @@ public class RegisterPagePanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField KataSandiTxt;
+    private javax.swing.JPasswordField KataSandiTxt;
     private javax.swing.JLabel askLabel;
     private javax.swing.JLabel background;
     private javax.swing.JPanel backgroundPanel;
@@ -223,6 +291,7 @@ public class RegisterPagePanel extends javax.swing.JPanel {
     private javax.swing.JTextField emailtxt;
     private javax.swing.JButton masukButton;
     private javax.swing.JTextField namaLengkaptxt;
+    private javax.swing.JTextField usernameTxt;
     private javax.swing.JLabel userIcon;
     private javax.swing.JLabel welcomeLabel;
     // End of variables declaration//GEN-END:variables

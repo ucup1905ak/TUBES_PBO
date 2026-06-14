@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `pbo_tubes`
 --
+CREATE DATABASE IF NOT EXISTS `pbo_tubes`;
+USE `pbo_tubes`;
 
 -- --------------------------------------------------------
 
@@ -35,7 +37,7 @@ CREATE TABLE `attachments` (
   `file_type` enum('IMAGE','DOCUMENT','VIDEO','ARCHIVE','OTHER') NOT NULL,
   `file_size` bigint(20) NOT NULL,
   `uploaded_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `uploaded_by` int(11) NOT NULL
+  `uploaded_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -48,7 +50,7 @@ CREATE TABLE `events` (
   `project_item_id` int(11) NOT NULL,
   `location` varchar(150) DEFAULT NULL,
   `is_all_day` tinyint(1) DEFAULT 0,
-  `start_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `start_at` datetime NOT NULL DEFAULT current_timestamp(),
   `end_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -79,7 +81,7 @@ CREATE TABLE `project_items` (
   `description` text DEFAULT NULL,
   `color` varchar(20) DEFAULT NULL,
   `project_id` int(11) NOT NULL,
-  `created_by` int(11) NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -129,10 +131,10 @@ CREATE TABLE `project_members` (
 CREATE TABLE `sessions` (
   `id` int(11) NOT NULL,
   `token` varchar(255) NOT NULL,
-  `userId` int(11) NOT NULL,
-  `createdAt` datetime DEFAULT current_timestamp(),
-  `expiresAt` datetime NOT NULL,
-  `isActive` tinyint(1) DEFAULT 1
+  `user_id` int(11) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `expires_at` datetime NOT NULL,
+  `is_active` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -254,7 +256,7 @@ ALTER TABLE `project_members`
 ALTER TABLE `sessions`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `token` (`token`),
-  ADD KEY `fk_session_user` (`userId`);
+  ADD KEY `fk_session_user` (`user_id`);
 
 --
 -- Indexes for table `social_links`
@@ -338,7 +340,7 @@ ALTER TABLE `users`
 --
 ALTER TABLE `attachments`
   ADD CONSTRAINT `fk_attachment_project_item` FOREIGN KEY (`project_item_id`) REFERENCES `project_items` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_attachment_uploaded_by` FOREIGN KEY (`uploaded_by`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `fk_attachment_uploaded_by` FOREIGN KEY (`uploaded_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `events`
@@ -350,7 +352,7 @@ ALTER TABLE `events`
 -- Constraints for table `project_items`
 --
 ALTER TABLE `project_items`
-  ADD CONSTRAINT `fk_project_item_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `fk_project_item_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `fk_project_item_project` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_project_item_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
@@ -379,7 +381,7 @@ ALTER TABLE `project_members`
 -- Constraints for table `sessions`
 --
 ALTER TABLE `sessions`
-  ADD CONSTRAINT `fk_session_user` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_session_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `social_links`

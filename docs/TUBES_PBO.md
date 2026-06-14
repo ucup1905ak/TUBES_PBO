@@ -783,77 +783,78 @@ The system must implement an error handling system with good feedback.
 
 6. # **Database Schema**
 
-# ✅ 
+✅ 
 
 | SessionTable |
 | ----- |
-| `id          INT  token       VARCHAR(255)  userId      INT  createdAt   DATETIME expiresAt   DATETIME isActive    BOOLEAN` |
+| `id INT` <br> `token VARCHAR(255)` <br> `user_id INT` <br> `created_at DATETIME` <br> `expires_at DATETIME` <br> `is_active BOOLEAN` |
 
 ✅ 
 
 | UserTable |
 | ----- |
-| `id INT username VARCHAR(50) email VARCHAR(100) passwordHash VARCHAR(255) fullName VARCHAR(100) bio TEXT profilePicture VARCHAR(255) createdAt DATETIME updatedAt DATETIME` |
+| `id INT` <br> `username VARCHAR(50)` <br> `email VARCHAR(100)` <br> `password_hash VARCHAR(255)` <br> `full_name VARCHAR(100)` <br> `bio TEXT` <br> `profile_picture VARCHAR(255)` <br> `created_at DATETIME` <br> `updated_at DATETIME` |
 
-# ✅ 
+✅ 
 
 | SocialTable |
 | ----- |
-| `id INT userId INT platform ENUM('GITHUB','LINKEDIN','INSTAGRAM','TWITTER','FACEBOOK','DISCORD','YOUTUBE','WEBSITE') url VARCHAR(255)` |
+| `id INT` <br> `user_id INT` <br> `platform ENUM('GITHUB','LINKEDIN','INSTAGRAM','TWITTER','FACEBOOK','DISCORD','YOUTUBE','WEBSITE')` <br> `url VARCHAR(255)` |
 
-# ✅ 
+✅ 
 
 | ProjectTable |
 | ----- |
-| `id INT name VARCHAR(100) description TEXT color VARCHAR(20) createdAt DATETIME updatedAt DATETIME`  |
+| `id INT` <br> `name VARCHAR(100)` <br> `description TEXT` <br> `color VARCHAR(20)` <br> `created_at DATETIME` <br> `updated_at DATETIME` |
 
-# 
+
 
 | ProjectMemberTable  |
 | ----- |
-| `projectId INT userId INT role ENUM('PROJECT_OWNER','TEAM_MEMBER') joinedAt DATETIME` |
+| `project_id INT` <br> `user_id INT` <br> `role ENUM('PROJECT_OWNER','TEAM_MEMBER')` <br> `joined_at DATETIME` |
 
-# ✅ 
+✅ 
 
 | ProjectItemTable  |
 | ----- |
-| `id INT title VARCHAR(100) description TEXT color VARCHAR(20) projectId INT createdBy INT updatedBy INT createdAt DATETIME updatedAt DATETIME` |
+| `id INT` <br> `title VARCHAR(100)` <br> `description TEXT` <br> `color VARCHAR(20)` <br> `project_id INT` <br> `created_by INT` <br> `updated_by INT` <br> `created_at DATETIME` <br> `updated_at DATETIME` |
 
-# 
+
 
 | ProjectItemAssigneeTable |
 | ----- |
-| `projectItemId INT userId INT`  |
+| `project_item_id INT` <br> `user_id INT` |
 
-# ✅ 
+✅ 
 
 | TaskTable  |
 | ----- |
-| `projectItemId INT priority ENUM('LOW','MEDIUM','HIGH') status ENUM('PENDING','IN_PROGRESS','DONE') startDate DATE dueDate DATE completedAt DATE`  |
+| `project_item_id INT` <br> `priority ENUM('LOW','MEDIUM','HIGH')` <br> `status ENUM('PENDING','IN_PROGRESS','DONE')` <br> `start_date DATE` <br> `due_date DATE` <br> `completed_at DATE` |
 
-# 
+
 
 | EventTable  |
 | ----- |
-| `projectItemId INT location VARCHAR(150) AllDay BOOLEAN startAt DATETIME endAt DATETIME`  |
+| `project_item_id INT` <br> `location VARCHAR(150)` <br> `is_all_day BOOLEAN` <br> `start_at DATETIME` <br> `end_at DATETIME` |
 
-# ✅ 
+✅ 
 
 | TagTable  |
 | ----- |
-| `id INT name VARCHAR(50) color VARCHAR(20) createdAt DATETIME`  |
+| `id INT` <br> `name VARCHAR(50)` <br> `color VARCHAR(20)` <br> `created_at DATETIME` |
 
-# ✅ 
+✅ 
 
 | ProjectItemTagTable  |
 | ----- |
-| `projectItemId INT tagId INT`  |
+| `project_item_id INT` <br> `tag_id INT` |
 
-# ✅ 
+✅ 
 
 | AttachmentTable  |
 | ----- |
-| `id INT projectItemId INT fileName VARCHAR(255) filePath VARCHAR(255) fileType ENUM('IMAGE','DOCUMENT','VIDEO','ARCHIVE','OTHER') fileSize BIGINT uploadedAt DATETIME uploadedBy INT`  |
+| `id INT` <br> `project_item_id INT` <br> `file_name VARCHAR(255)` <br> `file_path VARCHAR(255)` <br> `file_type ENUM('IMAGE','DOCUMENT','VIDEO','ARCHIVE','OTHER')` <br> `file_size BIGINT` <br> `uploaded_at DATETIME` <br> `uploaded_by INT` |
 
-# 
+
+
 

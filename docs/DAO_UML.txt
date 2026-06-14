@@ -1,0 +1,136 @@
+AttachmentDAO implements IGenericDAO<Attachment, Integer>, IRowMapper<Attachment>
++ add(entity : Attachment) : int
++ get(id : Integer) : Attachment
++ fetchAll() : List<Attachment>
++ update(entity : Attachment) : int
++ delete(id : Integer) : int
+
++ map(rs : ResultSet) : Attachment
+
+---
+
+EventDAO implements IProjectItemDAO<Event>, IRowMapper<Event>
++ add(entity : Event) : int
++ get(id : Integer) : Event
++ fetchAll() : List<Event>
++ update(entity : Event) : int
++ delete(id : Integer) : int
++ fetchByProject(id : Project) : List<Event>
++ fetchAsignee(id : Event) : List<User>
+
++ map(rs : ResultSet) : Event
+
+---
+
+ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Project>
+- db : DatabaseConnection
++ add(entity : Project) : int
++ get(id : Integer) : Project
++ fetchAll() : List<Project>
++ update(entity : Project) : int
++ delete(id : Integer) : int
+
++ map(rs : ResultSet) : Project
+
+---
+
+ProjectItemAsigneeDAO
+- db : DatabaseConnection
++ assignUser(projectItemId : Integer, userId : Integer) : int
++ removeAssignee(projectItemId : Integer, userId : Integer) : int
++ getAssignees(projectItemId : Integer) : List<User>
++ getAssignedItems(userId : Integer) : List<ProjectItem>
+
+---
+
+ProjectItemTagDAO
+- db : DatabaseConnection
++ assignTag(projectItemId : Integer, tagId : Integer) : int
++ removeTag(projectItemId : Integer, tagId : Integer) : int
++ getTags(projectItemId : Integer) : List<Tag>
++ getTaggedItems(tagId : Integer) : List<ProjectItem>
+
+---
+
+ProjectMemberDAO
+- db : DatabaseConnection
++ add(projectId : Integer, userId : Integer, roles : UserRole) : int
++ remove(projectId : Integer, userId : Integer) : int
++ getUserByProject(projectId : Integer) : List<User>
++ getProjectByUser(userId : Integer) : List<Project>
++ getRole(projectId : Integer, userId : Integer) : UserRole
++ updateRole(projectId : Integer, userId : Integer, role : UserRole) : int
+
+- mapUser(rs : ResultSet) : User
+- mapProject(rs : ResultSet) : Project
+
+---
+
+SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Session>
+- db : DatabaseConnection
++ add(entity : Session) : int
++ get(id : Integer) : Session
++ fetchAll() : List<Session>
++ update(entity : Session) : int
++ delete(id : Integer) : int
++ getByToken(token : String) : Session
++ getByUserId(userId : int) : List<Session>
++ invalidate(token : String) : void
++ invalidateAllUserSessions(userId : int) : void
+
++ map(rs : ResultSet) : Session
+
+---
+
+SocialDAO implements IGenericDAO<Social, Integer>, IRowMapper<Social>
+- db : DatabaseConnection
++ add(entity : Social) : int
++ get(id : Integer) : Social
++ fetchAll() : List<Social>
++ update(entity : Social) : int
++ delete(id : Integer) : int
++ findByUserId(userId : int) : List<Social>
+
++ map(rs : ResultSet) : Social
+
+---
+
+TagDAO implements IGenericDAO<Tag, Integer>, IRowMapper<Tag>
++ add(entity : Tag) : int
++ get(id : Integer) : Tag
++ fetchAll() : List<Tag>
++ update(entity : Tag) : int
++ delete(id : Integer) : int
+
++ map(rs : ResultSet) : Tag
+
+---
+
+TaskDAO implements IProjectItemDAO<Task>, IRowMapper<Task>
++ add(entity : Task) : int
++ get(id : Integer) : Task
++ fetchAll() : List<Task>
++ update(entity : Task) : int
++ delete(id : Integer) : int
++ fetchByProject(id : Project) : List<Task>
++ fetchAsignee(id : Task) : List<User>
+
++ map(rs : ResultSet) : Task
+- toDate(timestamp : Timestamp) : Date
+- toTimestamp(date : Date) : Timestamp
+
+---
+
+UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User>
+- db : DatabaseConnection
++ add(entity : User) : int
++ get(id : Integer) : User
++ fetchAll() : List<User>
++ update(entity : User) : int
++ delete(id : Integer) : int
++ search(searchTerm : String) : List<User>
++ getByEmail(email : String) : User
++ getByUsername(username : String) : User
+
++ map(rs : ResultSet) : User
+- tryParseInt(str : String) : int

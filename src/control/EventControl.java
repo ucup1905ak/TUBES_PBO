@@ -5,7 +5,7 @@
 package control;
 
 import dao.EventDAO;
-import dao.ProjectItemAsigneeDAO;
+import dao.ProjectItemAssigneeDAO;
 import exception.database.DatabaseException;
 import interfaces.IGenericControl;
 import java.sql.Timestamp;
@@ -26,11 +26,11 @@ import utility.Log;
 public class EventControl implements IGenericControl<Event, Integer> {
 
     private final EventDAO eventDAO;
-    private final ProjectItemAsigneeDAO assigneeDAO;
+    private final ProjectItemAssigneeDAO assigneeDAO;
 
     public EventControl() {
         this.eventDAO = new EventDAO();
-        this.assigneeDAO = new ProjectItemAsigneeDAO();
+        this.assigneeDAO = new ProjectItemAssigneeDAO();
         Log.create("[Control] : Init Event Control");
     }
 

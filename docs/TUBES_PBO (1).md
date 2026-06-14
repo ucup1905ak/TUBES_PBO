@@ -356,7 +356,7 @@ The system must implement an error handling system with good feedback.
 
 | \<\<Interface\>\> IDatabaseConnection |
 | ----- |
-| \+ isConnected() : boolean \+ executeQuery( query : Query,mapper : IRowMapper\<T\>) : List\<T\>   throws QueryTypeMismatchException,          DatabaseConnectionFailedException,          SQLException \+ executeUpdate(query : Query) : int   throws QueryTypeMismatchException,          DatabaseConnectionFailedException,          SQLException |
+| \+ isConnected() : boolean \+ executeQuery( query : Query,mapper : IRowMapper\<T\>) : List\<T\>   throws QueryTypeMismatchException,          DatabaseConnectionFailedException,          SQLException \+ executeUpdate(query : Query) : int   throws QueryTypeMismatchException,          DatabaseConnectionFailedException,          SQLException \+testConnection() : boolean |
 
 ✅
 
@@ -364,7 +364,7 @@ The system must implement an error handling system with good feedback.
 | ----- |
 | \+map(rs : ResultSet) : T |
 
-| \<\<Interface\>\> IProjectItemDAO\<T\> extends IGenericDAO\<ProjectItem, Integer\> |
+| \<\<Interface\>\> IProjectItemDAO\<T\> extends IGenericDAO\<T, Integer\> |
 | ----- |
 | fetchByProject(projectId : Integer) : List\<T\> fetchAsignee(projectItemId : Integer) : List\<User\> |
 
@@ -386,24 +386,17 @@ The system must implement an error handling system with good feedback.
 
 🧧
 
-| \<\<interface\>\> ProjectItemControl implements IGenericControl\<ProjectItem, Integer\> |
-| :---- |
-| \- projectItemDAO : ProjectItemDAO |
-| \+ add(entity : ProjectItem) : boolean \+ get(id : Integer) : ProjectItem \+ fetchAll() : List\<ProjectItem\> \+ update(entity : ProjectItem) : boolean \+ delete(id : Integer) : boolean \+ search(keyword : String) : List\<ProjectItem\> \+ addTag(itemId : Integer, tag : Tag) : boolean \+ removeTag(itemId : Integer, tagId : Integer) : boolean \+ addAttachment(itemId : Integer, attachment : Attachment) : boolean \+ removeAttachment(itemId : Integer, attachmentId : Integer) : boolean \+ assignUser(itemId : Integer, user : User) : boolean \+ removeAssignee(itemId : Integer, userId : Integer) : boolean |
-
-🧧
-
 | EventControl extends ProjectItemControl  |
 | :---- |
 | \-eventDAO : EventDAO |
 | \+ add(entity : Event) : boolean \+ get(id : Integer) : Event \+ fetchAll() : List\<Event\> \+ update(entity : Event) : boolean \+ delete(id : Integer) : boolean \+ findByProject(projectId : Integer) : List\<Event\> \+ search(keyword : String) : List\<Event\> \+ getEventsByDate(date : Date) : List\<Event\> \+ getUpcomingEvents() : List\<Event\> \+ addParticipant(eventId : Integer, user : User) : boolean \+ removeParticipant(eventId : Integer, userId : Integer) : boolean |
 
-🧧
+✅
 
-| TaskControl extends ProjectItemControl  |
+| TaskControl implements IGenericControl\<Task, Integer\>  |
 | :---- |
 | \- taskDAO : TaskDAO |
-| \+ add(entity : Task) : boolean \+ get(id : Integer) : Task \+ fetchAll() : List\<Task\> \+ update(entity : Task) : boolean \+ delete(id : Integer) : boolean \+ findByProject(projectId : Integer) : List\<Task\> \+ findByAssignee(userId : Integer) : List\<Task\> \+ search(keyword : String) : List\<Task\> \+ updateStatus(taskId : Integer, status : TaskStatus) : boolean \+ updatePriority(taskId : Integer, priority : TaskPriority) : boolean \+ markAsDone(taskId : Integer) : boolean \+ getTasksByStatus(status : TaskStatus) : List\<Task\> \+ getTasksDueToday() : List\<Task\> \+ getOverdueTasks() : List\<Task\> |
+| \+ add(entity : Task) : int \+ get(id : Integer) : Task \+ fetchAll() : List\<Task\> \+ update(entity : Task) : int \+ delete(id : Integer) : int \+ findByProject(projectId : Integer) : List\<Task\> \+ findByAssignee(userId : Integer) : List\<Task\> \+ search(keyword : String) : List\<Task\> \+ updateStatus(taskId : Integer, status : TaskStatus) : boolean \+ updatePriority(taskId : Integer, priority : TaskPriority) : boolean \+ markAsDone(taskId : Integer) : boolean \+ getTasksByStatus(status : TaskStatus) : List\<Task\> \+ getTasksDueToday() : List\<Task\> \+ getOverdueTasks() : List\<Task\> \- isSameLocalDate(date: Date , localDate: LocalDate ): boolean \- toLocalDate(date: Date): LocalDate  |
 
 ✅ 
 
@@ -440,14 +433,14 @@ The system must implement an error handling system with good feedback.
 | AuthService  |
 | :---- |
 | \-token : String  \-user : User |
-| \+authenticate(username : String, passwordHash : String) : Session | null \+getCurrentSession(token : String) : Session | null  |
+| \+authenticate(username : String, passwordHash : String) : Session | null \+getCurrentSession(token : String) : Session | null  \+register(username : String, fullname : String, email : String, password: String) : boolean \+changePassword(userId : int, oldPassword : String, newPassword String) : boolean |
 
 ✅ 
 
 | DatabaseConnection implements IDatabaseConnection |
 | :---- |
 | \+SCHEME : String \+HOSTNAME : String \+DATABASE : String \+PORT : int \-USERNAME : String \-PASSWORD : String |
-| \+getPath() : String \-connect() : void \-disconnect() : void \+ isConnected() : boolean \+ executeQuery(query : Query, mapper : IRowMapper\<T\>) : List\<T\> \+ executeUpdate(query : Query) : int |
+| \+getPath() : String \-connect() : void \-disconnect() : void \+ isConnected() : boolean \+ executeQuery(query : Query, mapper : IRowMapper\<T\>) : List\<T\> \+ executeUpdate(query : Query) : int \+ testConnection() : boolean |
 
 ### **Utility**
 
@@ -472,84 +465,77 @@ The system must implement an error handling system with good feedback.
 | SocialDAO implements IGenericDAO\<Social, Integer\>, IRowMapper\<Social\> |
 | :---- |
 | \- db : DatabaseConnection |
-| \+ add(entity : T) : int \+ get(id : ID) : T \+ fetchAll() : List\<T\> \+ update(entity : T) : int \+ delete(id : ID) : int \+ findByUserId(int userId) : List\<Social\> \+ map(rs : ResultSet) : Social |
+| \+ add(entity : Social) : int \+ get(id : Integer) : Social \+ fetchAll() : List\<Social\> \+ update(entity : Social) : int \+ delete(id : Integer) : int \+ findByUserId(id : Integer) : List\<Social\> \+ map(rs : ResultSet) : Social |
 
 ✅ 
 
 | UserDAO implements IGenericDAO\<User, Integer\> |
 | :---- |
 | \- db : DatabaseConnection |
-| \+ add(entity : T) : int \+ get(id : ID) : T \+ fetchAll() : List\<T\> \+ update(entity : T) : int \+ delete(id : ID) : int \+ map(rs : ResultSet) : User |
+| \+ add(entity : User) : int \+ get(id : Integer) : User \+ fetchAll() : List\<User\> \+ update(entity : User) : int \+ delete(id : Integer) : int \+ search(searchTerm : String) : List\<User\> \+ getByEmail(email : String) : User \+ getByUsername(username : String) : User \+ map(rs : ResultSet) : User \- tryParseInt(str : String) : int |
 
 ✅ 
 
 | SessionDAO implements IGenericDAO\<Task, Integer\>, IRowMapper\<Task\> |
 | :---- |
 | \-db : DatabaseConnection |
-| \+ add(entity : T) : int \+ get(id : ID) : T \+ fetchAll() : List\<T\> \+ update(entity : T) : int \+ delete(id : ID) : int \+ map(rs : ResultSet) : Session \+getByToken(token : String) : Session \+getByUserId(userId : int) : List\<Session\> \+invalidate(token : String) : void \+invalidateAllUserSessions(int userId) : void |
+| \+ add(entity : Session) : int \+ get(id : Integer) : Session \+ fetchAll() : List\<Session\> \+ update(entity : Session) : int \+ delete(id : Integer) : int \+ getByToken(token : String) : Session \+ getByUserId(userId : int) : List\<Session\> \+ invalidate(token : String) : void \+ invalidateAllUserSessions(userId : int) : void \+ map(rs : ResultSet) : Session |
 
 ✅ 
 
 | ProjectDAO implements IGenericDAO\<Project, Integer\>, IRowMapper\<Project\> |
 | :---- |
 | \- db : DatabaseConnection |
-| \+ add(entity : T) : int \+ get(id : ID) : T \+ fetchAll() : List\<T\> \+ update(entity : T) : int \+ delete(id : ID) : int \+ map(rs : ResultSet) : Project |
+| \+ add(entity : Project) : int \+ get(id : Integer) : Project \+ fetchAll() : List\<Project\> \+ update(entity : Project) : int \+ delete(id : Integer) : int \+ map(rs : ResultSet) : Project |
 
-✅ 
-
-| ProjectItemDAO implements IGenericDAO\<Task, Integer\>, IRowMapper\<Task\> |
-| :---- |
-| \-db : DatabaseConnection |
-| \+ add(entity : T) : int \+ update(entity : T) : int \+ delete(id : ID) : int \+ map(rs : ResultSet) : ProjectItem |
-
-🧧
+✅
 
 | TagDAO implements IGenericDAO\<Task, Integer\>, IRowMapper\<Task\> |
 | :---- |
-| \-db : DatabaseConnection |
-| \+ add(entity : T) : int \+ get(id : ID) : T \+ fetchAll() : List\<T\> \+ update(entity : T) : int \+ delete(id : ID) : int \+ map(rs : ResultSet) : Tag |
+|  |
+| \+ add(entity : Tag) : int \+ get(id : Integer) : Tag \+ fetchAll() : List\<Tag\> \+ update(entity : Tag) : int \+ delete(id : Integer) : int \+ map(rs : ResultSet) : Tag |
 
-🧧
+✅
 
-| TaskDAO implements IGenericDAO\<Task, Integer\>, IRowMapper\<Task\> |
+| TaskDAO implements IProjectItemDAO\<Task\>, IRowMapper\<Task\> |
 | :---- |
-| \-db : DatabaseConnection |
-| \+ add(entity : T) : int \+ get(id : ID) : T \+ fetchAll() : List\<T\> \+ update(entity : T) : int \+ delete(id : ID) : int \+ map(rs : ResultSet) : Task |
+|  |
+| \+ add(entity : Task) : int \+ get(id : Integer) : Task \+ fetchAll() : List\<Task\> \+ update(entity : Task) : int \+ delete(id : Integer) : int \+ fetchByProject(id : Project) : List\<Task\> \+ fetchAsignee(id : Task) : List\<User\> \+ map(rs : ResultSet) : Task \- toDate(timestamp : Timestamp) : Date \- toTimestamp(date : Date) : Timestamp |
 
-🧧
+✅
 
-| EventDAO implements IGenericDAO\<Task, Integer\>, IRowMapper\<Task\> |
+| EventDAO implements IProjectItemDAO\<Event\>, IRowMapper\<Event\> |
 | :---- |
-| \-db : DatabaseConnection |
-| \+ add(entity : T) : int \+ get(id : ID) : T \+ fetchAll() : List\<T\> \+ update(entity : T) : int \+ delete(id : ID) : int \+ map(rs : ResultSet) : Event |
+|  |
+| \+ add(entity : Event) : int \+ get(id : Integer) : Event \+ fetchAll() : List\<Event\> \+ update(entity : Event) : int \+ delete(id : Integer) : int \+ fetchByProject(id : Project) : List\<Event\> \+ fetchAsignee(id : Event) : List\<User\> \+ map(rs : ResultSet) : Event |
 
-🧧
+✅
 
 | AttachmentDAO implements IGenericDAO\<Task, Integer\>, IRowMapper\<Task\> |
 | :---- |
-| \-db : DatabaseConnection |
-| \+ add(entity : T) : int \+ get(id : ID) : T \+ fetchAll() : List\<T\> \+ update(entity : T) : int \+ delete(id : ID) : int \+ map(rs : ResultSet) : Attachment |
+|  |
+| \+ add(entity : Attachment) : int \+ get(id : Integer) : Attachment \+ fetchAll() : List\<Attachment\> \+ update(entity : Attachment) : int \+ delete(id : Integer) : int \+ map(rs : ResultSet) : Attachment |
 
-🧧
+✅
 
 | ProjectMemberDAO implements IRowMapper\<Task\> |
 | :---- |
-| \-db : DatabaseConnection |
-| \+ add(member : ProjectMember) : int \+ remove(projectId : Integer, userId : Integer) : int \+ getByProject(projectId : Integer) : List\<ProjectMember\> \+ getByUser(userId : Integer) : List\<ProjectMember\> \+ updateRole(projectId : Integer, userId : Integer, role : ProjectRole) : int \+ map(rs : ResultSet) : ProjectMember |
+| \- db : DatabaseConnection |
+| \+ add(projectId : Integer, userId : Integer, roles : UserRole) : int \+ remove(projectId : Integer, userId : Integer) : int \+ getUserByProject(projectId : Integer) : List\<User\> \+ getProjectByUser(userId : Integer) : List\<Project\> \+ getRole(projectId : Integer, userId : Integer) : UserRole \+ updateRole(projectId : Integer, userId : Integer, role : UserRole) : int \- mapUser(rs : ResultSet) : User \- mapProject(rs : ResultSet) : Project |
 
-🟨
+✅
 
 | ProjectItemAssigneeDAO |
 | :---- |
-| \-db : DatabaseConnection |
-| \+ assignUser(projectItemId : Integer, userId : Integer) : int \+ removeAssignee(projectItemId : Integer, userId : Integer) : int \+ getAssignees(projectItemId : Integer) : List\<User\> \+ getAssignedItems(userId : Integer) : List\<ProjectItem\>  |
+| \- db : DatabaseConnection |
+| \+ assignUser(projectItemId : Integer, userId : Integer) : int \+ removeAssignee(projectItemId : Integer, userId : Integer) : int \+ getAssignees(projectItemId : Integer) : List\<User\> \+ getAssignedItems(userId : Integer) : List\<ProjectItem\> |
 
-🧧
+✅
 
 | ProjectItemTagDAO implements IRowMapper\<Task\> |
 | :---- |
-| \-db : DatabaseConnection |
-| \+ assignTag(projectItemId : Integer, tagId : Integer) : int \+ removeTag(projectItemId : Integer, tagId : Integer) : int \+ getTags(projectItemId : Integer) : List\<Tag\> \+ getTaggedItems(tagId : Integer) : List\<ProjectItem\>  |
+| \- db : DatabaseConnection |
+| \+ assignTag(projectItemId : Integer, tagId : Integer) : int \+ removeTag(projectItemId : Integer, tagId : Integer) : int \+ getTags(projectItemId : Integer) : List\<Tag\> \+ getTaggedItems(tagId : Integer) : List\<ProjectItem\> |
 
 ### **Exception**
 
@@ -710,7 +696,7 @@ The system must implement an error handling system with good feedback.
 | :---- |
 | IMAGE DOCUMENT VIDEO ARCHIVE OTHER  |
 
-### **🧧**
+✅
 
 | \<\<ENUM\>\> ProjectItemType |
 | :---- |
@@ -783,78 +769,69 @@ The system must implement an error handling system with good feedback.
 
 6. # **Database Schema**
 
-✅ 
+✅
 
 | SessionTable |
-| ----- |
-| `id INT` <br> `token VARCHAR(255)` <br> `user_id INT` <br> `created_at DATETIME` <br> `expires_at DATETIME` <br> `is_active BOOLEAN` |
+| :---- |
+| `id INT`  \`token VARCHAR(255\` \`user\_id INT\` \`created\_at DATETIME\` \`expires\_at DATETIME\` \`is\_active BOOLEAN\` |
 
-✅ 
+✅
 
 | UserTable |
-| ----- |
-| `id INT` <br> `username VARCHAR(50)` <br> `email VARCHAR(100)` <br> `password_hash VARCHAR(255)` <br> `full_name VARCHAR(100)` <br> `bio TEXT` <br> `profile_picture VARCHAR(255)` <br> `created_at DATETIME` <br> `updated_at DATETIME` |
+| :---- |
+| `id INT`  \`username VARCHAR(50)\` \`email VARCHAR(100)\` \`password\_hash VARCHAR(255)\` \`full\_name VARCHAR(100)\` \`bio TEXT\` \`profile\_picture VARCHAR(255)\` \`created\_at DATETIME\` \`updated\_at DATETIME\` |
 
-✅ 
+✅
 
 | SocialTable |
-| ----- |
-| `id INT` <br> `user_id INT` <br> `platform ENUM('GITHUB','LINKEDIN','INSTAGRAM','TWITTER','FACEBOOK','DISCORD','YOUTUBE','WEBSITE')` <br> `url VARCHAR(255)` |
+| :---- |
+| `id INT`  \`user\_id INT\` \`platform ENUM('GITHUB','LINKEDIN','INSTAGRAM','TWITTER','FACEBOOK','DISCORD','YOUTUBE','WEBSITE')\` \`url VARCHAR(255)\` |
 
-✅ 
+✅
 
 | ProjectTable |
-| ----- |
-| `id INT` <br> `name VARCHAR(100)` <br> `description TEXT` <br> `color VARCHAR(20)` <br> `created_at DATETIME` <br> `updated_at DATETIME` |
+| :---- |
+| `id INT`  \`name VARCHAR(100)\` \`description TEXT\` \`color VARCHAR(20)\` \`created\_at DATETIME\` \`updated\_at DATETIME\` |
 
+| ProjectMemberTable |
+| :---- |
+| `project_id INT`  \`user\_id INT\` \`role ENUM('PROJECT\_OWNER','TEAM\_MEMBER')\` \`joined\_at DATETIME\` |
 
+✅
 
-| ProjectMemberTable  |
-| ----- |
-| `project_id INT` <br> `user_id INT` <br> `role ENUM('PROJECT_OWNER','TEAM_MEMBER')` <br> `joined_at DATETIME` |
-
-✅ 
-
-| ProjectItemTable  |
-| ----- |
-| `id INT` <br> `title VARCHAR(100)` <br> `description TEXT` <br> `color VARCHAR(20)` <br> `project_id INT` <br> `created_by INT` <br> `updated_by INT` <br> `created_at DATETIME` <br> `updated_at DATETIME` |
-
-
+| ProjectItemTable |
+| :---- |
+| `id INT`  \`title VARCHAR(100)\` \`description TEXT\` \`color VARCHAR(20)\` \`project\_id INT\` \`created\_by INT\` \`updated\_by INT\` \`created\_at DATETIME\` \`updated\_at DATETIME\` |
 
 | ProjectItemAssigneeTable |
-| ----- |
-| `project_item_id INT` <br> `user_id INT` |
+| :---- |
+| `project_item_id INT`  \`user\_id INT\` |
 
-✅ 
+✅
 
-| TaskTable  |
-| ----- |
-| `project_item_id INT` <br> `priority ENUM('LOW','MEDIUM','HIGH')` <br> `status ENUM('PENDING','IN_PROGRESS','DONE')` <br> `start_date DATE` <br> `due_date DATE` <br> `completed_at DATE` |
+| TaskTable |
+| :---- |
+| `project_item_id INT`  \`priority ENUM('LOW','MEDIUM','HIGH')\` \`status ENUM('PENDING','IN\_PROGRESS','DONE')\` \`start\_date DATE\` \`due\_date DATE\` \`completed\_at DATE\` |
 
+| EventTable |
+| :---- |
+| `project_item_id INT`  \`location VARCHAR(150)\` \`is\_all\_day BOOLEAN\` \`start\_at DATETIME\` \`end\_at DATETIME\` |
 
+✅
 
-| EventTable  |
-| ----- |
-| `project_item_id INT` <br> `location VARCHAR(150)` <br> `is_all_day BOOLEAN` <br> `start_at DATETIME` <br> `end_at DATETIME` |
+| TagTable |
+| :---- |
+| `id INT`  \`name VARCHAR(50)\` \`color VARCHAR(20)\` \`created\_at DATETIME\` |
 
-✅ 
+✅
 
-| TagTable  |
-| ----- |
-| `id INT` <br> `name VARCHAR(50)` <br> `color VARCHAR(20)` <br> `created_at DATETIME` |
+| ProjectItemTagTable |
+| :---- |
+| `project_item_id INT`  \`tag\_id INT\` |
 
-✅ 
+✅
 
-| ProjectItemTagTable  |
-| ----- |
-| `project_item_id INT` <br> `tag_id INT` |
-
-✅ 
-
-| AttachmentTable  |
-| ----- |
-| `id INT` <br> `project_item_id INT` <br> `file_name VARCHAR(255)` <br> `file_path VARCHAR(255)` <br> `file_type ENUM('IMAGE','DOCUMENT','VIDEO','ARCHIVE','OTHER')` <br> `file_size BIGINT` <br> `uploaded_at DATETIME` <br> `uploaded_by INT` |
-
-
-
+| AttachmentTable |
+| :---- |
+| `id INT`  \`project\_item\_id INT\` \`file\_name VARCHAR(255)\` \`file\_path VARCHAR(255)\` \`file\_type ENUM('IMAGE','DOCUMENT','VIDEO','ARCHIVE','OTHER')\` \`file\_size BIGINT\` \`uploaded\_at DATETIME\` \`uploaded\_by INT\` |
 

@@ -1,6 +1,12 @@
 package panel;
 
 import component.*;
+import service.AuthService;
+import model.Session;
+import javax.swing.JOptionPane;
+import exception.authentication.InvalidLoginCredentialException;
+import exception.database.DatabaseException;
+import java.util.function.Consumer;
 
 public class LoginPagePanel extends javax.swing.JPanel {
     
@@ -14,9 +20,15 @@ public class LoginPagePanel extends javax.swing.JPanel {
      */
     
     private java.awt.event.ActionListener onRegistListener;
+    private Consumer<Integer> onLoginSuccessListener;
+    private AuthService authService = new AuthService();
     
     public void setOnRegisterListener(java.awt.event.ActionListener listener){
         this.onRegistListener = listener;
+    }
+    
+    public void setOnLoginSuccessListener(Consumer<Integer> listener){
+        this.onLoginSuccessListener = listener;
     }
     
     @SuppressWarnings("unchecked")
@@ -25,7 +37,8 @@ public class LoginPagePanel extends javax.swing.JPanel {
 
         backgroundPanel = new javax.swing.JPanel();
         masukButton = new javax.swing.JButton();
-        KataSandiTextField = new RoundedTextField(30);
+        KataSandiTextField = new RoundedPasswordField(30);
+        KataSandiTextField.setEchoChar((char) 0);
         namaPenggunaTextField = new RoundedTextField(30);
         buatAkunLabel = new javax.swing.JLabel();
         askLabel = new javax.swing.JLabel();
@@ -41,6 +54,7 @@ public class LoginPagePanel extends javax.swing.JPanel {
         masukButton.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         masukButton.setForeground(new java.awt.Color(237, 237, 244));
         masukButton.setText("Masuk");
+        masukButton.addActionListener(e -> masukButtonActionPerformed(e));
         backgroundPanel.add(masukButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 460, 426, 37));
 
         KataSandiTextField.setBackground(new java.awt.Color(164, 164, 164));
@@ -138,6 +152,28 @@ public class LoginPagePanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_buatAkunLabelMouseClicked
 
+    private void masukButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        String usernameOrEmail = namaPenggunaTextField.getText();
+        String password = String.valueOf(KataSandiTextField.getPassword());
+
+        if (usernameOrEmail.isEmpty() || usernameOrEmail.equals("Nama Pengguna") ||
+            password.isEmpty() || password.equals("Kata Sandi")) {
+            JOptionPane.showMessageDialog(this, "Harap lengkapi semua bidang.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            Session session = authService.authenticate(usernameOrEmail, password);
+            if (session != null && onLoginSuccessListener != null) {
+                onLoginSuccessListener.accept(session.getUser().getId());
+            }
+        } catch (InvalidLoginCredentialException e) {
+            JOptionPane.showMessageDialog(this, "Nama pengguna atau kata sandi salah.", "Gagal", JOptionPane.ERROR_MESSAGE);
+        } catch (DatabaseException e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan pada database.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private void namaPenggunaTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_namaPenggunaTextFieldFocusGained
         if (namaPenggunaTextField.getText().equals("Nama Pengguna")) {
             namaPenggunaTextField.setText("");
@@ -157,22 +193,24 @@ public class LoginPagePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_backgroundMouseClicked
 
     private void KataSandiTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_KataSandiTextFieldFocusGained
-        if(KataSandiTextField.getText().equals("Kata Sandi")){
+        if(String.valueOf(KataSandiTextField.getPassword()).equals("Kata Sandi")){
             KataSandiTextField.setText("");
             KataSandiTextField.setForeground(new java.awt.Color(20,20,20));
+            KataSandiTextField.setEchoChar('\u2022');
         }
     }//GEN-LAST:event_KataSandiTextFieldFocusGained
 
     private void KataSandiTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_KataSandiTextFieldFocusLost
-        if(KataSandiTextField.getText().equals("")){
+        if(String.valueOf(KataSandiTextField.getPassword()).equals("")){
             KataSandiTextField.setText("Kata Sandi");
             KataSandiTextField.setForeground(new java.awt.Color(237, 237, 244));
+            KataSandiTextField.setEchoChar((char) 0);
         }
     }//GEN-LAST:event_KataSandiTextFieldFocusLost
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField KataSandiTextField;
+    private javax.swing.JPasswordField KataSandiTextField;
     private javax.swing.JLabel askLabel;
     private javax.swing.JLabel background;
     private javax.swing.JPanel backgroundPanel;

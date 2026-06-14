@@ -20,59 +20,70 @@ public class LoadingPagePanel extends javax.swing.JPanel {
         this.onFinishListener = listener;
     }
 
+    private boolean connectionSuccess = false;
+
     private void startLoading() {
         SwingWorker<Void, Integer> worker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() throws Exception {
-                for (int i = 0; i <= 100; i++) {
-                    Thread.sleep(50);
-                    publish(i); 
+                publish(10);
+                Thread.sleep(300);
+                
+                publish(40);
+                Thread.sleep(300);
+                
+                service.DatabaseConnection db = new service.DatabaseConnection();
+                connectionSuccess = db.testConnection();
+                
+                if (!connectionSuccess) {
+                    publish(-1);
+                    return null;
+                }
+                
+                publish(70);
+                Thread.sleep(300);
+                
+                for (int i = 80; i <= 100; i += 10) {
+                    publish(i);
+                    Thread.sleep(100);
                 }
                 return null;
             }
 
             @Override
             protected void process(java.util.List<Integer> chunks) {
-                int i = chunks.get(chunks.size() - 1); // ambil nilai terbaru
+                int i = chunks.get(chunks.size() - 1); 
+                
+                if (i == -1) {
+                    loadingLable.setText("Connection Failed");
+                    percentageLable.setText("Error");
+                    JOptionPane.showMessageDialog(LoadingPagePanel.this, "Cannot connect to database. Please make sure your database server is running.", "Database Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
                 percentageLable.setText(i + "%");
                 loading_progressbar.setValue(i);
 
-                if (i == 0) {
-                    loadingLable.setText("Turning on database");
-                }
                 if (i == 10) {
                     loadingLable.setText("Turning on database...");
                 }
-                if (i == 20) {
-                    loadingLable.setText("Opening database");
-                }
-                if (i == 30) {
-                    loadingLable.setText("Opening database...");
-                }
                 if (i == 40) {
-                    loadingLable.setText("Connection to database");
-                }
-                if (i == 50) {
-                    loadingLable.setText("Connection to database...");
-                }
-                if (i == 60) {
-                    loadingLable.setText("Connection successful");
+                    loadingLable.setText("Connecting to database...");
                 }
                 if (i == 70) {
                     loadingLable.setText("Connection successful...");
                 }
                 if (i == 80) {
-                    loadingLable.setText("Launching application");
-                }
-                if (i == 90) {
                     loadingLable.setText("Launching application...");
+                }
+                if (i == 100) {
+                    loadingLable.setText("Done.");
                 }
             }
 
             @Override
             protected void done() {
-                // Selesai loading → panggil listener untuk ganti panel
-                if (onFinishListener != null) {
+                if (connectionSuccess && onFinishListener != null) {
                     onFinishListener.actionPerformed(null);
                 }
             }

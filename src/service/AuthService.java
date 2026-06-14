@@ -12,19 +12,21 @@ import exception.validation.ValidationException;
 import exception.validation.EmptyFieldException;
 import exception.validation.InvalidInputException;
 import exception.validation.InvalidFormatException;
+import interfaces.IAuthService;
 
 /**
  *
  * @author Farelino Alexander Kim / 240713000
  */
 
-public class AuthService {
+public class AuthService implements IAuthService {
     public static final int EXPIRY =  3600;
     private final UserDAO userDAO = new UserDAO();
     private final SessionDAO sessionDAO = new SessionDAO();
     private final PasswordHasher passwordHasher = new PasswordHasher();
 
 
+    @Override
     public Session authenticate(String email, String password) throws DatabaseException, InvalidLoginCredentialException {
         if (email == null || password == null) {
             return null;
@@ -59,6 +61,7 @@ public class AuthService {
         }
     }
 
+    @Override
     public User register(String username, String fullname, String email, String password) throws DatabaseException, ValidationException {
         if (email == null || email.trim().isEmpty()) {
             throw new EmptyFieldException("Email");
@@ -89,6 +92,7 @@ public class AuthService {
         return userDAO.getByUsername(username);
     }
 
+    @Override
     public boolean validateSession(String token) throws DatabaseException {
         if (token == null || token.trim().isEmpty()) {
             return false;
@@ -107,6 +111,7 @@ public class AuthService {
         }
     }
 
+    @Override
     public Session getSessionByToken(String token) throws DatabaseException {
         if (token == null || token.trim().isEmpty()) {
             return null;
@@ -124,6 +129,7 @@ public class AuthService {
         return null;
     }
 
+    @Override
     public void invalidateSession(String token) throws DatabaseException {
         if (token == null || token.trim().isEmpty()) {
             return;
@@ -136,6 +142,7 @@ public class AuthService {
         }
     }
 
+    @Override
     public String refreshToken(String token) throws DatabaseException {
         if (token == null || token.trim().isEmpty()) {
             return null;
@@ -170,6 +177,7 @@ public class AuthService {
         return new java.sql.Timestamp(expiryMillis);
     }
 
+    @Override
     public boolean changePassword(int userId, String oldPassword, String newPassword) throws DatabaseException {
         if (oldPassword == null || newPassword == null) {
             return false;

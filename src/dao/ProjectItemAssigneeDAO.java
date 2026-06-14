@@ -18,7 +18,7 @@ import utility.Query;
  *
  * @author Silvanus
  */
-public class ProjectItemAsigneeDAO {
+public class ProjectItemAssigneeDAO {
 
     private final DatabaseConnection db = new DatabaseConnection();
 

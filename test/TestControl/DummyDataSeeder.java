@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.*;
 import model.enums.*;
+import service.AuthService;
 import utility.Log;
 
 public class DummyDataSeeder {
@@ -16,7 +17,7 @@ public class DummyDataSeeder {
         // Suppress logs to keep output clean
 //        Log.enabled = false;
 
-        UserDAO userDAO = new UserDAO();
+        AuthService authService = new AuthService();
         ProjectDAO projectDAO = new ProjectDAO();
         ProjectMemberDAO memberDAO = new ProjectMemberDAO();
         TaskDAO taskDAO = new TaskDAO();
@@ -31,9 +32,8 @@ public class DummyDataSeeder {
             long timestamp = System.currentTimeMillis();
             for (int i = 1; i <= 10; i++) {
                 String username = "seeder_" + timestamp + "_user" + i;
-                User user = new User(username, "Seeder User " + i, username + "@mail.com", "pass123");
-                userDAO.add(user);
-                users.add(userDAO.getByUsername(username));
+                User user = authService.register(username, "Seeder User " + i, username + "@mail.com", "pass123");
+                users.add(user);
             }
             System.out.println("Inserted 10 Users.");
 
@@ -66,7 +66,7 @@ public class DummyDataSeeder {
                 task.setCreatedBy(users.get(i - 1));
                 task.setPriority(TaskPriority.MEDIUM);
                 task.setStatus(TaskStatus.PENDING);
-                task.setStartDate(new java.util.Date());
+                task.setStartDate(n ew java.util.Date());
                 task.setDueDate(new java.util.Date(System.currentTimeMillis() + 86400000)); // +1 day
                 taskDAO.add(task);
                 
@@ -123,7 +123,7 @@ public class DummyDataSeeder {
             System.out.println("Successfully seeded all dummy data!");
             System.out.println("=================================");
 
-        } catch (DatabaseException e) {
+        } catch (Exception e) {
             System.err.println("Seeding failed: " + e.getMessage());
             e.printStackTrace();
         }

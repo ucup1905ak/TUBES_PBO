@@ -4,48 +4,13 @@ import java.awt.Color;
 import javax.swing.JComponent;
 import panel.*;
 
-public class MainView extends javax.swing.JFrame {
+public class DashbordView extends javax.swing.JFrame {
 
-    public MainView() {
+    public DashbordView() {
         initComponents();
-        mainBorderPanel.setBorder(null);
-        recolorDefaultSwitchPanel();
-        showLoadingPanel();
     }
 
-    private void recolorDefaultSwitchPanel() {
-        repaint();
-        mainBorderPanel.setBackground(new Color(0, 0, 0, 0));
-    }
-    
-    private void showLoadingPanel(){
-        LoadingPagePanel loading = new LoadingPagePanel();
-        loading.setOnFinishListener(e -> {
-            showLoginPanel();
-        });
-        setForm(loading);
-    }
-
-    private void setForm(JComponent com){
-        mainBorderPanel.removeAll();
-        mainBorderPanel.repaint();
-        mainBorderPanel.add(com);
-        mainBorderPanel.revalidate();
-    }
-    
-    private void showLoginPanel(){
-        LoginPagePanel login = new LoginPagePanel();
-        login.setOnRegisterListener(e -> showRegisterPanel());
-        setForm(login);
-    }
-    
-    private void showRegisterPanel(){
-        RegisterPagePanel regist = new RegisterPagePanel();
-        regist.setOnLoginListener(e -> showLoginPanel());
-        setForm(regist);
-    }
-
-    @SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -63,9 +28,7 @@ public class MainView extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addComponent(mainBorderPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            
+            .addComponent(mainBorderPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -77,39 +40,6 @@ public class MainView extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MainView().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel mainBorderPanel;

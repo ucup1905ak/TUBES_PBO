@@ -4,7 +4,11 @@
  */
 package interfaces;
 
+import exception.authentication.InvalidLoginCredentialException;
+import exception.database.DatabaseException;
+import exception.validation.ValidationException;
 import model.Session;
+import model.User;
 
 /**
  *
@@ -12,9 +16,17 @@ import model.Session;
  */
 public interface IAuthService {
 
-    public Session authenticate(String username, String passwordHash);
+    public Session authenticate(String email, String password) throws DatabaseException, InvalidLoginCredentialException;
 
-    public Session getCurrentSession(String token);
+    public User register(String username, String fullname, String email, String password) throws DatabaseException, ValidationException;
+
+    public boolean validateSession(String token) throws DatabaseException;
+
+    public Session getSessionByToken(String token) throws DatabaseException;
+
+    public void invalidateSession(String token) throws DatabaseException;
+
+    public String refreshToken(String token) throws DatabaseException;
+
+    public boolean changePassword(int userId, String oldPassword, String newPassword) throws DatabaseException;
 }
-
-

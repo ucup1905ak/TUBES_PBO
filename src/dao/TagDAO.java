@@ -25,11 +25,10 @@ public class TagDAO implements IGenericDAO<Tag, Integer>, IRowMapper<Tag>{
     public int add(Tag entity) throws DatabaseException {
         try {
             Query sql = new Query()
-                .insertInto("tags", "name", "color", "created_at")
+                .insertInto("tags", "name", "color")
                 .values(
                     entity.getName(),
-                    entity.getColor(),
-                    entity.getCreatedAt()
+                    entity.getColor()
                 );
 
             int rows = DB.executeUpdate(sql);

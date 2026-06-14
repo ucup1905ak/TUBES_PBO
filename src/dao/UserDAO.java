@@ -34,30 +34,43 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
                 .where("username LIKE ? OR email LIKE ? OR id = ?",
                         searchPattern, searchPattern, tryParseInt(trimmedTerm));
 
-        List<User> results = db.executeQuery(sql, this::map);
-        return results.isEmpty() ? null : results;
+        try {
+            List<User> results = db.executeQuery(sql, this::map);
+            Log.create("UserDAO.search queried " + results.size() + " row(s).");
+            return results.isEmpty() ? null : results;
+        } catch (DatabaseException e) {
+            Log.err("UserDAO.search failed: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public int add(User entity) throws DatabaseException {
-        Query sql = new Query();
-        sql.insertInto("users",
+        try {
+            Query sql = new Query();
+            sql.insertInto("users",
                 "username",
                 "email",
                 "password_hash",
                 "full_name",
                 "bio",
                 "profile_picture"
-        )
+            )
                 .values(
-                        entity.getUsername(),
-                        entity.getEmail(),
-                        entity.getPasswordHash(),
-                        entity.getFullName(),
-                        entity.getBio(),
-                        entity.getProfilePicture()
+                    entity.getUsername(),
+                    entity.getEmail(),
+                    entity.getPasswordHash(),
+                    entity.getFullName(),
+                    entity.getBio(),
+                    entity.getProfilePicture()
                 );
-        return db.executeUpdate(sql);
+            int rows = db.executeUpdate(sql);
+            Log.create("UserDAO.add updated " + rows + " row(s).");
+            return rows;
+        } catch (DatabaseException e) {
+            Log.err("UserDAO.add failed: " + e.getMessage());
+            throw e;
+        }
 
     }
 
@@ -68,11 +81,17 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
                 .select("*")
                 .from("users")
                 .where("id = ?", id);
-        List<User> listUser = db.executeQuery(sql, this::map);
-        if (listUser.isEmpty()) {
-            return null;
+        try {
+            List<User> listUser = db.executeQuery(sql, this::map);
+            Log.create("UserDAO.get queried " + listUser.size() + " row(s).");
+            if (listUser.isEmpty()) {
+                return null;
+            }
+            return listUser.get(0);
+        } catch (DatabaseException e) {
+            Log.err("UserDAO.get failed: " + e.getMessage());
+            throw e;
         }
-        return listUser.get(0);
     }
 
     @Override
@@ -81,34 +100,55 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
         Query sql = new Query()
                 .select("*")
                 .from("users");
-        return db.executeQuery(sql, this::map);
+        try {
+            List<User> users = db.executeQuery(sql, this::map);
+            Log.create("UserDAO.fetchAll queried " + users.size() + " row(s).");
+            return users;
+        } catch (DatabaseException e) {
+            Log.err("UserDAO.fetchAll failed: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public int update(User entity) throws DatabaseException {
 
-        Query sql = new Query()
-                .update("users")
-                .set("username", entity.getUsername())
-                .set("email", entity.getEmail())
-                .set("password_hash", entity.getPasswordHash())
-                .set("full_name", entity.getFullName())
-                .set("bio", entity.getBio())
-                .set("profile_picture", entity.getProfilePicture())
-                .set("updated_at", entity.getUpdatedAt())
-                .where("id  = ?", entity.getId());
+        try {
+            Query sql = new Query()
+                    .update("users")
+                    .set("username", entity.getUsername())
+                    .set("email", entity.getEmail())
+                    .set("password_hash", entity.getPasswordHash())
+                    .set("full_name", entity.getFullName())
+                    .set("bio", entity.getBio())
+                    .set("profile_picture", entity.getProfilePicture())
+                    .set("updated_at", entity.getUpdatedAt())
+                    .where("id  = ?", entity.getId());
 
-        return db.executeUpdate(sql);
+            int rows = db.executeUpdate(sql);
+            Log.create("UserDAO.update updated " + rows + " row(s).");
+            return rows;
+        } catch (DatabaseException e) {
+            Log.err("UserDAO.update failed: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public int delete(Integer id) throws DatabaseException {
 
-        Query sql = new Query()
-                .deleteFrom("users")
-                .where("id  = ?", id);
+        try {
+            Query sql = new Query()
+                    .deleteFrom("users")
+                    .where("id  = ?", id);
 
-        return db.executeUpdate(sql);
+            int rows = db.executeUpdate(sql);
+            Log.create("UserDAO.delete updated " + rows + " row(s).");
+            return rows;
+        } catch (DatabaseException e) {
+            Log.err("UserDAO.delete failed: " + e.getMessage());
+            throw e;
+        }
     }
 
     public User getByEmail(String email) throws DatabaseException {
@@ -119,9 +159,14 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
                 .from("users")
                 .where("email = ?", email);
 //        System.out.println(sql.build());
-        List<User> results = db.executeQuery(sql, this::map);
-        
-        return results.isEmpty() ? null : results.get(0);
+        try {
+            List<User> results = db.executeQuery(sql, this::map);
+            Log.create("UserDAO.getByEmail queried " + results.size() + " row(s).");
+            return results.isEmpty() ? null : results.get(0);
+        } catch (DatabaseException e) {
+            Log.err("UserDAO.getByEmail failed: " + e.getMessage());
+            throw e;
+        }
 
     }
 
@@ -135,8 +180,14 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
                 .from("users")
                 .where("username = ?", username);
 
-        List<User> results = db.executeQuery(sql, this::map);
-        return results.isEmpty() ? null : results.get(0);
+        try {
+            List<User> results = db.executeQuery(sql, this::map);
+            Log.create("UserDAO.getByUsername queried " + results.size() + " row(s).");
+            return results.isEmpty() ? null : results.get(0);
+        } catch (DatabaseException e) {
+            Log.err("UserDAO.getByUsername failed: " + e.getMessage());
+            throw e;
+        }
 
     }
 
@@ -154,6 +205,7 @@ public class UserDAO implements IGenericDAO<User, Integer>, IRowMapper<User> {
             u.setCreatedAt(rs.getTimestamp("created_at"));
             u.setUpdatedAt(rs.getTimestamp("updated_at"));
         } catch (SQLException e) {
+            Log.err("UserDAO.map failed: " + e.getMessage());
             throw new ResultSetParsingException(
                     "Failed to parse User from ResultSet",
                     e

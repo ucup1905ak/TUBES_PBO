@@ -1,6 +1,7 @@
 package dao;
 
 import exception.database.DatabaseException;
+import exception.database.ResultSetParsingException;
 import interfaces.IGenericDAO;
 import interfaces.IRowMapper;
 import java.sql.ResultSet;
@@ -8,6 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 import model.*;
 import service.DatabaseConnection;
+import utility.Log;
 import utility.Query;
 
 /**
@@ -21,22 +23,29 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
 
     @Override
     public int add(Session entity) throws DatabaseException {
-        Query sql = new Query();
-        sql.insertInto("sessions",
+        try {
+            Query sql = new Query();
+            sql.insertInto("sessions",
                 "token",
                 "userId",
                 "createdAt",
                 "expiresAt",
                 "isActive"
-        )
+            )
                 .values(
-                        entity.getToken(),
-                        entity.getUser().getId(),
-                        entity.getCreatedAt(),
-                        entity.getExpiresAt(),
-                        entity.isActive()
+                    entity.getToken(),
+                    entity.getUser().getId(),
+                    entity.getCreatedAt(),
+                    entity.getExpiresAt(),
+                    entity.isActive()
                 );
-        return db.executeUpdate(sql);
+            int rows = db.executeUpdate(sql);
+            Log.create("SessionDAO.add updated " + rows + " row(s).");
+            return rows;
+        } catch (DatabaseException e) {
+            Log.err("SessionDAO.add failed: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
@@ -45,11 +54,17 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
                 .select("*")
                 .from("sessions")
                 .where("id = ?", id);
-        List<Session> listSession = db.executeQuery(sql, this::map);
-        if (listSession.isEmpty()) {
-            return null;
+        try {
+            List<Session> listSession = db.executeQuery(sql, this::map);
+            Log.create("SessionDAO.get queried " + listSession.size() + " row(s).");
+            if (listSession.isEmpty()) {
+                return null;
+            }
+            return listSession.get(0);
+        } catch (DatabaseException e) {
+            Log.err("SessionDAO.get failed: " + e.getMessage());
+            throw e;
         }
-        return listSession.get(0);
     }
 
     @Override
@@ -57,36 +72,63 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
         Query sql = new Query()
                 .select("*")
                 .from("sessions");
-        return db.executeQuery(sql, this::map);
+        try {
+            List<Session> sessions = db.executeQuery(sql, this::map);
+            Log.create("SessionDAO.fetchAll queried " + sessions.size() + " row(s).");
+            return sessions;
+        } catch (DatabaseException e) {
+            Log.err("SessionDAO.fetchAll failed: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public int update(Session entity) throws DatabaseException {
-        Query sql = new Query()
-                .update("sessions")
-                .set("token", entity.getToken())
-                .set("expiresAt", entity.getExpiresAt())
-                .set("isActive", entity.isActive())
-                .where("id = ?", entity.getId());
-        return db.executeUpdate(sql);
+        try {
+            Query sql = new Query()
+                    .update("sessions")
+                    .set("token", entity.getToken())
+                    .set("expiresAt", entity.getExpiresAt())
+                    .set("isActive", entity.isActive())
+                    .where("id = ?", entity.getId());
+            int rows = db.executeUpdate(sql);
+            Log.create("SessionDAO.update updated " + rows + " row(s).");
+            return rows;
+        } catch (DatabaseException e) {
+            Log.err("SessionDAO.update failed: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public int delete(Integer id) throws DatabaseException {
-        Query sql = new Query()
-                .deleteFrom("sessions")
-                .where("id = ?", id);
-        return db.executeUpdate(sql);
+        try {
+            Query sql = new Query()
+                    .deleteFrom("sessions")
+                    .where("id = ?", id);
+            int rows = db.executeUpdate(sql);
+            Log.create("SessionDAO.delete updated " + rows + " row(s).");
+            return rows;
+        } catch (DatabaseException e) {
+            Log.err("SessionDAO.delete failed: " + e.getMessage());
+            throw e;
+        }
     }
 
+    @Override
     public Session map(ResultSet rs) throws SQLException {
-        Session session = new Session();
-        session.setId(rs.getInt("id"));
-        session.setToken(rs.getString("token"));
-        session.setCreatedAt(rs.getTimestamp("createdAt"));
-        session.setExpiresAt(rs.getTimestamp("expiresAt"));
-        session.setActive(rs.getBoolean("isActive"));
-        return session;
+        try {
+            Session session = new Session();
+            session.setId(rs.getInt("id"));
+            session.setToken(rs.getString("token"));
+            session.setCreatedAt(rs.getTimestamp("createdAt"));
+            session.setExpiresAt(rs.getTimestamp("expiresAt"));
+            session.setActive(rs.getBoolean("isActive"));
+            return session;
+        } catch (SQLException e) {
+            Log.err("SessionDAO.map failed: " + e.getMessage());
+            throw new ResultSetParsingException("Failed to parse Session from ResultSet", e);
+        }
     }
 
     public Session getByToken(String token) throws DatabaseException {
@@ -94,8 +136,14 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
                 .select("*")
                 .from("sessions")
                 .where("token = ?", token);
-        List<Session> results = db.executeQuery(sql, this::map);
-        return results.isEmpty() ? null : results.get(0);
+        try {
+            List<Session> results = db.executeQuery(sql, this::map);
+            Log.create("SessionDAO.getByToken queried " + results.size() + " row(s).");
+            return results.isEmpty() ? null : results.get(0);
+        } catch (DatabaseException e) {
+            Log.err("SessionDAO.getByToken failed: " + e.getMessage());
+            throw e;
+        }
     }
 
     public List<Session> getByUserId(int userId) throws DatabaseException {
@@ -103,22 +151,41 @@ public class SessionDAO implements IGenericDAO<Session, Integer>, IRowMapper<Ses
                 .select("*")
                 .from("sessions")
                 .where("userId = ?", userId);
-        return db.executeQuery(sql, this::map);
+        try {
+            List<Session> sessions = db.executeQuery(sql, this::map);
+            Log.create("SessionDAO.getByUserId queried " + sessions.size() + " row(s).");
+            return sessions;
+        } catch (DatabaseException e) {
+            Log.err("SessionDAO.getByUserId failed: " + e.getMessage());
+            throw e;
+        }
     }
     
     public void invalidate(String token) throws DatabaseException {
-        Query sql = new Query()
-                .update("sessions")
-                .set("isActive", false)
-                .where("token = ?", token);
-        db.executeUpdate(sql);
+        try {
+            Query sql = new Query()
+                    .update("sessions")
+                    .set("isActive", false)
+                    .where("token = ?", token);
+            int rows = db.executeUpdate(sql);
+            Log.create("SessionDAO.invalidate updated " + rows + " row(s).");
+        } catch (DatabaseException e) {
+            Log.err("SessionDAO.invalidate failed: " + e.getMessage());
+            throw e;
+        }
     }
 
     public void invalidateAllUserSessions(int userId) throws DatabaseException {
-        Query sql = new Query()
-                .update("sessions")
-                .set("isActive", false)
-                .where("userId = ?", userId);
-        db.executeUpdate(sql);
+        try {
+            Query sql = new Query()
+                    .update("sessions")
+                    .set("isActive", false)
+                    .where("userId = ?", userId);
+            int rows = db.executeUpdate(sql);
+            Log.create("SessionDAO.invalidateAllUserSessions updated " + rows + " row(s).");
+        } catch (DatabaseException e) {
+            Log.err("SessionDAO.invalidateAllUserSessions failed: " + e.getMessage());
+            throw e;
+        }
     }
 }

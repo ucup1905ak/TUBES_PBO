@@ -66,7 +66,7 @@ public class DummyDataSeeder {
                 task.setCreatedBy(users.get(i - 1));
                 task.setPriority(TaskPriority.MEDIUM);
                 task.setStatus(TaskStatus.PENDING);
-                task.setStartDate(n ew java.util.Date());
+                task.setStartDate(new java.util.Date());
                 task.setDueDate(new java.util.Date(System.currentTimeMillis() + 86400000)); // +1 day
                 taskDAO.add(task);
                 

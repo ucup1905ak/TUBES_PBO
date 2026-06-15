@@ -1,14 +1,12 @@
 package TestControl;
 
 import dao.*;
-import exception.database.DatabaseException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import model.*;
 import model.enums.*;
 import service.AuthService;
-import utility.Log;
 
 public class DummyDataSeeder {
 
@@ -66,7 +64,7 @@ public class DummyDataSeeder {
                 task.setCreatedBy(users.get(i - 1));
                 task.setPriority(TaskPriority.MEDIUM);
                 task.setStatus(TaskStatus.PENDING);
-                task.setStartDate(n ew java.util.Date());
+                task.setStartDate(new java.util.Date());
                 task.setDueDate(new java.util.Date(System.currentTimeMillis() + 86400000)); // +1 day
                 taskDAO.add(task);
                 

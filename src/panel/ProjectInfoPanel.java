@@ -47,14 +47,23 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        ProjectIconLabel.setText("Pro_Icon");
+        ProjectInfoPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        TopPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        ProjectIconLabel.setForeground(new java.awt.Color(255, 0, 0));
+        ProjectIconLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ProjectIconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/project_panel/file_icon.png"))); // NOI18N
+        ProjectIconLabel.setToolTipText("");
 
         ProjectNameLabel.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        ProjectNameLabel.setText("Prooject_Name");
+        ProjectNameLabel.setText("Project_Name");
 
-        MoreIconLabel.setText("More_Icon");
+        MoreIconLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        MoreIconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/project_panel/menu_icon.png"))); // NOI18N
 
-        CancelIconLabel.setText("Cancel_Icon");
+        CancelIconLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        CancelIconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/project_panel/x_icon.png"))); // NOI18N
 
         javax.swing.GroupLayout TopPanelLayout = new javax.swing.GroupLayout(TopPanel);
         TopPanel.setLayout(TopPanelLayout);
@@ -80,12 +89,13 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TopPanelLayout.createSequentialGroup()
                 .addContainerGap(15, Short.MAX_VALUE)
                 .addGroup(TopPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ProjectNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ProjectNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(MoreIconLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CancelIconLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(15, 15, 15))
         );
 
+        DescriptionPanel.setBackground(new java.awt.Color(255, 255, 255));
         DescriptionPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 DescriptionPanelMouseClicked(evt);
@@ -94,6 +104,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
 
         DescriptionTextAre.setColumns(20);
         DescriptionTextAre.setRows(5);
+        DescriptionTextAre.setText("yeah");
         DescriptionScrollPane.setViewportView(DescriptionTextAre);
 
         javax.swing.GroupLayout DescriptionPanelLayout = new javax.swing.GroupLayout(DescriptionPanel);
@@ -111,6 +122,8 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
                 .addComponent(DescriptionScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        CreatedAtPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         CreatedAtLabel.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         CreatedAtLabel.setText("Created At");
@@ -138,6 +151,8 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
                 .addContainerGap(12, Short.MAX_VALUE))
         );
 
+        OwnerPanel.setBackground(new java.awt.Color(255, 255, 255));
+
         OwnerLabel.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         OwnerLabel.setText("Owner");
 
@@ -163,6 +178,8 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
                 .addComponent(OwnerProfilePictureLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        MemberPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         MemberLabel.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         MemberLabel.setText("Member");

@@ -34,6 +34,11 @@
   </Layout>
   <SubComponents>
     <Container class="javax.swing.JPanel" name="ProjectInfoPanel">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
+      </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -84,6 +89,11 @@
       </Layout>
       <SubComponents>
         <Container class="javax.swing.JPanel" name="TopPanel">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+          </Properties>
 
           <Layout>
             <DimensionLayout dim="0">
@@ -111,7 +121,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace pref="15" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="ProjectNameLabel" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
+                          <Component id="ProjectNameLabel" alignment="3" min="-2" pref="50" max="-2" attributes="0"/>
                           <Component id="MoreIconLabel" alignment="3" min="-2" pref="50" max="-2" attributes="0"/>
                           <Component id="CancelIconLabel" alignment="3" min="-2" pref="50" max="-2" attributes="0"/>
                       </Group>
@@ -123,7 +133,14 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="ProjectIconLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Pro_Icon"/>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icon/project_panel/file_icon.png"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="ProjectNameLabel">
@@ -131,22 +148,33 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Arial" size="24" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Prooject_Name"/>
+                <Property name="text" type="java.lang.String" value="Project_Name"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="MoreIconLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="More_Icon"/>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icon/project_panel/menu_icon.png"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="CancelIconLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Cancel_Icon"/>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icon/project_panel/x_icon.png"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="DescriptionPanel">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+          </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="DescriptionPanelMouseClicked"/>
           </Events>
@@ -182,6 +210,7 @@
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
                     <Property name="rows" type="int" value="5"/>
+                    <Property name="text" type="java.lang.String" value="yeah"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -189,6 +218,11 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="CreatedAtPanel">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+          </Properties>
 
           <Layout>
             <DimensionLayout dim="0">
@@ -232,6 +266,11 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="OwnerPanel">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+          </Properties>
 
           <Layout>
             <DimensionLayout dim="0">
@@ -275,6 +314,11 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="MemberPanel">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+          </Properties>
 
           <Layout>
             <DimensionLayout dim="0">

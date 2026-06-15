@@ -1,14 +1,12 @@
 package TestControl;
 
 import dao.*;
-import exception.database.DatabaseException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import model.*;
 import model.enums.*;
 import service.AuthService;
-import utility.Log;
 
 public class DummyDataSeeder {
 

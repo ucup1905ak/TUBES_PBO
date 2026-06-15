@@ -4,17 +4,37 @@
  */
 package panel;
 
+import model.Project;
+import java.text.SimpleDateFormat;
+
 /**
  *
  * @author Silvanus
  */
 public class ProjectInfoPanel extends javax.swing.JFrame {
 
+     private Project project;
+    
     /**
      * Creates new form ProjectInfoPanel
      */
     public ProjectInfoPanel() {
         initComponents();
+        
+        this.project = project;
+        loadProjectData();
+    }
+    
+    private void loadProjectData() {
+        if (project == null) return;
+
+        //untuk show nama & deskripsi Project
+        ProjectNameLabel.setText(project.getName());
+        DescriptionTextAre.setText(project.getDescription());
+        
+        //untuk show Created At
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+        CreatedAtDateLabel.setText(formatter.format(project.getCreatedAt()));
     }
 
     /**

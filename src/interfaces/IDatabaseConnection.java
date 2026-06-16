@@ -12,7 +12,7 @@ import exception.database.DatabaseException;
 import exception.database.QueryTypeMismatchException;
 import java.sql.SQLException;
 import java.util.List;
-import utility.Query;
+import utility.db.Query;
 
 public interface IDatabaseConnection {
 

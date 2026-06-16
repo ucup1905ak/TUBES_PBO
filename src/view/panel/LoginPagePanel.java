@@ -1,43 +1,45 @@
 package view.panel;
 
-import service.AuthService;
+import control.SessionControl;
 import view.component.*;
 import model.Session;
 import javax.swing.JOptionPane;
 import exception.authentication.InvalidLoginCredentialException;
 import exception.database.DatabaseException;
+import exception.validation.InvalidFormatException;
 import java.util.function.Consumer;
 
 public class LoginPagePanel extends javax.swing.JPanel {
-    
+
     public LoginPagePanel() {
         initComponents();
-        
+
     }
 
     /*
         METHOD
      */
-    
     private java.awt.event.ActionListener onRegistListener;
-    private Consumer<Integer> onLoginSuccessListener;
-    private AuthService authService = new AuthService();
-    
-    public void setOnRegisterListener(java.awt.event.ActionListener listener){
+    private Consumer<Session> onLoginSuccessListener;
+//    private AuthService authService = new AuthService();
+    private SessionControl sessionControl = new SessionControl();
+
+    public void setOnRegisterListener(java.awt.event.ActionListener listener) {
         this.onRegistListener = listener;
     }
-    
-    public void setOnLoginSuccessListener(Consumer<Integer> listener){
+
+    public void setOnLoginSuccessListener(Consumer<Session> listener) {
         this.onLoginSuccessListener = listener;
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         backgroundPanel = new javax.swing.JPanel();
         masukButton = new javax.swing.JButton();
-        KataSandiTextField = new RoundedTextField(30);
+        KataSandiTextField = new RoundedPasswordField(30);
+        KataSandiTextField.setEchoChar((char) 0);
         namaPenggunaTextField = new RoundedTextField(30);
         buatAkunLabel = new javax.swing.JLabel();
         askLabel = new javax.swing.JLabel();
@@ -53,6 +55,11 @@ public class LoginPagePanel extends javax.swing.JPanel {
         masukButton.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         masukButton.setForeground(new java.awt.Color(237, 237, 244));
         masukButton.setText("Masuk");
+        masukButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                masukButtonActionPerformed(evt);
+            }
+        });
         backgroundPanel.add(masukButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 460, 426, 37));
 
         KataSandiTextField.setBackground(new java.awt.Color(164, 164, 164));
@@ -145,37 +152,16 @@ public class LoginPagePanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buatAkunLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buatAkunLabelMouseClicked
-        if(onRegistListener != null){
+        if (onRegistListener != null) {
             onRegistListener.actionPerformed(null);
         }
     }//GEN-LAST:event_buatAkunLabelMouseClicked
 
-    private void masukButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        String usernameOrEmail = namaPenggunaTextField.getText();
-        String password = String.valueOf(KataSandiTextField.getPassword());
-
-        if (usernameOrEmail.isEmpty() || usernameOrEmail.equals("Nama Pengguna") ||
-            password.isEmpty() || password.equals("Kata Sandi")) {
-            JOptionPane.showMessageDialog(this, "Harap lengkapi semua bidang.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        try {
-            Session session = authService.authenticate(usernameOrEmail, password);
-            if (session != null && onLoginSuccessListener != null) {
-                onLoginSuccessListener.accept(session.getUser().getId());
-            }
-        } catch (InvalidLoginCredentialException e) {
-            JOptionPane.showMessageDialog(this, "Nama pengguna atau kata sandi salah.", "Gagal", JOptionPane.ERROR_MESSAGE);
-        } catch (DatabaseException e) {
-            JOptionPane.showMessageDialog(this, "Terjadi kesalahan pada database.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
     private void namaPenggunaTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_namaPenggunaTextFieldFocusGained
         if (namaPenggunaTextField.getText().equals("Nama Pengguna")) {
             namaPenggunaTextField.setText("");
-            namaPenggunaTextField.setForeground(new java.awt.Color(20,20,20));
+            namaPenggunaTextField.setForeground(new java.awt.Color(20, 20, 20));
         }
     }//GEN-LAST:event_namaPenggunaTextFieldFocusGained
 
@@ -191,24 +177,47 @@ public class LoginPagePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_backgroundMouseClicked
 
     private void KataSandiTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_KataSandiTextFieldFocusGained
-        if(String.valueOf(KataSandiTextField.getPassword()).equals("Kata Sandi")){
+        if (String.valueOf(KataSandiTextField.getPassword()).equals("Kata Sandi")) {
             KataSandiTextField.setText("");
-            KataSandiTextField.setForeground(new java.awt.Color(20,20,20));
+            KataSandiTextField.setForeground(new java.awt.Color(20, 20, 20));
             KataSandiTextField.setEchoChar('\u2022');
         }
     }//GEN-LAST:event_KataSandiTextFieldFocusGained
 
     private void KataSandiTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_KataSandiTextFieldFocusLost
-        if(String.valueOf(KataSandiTextField.getPassword()).equals("")){
+        if (String.valueOf(KataSandiTextField.getPassword()).equals("")) {
             KataSandiTextField.setText("Kata Sandi");
             KataSandiTextField.setForeground(new java.awt.Color(237, 237, 244));
             KataSandiTextField.setEchoChar((char) 0);
         }
     }//GEN-LAST:event_KataSandiTextFieldFocusLost
 
+    private void masukButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_masukButtonActionPerformed
+        String usernameOrEmail = namaPenggunaTextField.getText();
+        String password = String.valueOf(KataSandiTextField.getPassword());
+
+        if (usernameOrEmail.isEmpty() || usernameOrEmail.equals("Nama Pengguna")
+                || password.isEmpty() || password.equals("Kata Sandi")) {
+            JOptionPane.showMessageDialog(this, "Harap lengkapi semua bidang.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+//            Session session = authService.authenticate(usernameOrEmail, password);
+            sessionControl.login(usernameOrEmail, password);
+            onLoginSuccessListener.accept(sessionControl.getCurrentSession());
+        } catch (InvalidLoginCredentialException e) {
+            JOptionPane.showMessageDialog(this, "Nama pengguna atau kata sandi salah.", "Gagal", JOptionPane.ERROR_MESSAGE);
+        } catch (DatabaseException e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan pada database.", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (InvalidFormatException e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan Input Format.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_masukButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField KataSandiTextField;
+    private javax.swing.JPasswordField KataSandiTextField;
     private javax.swing.JLabel askLabel;
     private javax.swing.JLabel background;
     private javax.swing.JPanel backgroundPanel;

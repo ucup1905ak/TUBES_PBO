@@ -9,9 +9,9 @@ package model;
  *
  * @author Farelino Alexander Kim / 240713000ino Alexander Kim - 240713000
  */
+import java.util.Date;
 import model.enums.TaskPriority;
 import model.enums.TaskStatus;
-import java.util.Date;
 
 public class Task extends ProjectItem {
 
@@ -25,6 +25,31 @@ public class Task extends ProjectItem {
         super();
         this.status = TaskStatus.PENDING;
     }
+
+    public Task(
+            String title,
+            String description,
+            Project project,
+            User createdBy,
+            TaskPriority priority,
+            TaskStatus status,
+            Date startDate,
+            Date dueDate
+    ) {
+        super();
+        setTitle(title);
+        setDescription(description);
+        setProject(project);
+        setCreatedBy(createdBy);
+        this.priority = priority;
+        this.status = status != null ? status : TaskStatus.PENDING;
+        this.startDate = startDate;
+        this.dueDate = dueDate;
+        if (this.status == TaskStatus.DONE) {
+            this.completedAt = startDate != null ? startDate : new Date();
+        }
+    }
+    
 
     public TaskPriority getPriority() {
         return priority;

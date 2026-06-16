@@ -13,8 +13,8 @@ import java.sql.SQLException;
 import java.util.List;
 import model.Project;
 import service.DatabaseConnection;
-import utility.Log;
-import utility.Query;
+import utility.security.Log;
+import utility.db.Query;
 
 /**
  *
@@ -30,6 +30,9 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
      * Semua method di sini konsepnya sama kayak UserDAO Dengan meninggikan nama
      * Yesus, semoga bekerja - Widi
      *
+     * Farel : Return ID Project yang baru dibuat, lalu langsung set selected ke project tersebut
+     * 
+     * God Bless You All, Semoga Lancar - Farel
      */
     @Override
     public int add(Project entity) throws DatabaseException {
@@ -37,18 +40,18 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
             Query sql = new Query();
 
             sql.insertInto("projects",
-                "name",
-                "description",
-                "color"
+                    "name",
+                    "description",
+                    "color"
             )
-                .values(
-                    entity.getName(),
-                    entity.getDescription(),
-                    entity.getColor()
-                );
-            int rows = db.executeUpdate(sql);
-            Log.create("ProjectDAO.add updated " + rows + " row(s).");
-            return rows;
+                    .values(
+                            entity.getName(),
+                            entity.getDescription(),
+                            entity.getColor()
+                    );
+            int id = db.executeInsert(sql);
+            Log.create("ProjectDAO.add inserted project id " + id + ".");
+            return id;
         } catch (DatabaseException e) {
             Log.err("ProjectDAO.add failed: " + e.getMessage());
             throw e;
@@ -126,6 +129,25 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
         }
     }
 
+    public Project getByName(String name) throws DatabaseException {
+        Query sql = new Query()
+                .select("*")
+                .from("projects")
+                .where("name = ?", name);
+
+        try {
+            List<Project> listProject = db.executeQuery(sql, this::map);
+            Log.create("ProjectDAO.get queried " + listProject.size() + " row(s).");
+            if (listProject.isEmpty()) {
+                return null;
+            }
+            return listProject.get(0);
+        } catch (DatabaseException e) {
+            Log.err("ProjectDAO.get failed: " + e.getMessage());
+            throw e;
+        }
+    }
+
     @Override
     public Project map(ResultSet rs) throws DatabaseException {
         Project p = new Project();
@@ -139,7 +161,7 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
         } catch (SQLException e) {
             Log.err("ProjectDAO.map failed: " + e.getMessage());
             throw new ResultSetParsingException(
-                    "Failed to parse User from ResultSet",
+                    "Failed to parse Project from ResultSet",
                     e
             );
 

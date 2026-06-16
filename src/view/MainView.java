@@ -1,5 +1,6 @@
 package view;
 
+import control.SessionControl;
 import java.awt.Color;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
@@ -7,7 +8,7 @@ import javax.swing.JLayeredPane;
 import view.panel.*;
 
 public class MainView extends javax.swing.JFrame {
-
+    private SessionControl sesionControl = new SessionControl();
     private JLayeredPane layeredPane;
     private HomePagePanel homePagePanel;
     private ProfilePanel profilePanel;
@@ -52,7 +53,7 @@ public class MainView extends javax.swing.JFrame {
     private void showLoginPanel() {
         LoginPagePanel login = new LoginPagePanel();
         login.setOnRegisterListener(e -> showRegisterPanel());
-        login.setOnLoginSuccessListener(userId -> showHomePageView(userId));
+        login.setOnLoginSuccessListener(userId -> showHomePageView());
         setForm(login);
     }
 
@@ -69,7 +70,7 @@ public class MainView extends javax.swing.JFrame {
         setForm(changePassword);
     }
 
-    public void showHomePageView(int userId) {
+    public void showHomePageView() {
         layeredPane.removeAll();
 
         homePagePanel = new HomePagePanel();
@@ -78,8 +79,9 @@ public class MainView extends javax.swing.JFrame {
         homePagePanel.setOnProfileClickListener(() -> toggleProfileOverlay(true));
 
         layeredPane.add(homePagePanel, JLayeredPane.DEFAULT_LAYER);
-
-        profilePanel = new ProfilePanel(userId);
+        
+        
+        profilePanel = new ProfilePanel(sesionControl.getCurrentUser().getId());
 
         profilePanel.setBounds(814, 0, 466, 720);
         profilePanel.setVisible(false);

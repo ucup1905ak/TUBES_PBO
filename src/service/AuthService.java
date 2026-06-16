@@ -21,9 +21,9 @@ import interfaces.IAuthService;
 
 public class AuthService implements IAuthService {
     public static final int EXPIRY =  3600;
-    private final UserDAO userDAO = new UserDAO();
-    private final SessionDAO sessionDAO = new SessionDAO();
-    private final PasswordHasher passwordHasher = new PasswordHasher();
+    private static final UserDAO userDAO = new UserDAO();
+    private static final SessionDAO sessionDAO = new SessionDAO();
+    private static final PasswordHasher passwordHasher = new PasswordHasher();
 
 
     @Override

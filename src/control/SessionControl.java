@@ -18,7 +18,7 @@ import service.AuthService;
 public class SessionControl {
 
     private static Session currentSession = null;
-    private final AuthService authService = new AuthService();
+    private static final AuthService authService = new AuthService();
 
     public boolean login(String email, String password) throws DatabaseException, InvalidFormatException, InvalidLoginCredentialException {
         if (email == null || email.trim().isEmpty()

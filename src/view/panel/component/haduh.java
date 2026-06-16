@@ -5,12 +5,12 @@ package view.panel.component;
  *
  * @author farel
  */
-public class TaskCard extends javax.swing.JPanel {
+public class haduh extends javax.swing.JPanel {
 
     /**
      * Creates new form TaskCard
      */
-    public TaskCard() {
+    public haduh() {
         initComponents();
     }
 

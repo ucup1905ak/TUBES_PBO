@@ -1,19 +1,28 @@
-
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ */
 package view.panel.component;
+
+import model.Task;
 
 /**
  *
  * @author farel
  */
 public class TaskCard extends javax.swing.JPanel {
-
+    private Task task = new Task();
     /**
      * Creates new form TaskCard
      */
     public TaskCard() {
         initComponents();
     }
-
+    
+    public void setTask(Task t){
+        task = t;
+        repaint();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -23,34 +32,43 @@ public class TaskCard extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        tagBite1 = new view.panel.component.TagBite();
-        TaskTitle = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         Tags = new javax.swing.JPanel();
         tagBite2 = new view.panel.component.TagBite();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        Description = new javax.swing.JTextArea();
+        priorityBite2 = new view.panel.component.PriorityBite();
 
-        setBackground(new java.awt.Color(250, 250, 250));
-        setMaximumSize(new java.awt.Dimension(250, 300));
-        setMinimumSize(new java.awt.Dimension(250, 250));
-        setName(""); // NOI18N
-        setPreferredSize(new java.awt.Dimension(250, 175));
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
-        TaskTitle.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
-        TaskTitle.setForeground(new java.awt.Color(57, 57, 57));
-        TaskTitle.setText("Task Title");
-        add(TaskTitle);
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 16)
 
-        Tags.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        );
+        jLabel1.setText(task.getTitle());
+        jLabel1.setAlignmentX(0.5F);
+        add(jLabel1);
+
+        Tags.setLayout(new javax.swing.BoxLayout(Tags, javax.swing.BoxLayout.X_AXIS));
         Tags.add(tagBite2);
 
         add(Tags);
+
+        Description.setColumns(20);
+        Description.setRows(5);
+        Description.setEnabled(false);
+        jScrollPane1.setViewportView(Description);
+
+        add(jScrollPane1);
+        add(priorityBite2);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea Description;
     private javax.swing.JPanel Tags;
-    private javax.swing.JLabel TaskTitle;
-    private view.panel.component.TagBite tagBite1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private view.panel.component.PriorityBite priorityBite2;
     private view.panel.component.TagBite tagBite2;
     // End of variables declaration//GEN-END:variables
 }

@@ -13,6 +13,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import javax.swing.border.EmptyBorder;
+import model.Tag;
 
 /**
  *
@@ -24,19 +25,25 @@ public class TagBite extends javax.swing.JPanel {
     private static final int DOT_SIZE = 10;
     private static final int DOT_GAP = 6; // gap between dot and text
 
+    private Tag tag;
     /**
      * Creates new form TagBite
      */
     public TagBite() {
         initComponents();
+        
+        TagTitle.setText("Empty Tag");
         this.dotColor = new Color(224, 228, 53, 100);
         setBorder(new EmptyBorder(4, 10, 4, 10));
+        repaint();
     }
 
     public TagBite(String text, Color color) {
         initComponents();
         this.dotColor = color;
+        TagTitle.setText(text);
         setBorder(new EmptyBorder(4, 10, 4, 10)); // padding
+        repaint();
     }
 
     /**
@@ -50,16 +57,15 @@ public class TagBite extends javax.swing.JPanel {
 
         TagTitle = new javax.swing.JLabel();
 
-        setBackground(new java.awt.Color(255, 255, 204));
-        setBorder(new EmptyBorder(4, 10, 4, 10));
-        setMaximumSize(new java.awt.Dimension(80, 22));
+        setMaximumSize(new java.awt.Dimension(100, 22));
+        setMinimumSize(new java.awt.Dimension(40, 22));
         setOpaque(false);
         setPreferredSize(new java.awt.Dimension(50, 22));
-        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         TagTitle.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
-        TagTitle.setText("jLabel1");
-        TagTitle.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        TagTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        TagTitle.setText("TagTitle");
+        TagTitle.setAlignmentX(0.5F);
         add(TagTitle);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -96,7 +102,7 @@ public class TagBite extends javax.swing.JPanel {
             int labelW = fm.stringWidth(TagTitle.getText()) + 4;
             int labelH = fm.getHeight();
             int labelY = (h - labelH) / 2;
-            TagTitle.setBounds(textX, labelY, labelW, labelH + 4); // ✅ real size
+            TagTitle.setBounds(textX, labelY, labelW, labelH );
             TagTitle.setForeground(setLightnessHSL(dotColor, 0.3f));
         }
     }

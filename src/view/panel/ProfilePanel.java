@@ -55,7 +55,6 @@ public class ProfilePanel extends JPanel {
     private JLabel instagramLabel;
     private JPanel contentPanel;
 
-    // Callback interfaces
     public interface LogoutListener {
 
         void onLogout();
@@ -146,7 +145,6 @@ public class ProfilePanel extends JPanel {
         this.closeListener = l;
     }
 
-    // ------------------------------------------------------------------ build
     private void buildUI() {
 
         JPanel root = new JPanel(new BorderLayout()) {
@@ -491,7 +489,6 @@ public class ProfilePanel extends JPanel {
         });
     }
 
-    // --------------------------------------------------------- social media
     private JPanel buildSocialMediaSection() {
         JPanel panel = new JPanel();
         panel.setOpaque(false);
@@ -618,7 +615,6 @@ public class ProfilePanel extends JPanel {
         tf.addActionListener(confirmAction);
     }
 
-    // --------------------------------------------------------------- helpers
     private JPanel buildDivider() {
         JPanel d = new JPanel() {
             @Override
@@ -709,7 +705,6 @@ public class ProfilePanel extends JPanel {
         btn.setFocusPainted(false);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btn.setPreferredSize(new Dimension(110, 34));
-        // add power icon prefix via label
         btn.setIcon(new ImageIcon(getClass().getResource("/icon/profile_panel/logout.png")));
         return btn;
     }

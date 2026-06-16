@@ -42,7 +42,7 @@ public class TextControl {
         
         AuthService authService = new AuthService();
         UserControl userControl = new UserControl();
-        ProjectControl projectControl = new ProjectControl();
+//        ProjectControl projectControl = new ProjectControl();
         TaskControl taskControl = new TaskControl();
         EventControl eventControl = new EventControl();
         TagControl tagControl = new TagControl();
@@ -118,7 +118,7 @@ public class TextControl {
             project = new Project();
             project.setName("Test BRD Project");
             project.setDescription("Project to test PRD features");
-            projectControl.add(project);
+//            projectControl.add(project);
             
             List<Project> allProjects = projectDAO.fetchAll();
             if(allProjects != null && !allProjects.isEmpty()){
@@ -224,7 +224,7 @@ public class TextControl {
             if (project != null) {
                 projectMemberDAO.remove(project.getId(), user1.getId());
                 projectMemberDAO.remove(project.getId(), user2.getId());
-                projectControl.delete(project.getId());
+//                projectControl.delete(project.getId());
             }
             
             System.out.println("[Clean] Removing users...");

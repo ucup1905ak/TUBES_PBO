@@ -30,7 +30,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         SessionControl sc = new SessionControl();
         projectControl = new ProjectControl(sc.getCurrentUser());
-        p = projectControl.getSelected();
+        this.project = projectControl.getSelected();
         loadProjectData();
     }
 
@@ -40,6 +40,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
         this.project = p;
         SessionControl sc = new SessionControl();
         projectControl = new ProjectControl(sc.getCurrentUser());
+        
         loadProjectData();
     }
 

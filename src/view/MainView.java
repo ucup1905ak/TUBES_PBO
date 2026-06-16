@@ -2,23 +2,37 @@ package view;
 
 import java.awt.Color;
 import javax.swing.JComponent;
+import javax.swing.JLayeredPane;
 import panel.*;
 
 public class MainView extends javax.swing.JFrame {
 
+    private JLayeredPane layeredPane;
+    private DashboardPanel dashboardPanel;
+    private ProfilePanel profilePanel;
+
     public MainView() {
         initComponents();
+        initLayeredPane();
         mainBorderPanel.setBorder(null);
         recolorDefaultSwitchPanel();
         showLoadingPanel();
+    }
+
+    private void initLayeredPane() {
+        layeredPane = new JLayeredPane();
+        layeredPane.setPreferredSize(new java.awt.Dimension(1280, 720));
+
+        mainBorderPanel.setLayout(new java.awt.BorderLayout());
+        mainBorderPanel.add(layeredPane, java.awt.BorderLayout.CENTER);
     }
 
     private void recolorDefaultSwitchPanel() {
         repaint();
         mainBorderPanel.setBackground(new Color(0, 0, 0, 0));
     }
-    
-    private void showLoadingPanel(){
+
+    private void showLoadingPanel() {
         LoadingPagePanel loading = new LoadingPagePanel();
         loading.setOnFinishListener(e -> {
             showLoginPanel();
@@ -26,21 +40,22 @@ public class MainView extends javax.swing.JFrame {
         setForm(loading);
     }
 
-    private void setForm(JComponent com){
-        mainBorderPanel.removeAll();
-        mainBorderPanel.repaint();
-        mainBorderPanel.add(com);
+    private void setForm(JComponent com) {
+        layeredPane.removeAll();
+        com.setBounds(0, 0, 1280, 720);
+        layeredPane.add(com, JLayeredPane.DEFAULT_LAYER);
+        layeredPane.repaint();
         mainBorderPanel.revalidate();
     }
-    
-    private void showLoginPanel(){
+
+    private void showLoginPanel() {
         LoginPagePanel login = new LoginPagePanel();
         login.setOnRegisterListener(e -> showRegisterPanel());
-        login.setOnLoginSuccessListener(userId -> showChangePasswordPanel(userId));
+        login.setOnLoginSuccessListener(userId -> showDashboardView(userId));
         setForm(login);
     }
-    
-    private void showRegisterPanel(){
+
+    private void showRegisterPanel() {
         RegisterPagePanel regist = new RegisterPagePanel();
         regist.setOnLoginListener(e -> showLoginPanel());
         setForm(regist);
@@ -51,6 +66,40 @@ public class MainView extends javax.swing.JFrame {
         changePassword.setCurrentUserId(userId);
         changePassword.setOnBackListener(e -> showLoginPanel()); // Temporary routing back to login
         setForm(changePassword);
+    }
+
+    public void showDashboardView(int userId) {
+        layeredPane.removeAll();
+
+        dashboardPanel = new DashboardPanel();
+        dashboardPanel.setBounds(0, 0, 1280, 720);
+        dashboardPanel.getProfileButton().addActionListener(e -> toggleProfileOverlay(true));
+        
+        layeredPane.add(dashboardPanel, JLayeredPane.DEFAULT_LAYER);
+        
+        profilePanel = new ProfilePanel();
+        
+        profilePanel.setBounds(814, 0, 466, 720);
+        profilePanel.setVisible(false);
+        
+        profilePanel.setCloseListener(() -> toggleProfileOverlay(false));
+        profilePanel.setLogoutListener(() -> {
+            toggleProfileOverlay(false);
+            showLoginPanel();
+        });
+        
+        layeredPane.add(profilePanel, JLayeredPane.PALETTE_LAYER);
+        
+        layeredPane.repaint();
+        layeredPane.revalidate();
+        
+    }
+    
+    private void toggleProfileOverlay(boolean show){
+        if(profilePanel != null){
+            profilePanel.setVisible(show);
+            layeredPane.repaint();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -85,7 +134,6 @@ public class MainView extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

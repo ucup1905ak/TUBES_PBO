@@ -15,6 +15,12 @@ import model.Project;
  *
  * @author aldio
  */
+import model.Session;
+import java.io.File;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+import model.User;
+
 public class HomePagePanel extends javax.swing.JPanel {
     
     private ProjectControl control = new ProjectControl(new SessionControl().getCurrentUser());
@@ -32,8 +38,30 @@ public class HomePagePanel extends javax.swing.JPanel {
         }
         initComponents();
         setupFocusClearance();
-        addProjects();
+addProjects();
+        updateProfileIcon(session.getUser());
         initKanbanBoard();
+
+    }
+
+    public void updateProfileIcon(User currentUser) {
+        if (currentUser != null && currentUser.getProfilePicture() != null && !currentUser.getProfilePicture().isEmpty()) {
+            File file = new File(currentUser.getProfilePicture());
+            if (file.exists()) {
+                ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+                
+                icon.getImage().flush();
+
+                Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+                Profile.setIcon(new ImageIcon(img));
+                Profile.setText("");
+                
+                Profile.revalidate();
+                Profile.repaint();
+            } else {
+                System.out.println("File foto profil tidak ditemukan di: " + file.getAbsolutePath());
+            }
+        }
     }
     private void addProjects(){
         if(projects == null){
@@ -45,17 +73,12 @@ public class HomePagePanel extends javax.swing.JPanel {
         }
     }
     private void initKanbanBoard() {
-        // 1. Instansiasi objek KanbanCard (papan utama kanban)
-        // Jika letak package-nya berbeda, pastikan import 'Panel.KanbanCard;' sudah ada di bagian atas file
         KanbanCard papanKanban = new KanbanCard();
 
-        // 2. Set layout panel 'Kanban' menjadi BorderLayout agar komponen di dalamnya bisa memenuhi ruang tab
         Kanban.setLayout(new java.awt.BorderLayout());
 
-        // 3. Masukkan objek papanKanban tepat di bagian tengah (CENTER)
         Kanban.add(papanKanban, java.awt.BorderLayout.CENTER);
 
-        // 4. Lakukan validasi ulang dan gambar ulang panel agar perubahan langsung muncul saat aplikasi dijalankan
         Kanban.revalidate();
         Kanban.repaint();
     }
@@ -109,6 +132,7 @@ public class HomePagePanel extends javax.swing.JPanel {
         ContentPanel = new javax.swing.JTabbedPane();
         Kalender = new javax.swing.JPanel();
         Kanban = new javax.swing.JPanel();
+        AddTaskEventButton = new javax.swing.JButton();
 
         setAlignmentX(0.0F);
         setAlignmentY(0.0F);
@@ -215,15 +239,28 @@ public class HomePagePanel extends javax.swing.JPanel {
 
         ContentPanel.addTab("Tabel", Kalender);
 
+        AddTaskEventButton.setText("tambah");
+        AddTaskEventButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddTaskEventButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout KanbanLayout = new javax.swing.GroupLayout(Kanban);
         Kanban.setLayout(KanbanLayout);
         KanbanLayout.setHorizontalGroup(
             KanbanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1078, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, KanbanLayout.createSequentialGroup()
+                .addContainerGap(973, Short.MAX_VALUE)
+                .addComponent(AddTaskEventButton)
+                .addGap(29, 29, 29))
         );
         KanbanLayout.setVerticalGroup(
             KanbanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 633, Short.MAX_VALUE)
+            .addGroup(KanbanLayout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(AddTaskEventButton)
+                .addContainerGap(591, Short.MAX_VALUE))
         );
 
         ContentPanel.addTab("Kanban", Kanban);
@@ -276,8 +313,13 @@ public class HomePagePanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_ProfileMouseClicked
 
+    private void AddTaskEventButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddTaskEventButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AddTaskEventButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AddTaskEventButton;
     private javax.swing.JTabbedPane ContentPanel;
     private javax.swing.JPanel Kalender;
     private javax.swing.JPanel Kanban;

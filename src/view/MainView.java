@@ -6,6 +6,8 @@ import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 
 import view.panel.*;
+import model.Session;
+import control.SessionControl;
 
 public class MainView extends javax.swing.JFrame {
     private SessionControl sesionControl = new SessionControl();
@@ -50,10 +52,16 @@ public class MainView extends javax.swing.JFrame {
         mainBorderPanel.revalidate();
     }
 
+    public view.panel.HomePagePanel getHomePagePanel() {
+        return this.homePagePanel;
+    }
+
     private void showLoginPanel() {
         LoginPagePanel login = new LoginPagePanel();
         login.setOnRegisterListener(e -> showRegisterPanel());
-        login.setOnLoginSuccessListener(userId -> showHomePageView());
+        login.setOnLoginSuccessListener(session -> {
+            showHomePageView(session);
+        });
         setForm(login);
     }
 
@@ -66,23 +74,21 @@ public class MainView extends javax.swing.JFrame {
     public void showChangePasswordPanel(int userId) {
         ChangePasswordPanel changePassword = new ChangePasswordPanel();
         changePassword.setCurrentUserId(userId);
-        changePassword.setOnBackListener(e -> showLoginPanel()); // Temporary routing back to login
+        changePassword.setOnBackListener(e -> showLoginPanel());
         setForm(changePassword);
     }
 
-    public void showHomePageView() {
+    public void showHomePageView(Session session) {
         layeredPane.removeAll();
 
-        homePagePanel = new HomePagePanel();
+        homePagePanel = new HomePagePanel(session);
         homePagePanel.setBounds(0, 0, 1280, 720);
 
         homePagePanel.setOnProfileClickListener(() -> toggleProfileOverlay(true));
 
         layeredPane.add(homePagePanel, JLayeredPane.DEFAULT_LAYER);
-        
-        
-        profilePanel = new ProfilePanel(sesionControl.getCurrentUser().getId());
 
+        profilePanel = new ProfilePanel(session);
         profilePanel.setBounds(814, 0, 466, 720);
         profilePanel.setVisible(false);
 
@@ -92,11 +98,50 @@ public class MainView extends javax.swing.JFrame {
             showLoginPanel();
         });
 
+        profilePanel.setProfileUpdateListener(() -> {
+            homePagePanel.updateProfileIcon(session.getUser());
+
+            homePagePanel.revalidate();
+            homePagePanel.repaint();
+        });
+
         layeredPane.add(profilePanel, JLayeredPane.PALETTE_LAYER);
 
         layeredPane.repaint();
         layeredPane.revalidate();
     }
+
+//    public void showHomePageView(Session session) {
+//        layeredPane.removeAll();
+//        homePagePanel = new HomePagePanel(session);
+//        homePagePanel.setBounds(0, 0, 1280, 720);
+//        layeredPane.add(homePagePanel, JLayeredPane.DEFAULT_LAYER);
+//        layeredPane.repaint();
+//        mainBorderPanel.revalidate();
+//
+    ////        homePagePanel = new HomePagePanel(userId);
+////        homePagePanel.setBounds(0, 0, 1280, 720);
+////
+////        homePagePanel.setOnProfileClickListener(() -> toggleProfileOverlay(true));
+////
+////        layeredPane.add(homePagePanel, JLayeredPane.DEFAULT_LAYER);
+////
+////        profilePanel = new ProfilePanel(userId);
+////
+////        profilePanel.setBounds(814, 0, 466, 720);
+////        profilePanel.setVisible(false);
+////
+////        profilePanel.setCloseListener(() -> toggleProfileOverlay(false));
+////        profilePanel.setLogoutListener(() -> {
+////            toggleProfileOverlay(false);
+////            showLoginPanel();
+////        });
+////
+////        layeredPane.add(profilePanel, JLayeredPane.PALETTE_LAYER);
+////
+////        layeredPane.repaint();
+////        layeredPane.revalidate();
+//    }
 
     private void toggleProfileOverlay(boolean show) {
         if (profilePanel != null) {

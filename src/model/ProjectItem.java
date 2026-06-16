@@ -19,8 +19,8 @@ import java.util.List;
 public abstract class ProjectItem implements IAssignable, ITaggable, IAuditable{
 
     private int id;
-    private String title;
-    private String description;
+    private String title = "<Empty>";
+    private String description = "<Empty>";
     private String color;
     private Project project;
     private List<Tag> tags;

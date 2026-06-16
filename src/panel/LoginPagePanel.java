@@ -37,8 +37,7 @@ public class LoginPagePanel extends javax.swing.JPanel {
 
         backgroundPanel = new javax.swing.JPanel();
         masukButton = new javax.swing.JButton();
-        KataSandiTextField = new RoundedPasswordField(30);
-        KataSandiTextField.setEchoChar((char) 0);
+        KataSandiTextField = new RoundedTextField(30);
         namaPenggunaTextField = new RoundedTextField(30);
         buatAkunLabel = new javax.swing.JLabel();
         askLabel = new javax.swing.JLabel();
@@ -54,7 +53,6 @@ public class LoginPagePanel extends javax.swing.JPanel {
         masukButton.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         masukButton.setForeground(new java.awt.Color(237, 237, 244));
         masukButton.setText("Masuk");
-        masukButton.addActionListener(e -> masukButtonActionPerformed(e));
         backgroundPanel.add(masukButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 460, 426, 37));
 
         KataSandiTextField.setBackground(new java.awt.Color(164, 164, 164));
@@ -210,7 +208,7 @@ public class LoginPagePanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPasswordField KataSandiTextField;
+    private javax.swing.JTextField KataSandiTextField;
     private javax.swing.JLabel askLabel;
     private javax.swing.JLabel background;
     private javax.swing.JPanel backgroundPanel;

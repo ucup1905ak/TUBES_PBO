@@ -37,15 +37,15 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
             Query sql = new Query();
 
             sql.insertInto("projects",
-                "name",
-                "description",
-                "color"
+                    "name",
+                    "description",
+                    "color"
             )
-                .values(
-                    entity.getName(),
-                    entity.getDescription(),
-                    entity.getColor()
-                );
+                    .values(
+                            entity.getName(),
+                            entity.getDescription(),
+                            entity.getColor()
+                    );
             int rows = db.executeUpdate(sql);
             Log.create("ProjectDAO.add updated " + rows + " row(s).");
             return rows;
@@ -122,6 +122,25 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
             return rows;
         } catch (DatabaseException e) {
             Log.err("ProjectDAO.delete failed: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public Project getByName(String name) throws DatabaseException {
+        Query sql = new Query()
+                .select("*")
+                .from("projects")
+                .where("name = ?", name);
+
+        try {
+            List<Project> listProject = db.executeQuery(sql, this::map);
+            Log.create("ProjectDAO.get queried " + listProject.size() + " row(s).");
+            if (listProject.isEmpty()) {
+                return null;
+            }
+            return listProject.get(0);
+        } catch (DatabaseException e) {
+            Log.err("ProjectDAO.get failed: " + e.getMessage());
             throw e;
         }
     }

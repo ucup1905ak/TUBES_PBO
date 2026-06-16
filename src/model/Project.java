@@ -25,6 +25,11 @@ public class Project {
     public Project() {
         this.members = new ArrayList<>();
     }
+    public Project(String name, String desc) {
+        this.members = new ArrayList<>();
+        this.name = name;
+        this.description = desc;
+    }
 
     public int getId() {
         return id;

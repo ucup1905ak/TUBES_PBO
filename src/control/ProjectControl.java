@@ -47,7 +47,14 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
 
     @Override
     public int add(Project project) throws DatabaseException {
-        return dao.add(project);
+        int res = dao.add(project);
+        Project real = dao.getByName(project.getName());
+        
+        int userId = user.getId();
+        
+        mDao.add(real.getId(),userId,UserRole.PROJECT_OWNER);
+        selected = real;
+        return res;
     }
 
     @Override

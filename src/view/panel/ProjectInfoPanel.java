@@ -6,7 +6,11 @@ package view.panel;
 
 import control.ProjectControl;
 import exception.database.DatabaseException;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 import model.Project;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
@@ -116,15 +120,23 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
         if (path == null || path.isBlank()) return;
 
         ImageIcon icon = new ImageIcon(path);
+        Image circularImage = createCircularImage(icon.getImage(), 50, 50);
 
-        Image image = icon.getImage().getScaledInstance(
-            50,
-            50,
-            Image.SCALE_SMOOTH
-        );
-
-        OwnerProfilePictureLabel.setIcon(new ImageIcon(image));
+        OwnerProfilePictureLabel.setIcon(new ImageIcon(circularImage));
         OwnerProfilePictureLabel.setText("");
+    }
+
+    private Image createCircularImage(Image sourceImage, int width, int height) {
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = bufferedImage.createGraphics();
+        try {
+            graphics.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+            graphics.setClip(new Ellipse2D.Double(0, 0, width, height));
+            graphics.drawImage(sourceImage, 0, 0, width, height, null);
+        } finally {
+            graphics.dispose();
+        }
+        return bufferedImage;
     }
 
     /**

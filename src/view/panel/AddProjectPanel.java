@@ -25,10 +25,7 @@ public class AddProjectPanel extends javax.swing.JFrame {
     public AddProjectPanel() {
         initComponents();
 
-        currentUser = new User();
-        currentUser.setId(999);
-        currentUser.setUsername("TEST_USER");
-
+        currentUser = sessionControl.getCurrentUser();
         projectControl = new ProjectControl();
         projectControl.setUser(currentUser);
     }

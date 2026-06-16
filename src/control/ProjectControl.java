@@ -21,8 +21,8 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
 
     private Project selected;
     private final User user;
-    private ProjectDAO dao = new ProjectDAO();
-    private ProjectMemberDAO mDao = new ProjectMemberDAO();
+    private final  ProjectDAO dao = new ProjectDAO();
+    private final  ProjectMemberDAO mDao = new ProjectMemberDAO();
 
     public ProjectControl(User user) {
         this.user = user;
@@ -41,9 +41,7 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
         return user;
     }
 
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
+    
 
     @Override
     public int add(Project project) throws DatabaseException {
@@ -59,12 +57,19 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
 
     @Override
     public Project get(Integer id) throws DatabaseException {
-        return dao.get(id);
+        Project p =  dao.get(id);
+        p.setMembers(mDao.getUserByProject(p.getId()));
+        return p;
     }
 
     @Override
     public List<Project> fetchAll() throws DatabaseException {
-        return dao.fetchAll();
+        List<Project> list = dao.fetchAll();
+
+        for (Project p : list) {
+            p.setMembers(mDao.getUserByProject(p.getId()));
+        }
+        return list;
     }
 
     @Override
@@ -83,14 +88,12 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
 
     public boolean setProject(Integer projectId) throws DatabaseException {
         List<Project> list = fetchUserProjects();
-
-        for (Project p : list) {
-            if (p.getId() == projectId) {
-                this.selected = p;
-                return true;
-            }
+        Project p = dao.get(projectId);
+        if(list == null || list.contains(p)== false) {
+            return false;
         }
-        return false;
+        selected = p;
+        return true;
     }
 
     public Project getProject() throws DatabaseException {
@@ -118,8 +121,8 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
         return mDao.getUserByProject(this.selected.getId());
     }
 
-    public UserRole getRole() throws DatabaseException {
-        return mDao.getRole(this.selected.getId(), user.getId());
+    public UserRole getRole(User u) throws DatabaseException {
+        return mDao.getRole(this.selected.getId(), u.getId());
     }
 
 }

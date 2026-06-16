@@ -1,7 +1,7 @@
-package panel;
+package view.panel;
 
-import component.*;
 import service.AuthService;
+import view.component.*;
 import model.Session;
 import javax.swing.JOptionPane;
 import exception.authentication.InvalidLoginCredentialException;

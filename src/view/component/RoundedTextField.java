@@ -1,14 +1,22 @@
-package component;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package view.component;
 
 import java.awt.Graphics;
 import java.awt.Shape;
-import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
-public class RoundedPasswordField extends JPasswordField {
+/**
+ *
+ * @author aldio
+ */
+public class RoundedTextField extends JTextField {
     
     private Shape shape;
     
-    public RoundedPasswordField(int size) {
+    public RoundedTextField(int size) {
         super(size);
         setOpaque(false);
     }

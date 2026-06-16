@@ -1,4 +1,4 @@
-package panel;
+package view.panel;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;

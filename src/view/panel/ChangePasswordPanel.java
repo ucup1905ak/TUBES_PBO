@@ -1,6 +1,5 @@
-package panel;
+package view.panel;
 
-import component.RoundedPasswordField;
 import java.awt.Color;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -9,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import service.AuthService;
+import view.component.RoundedPasswordField;
 import exception.database.DatabaseException;
 
 public class ChangePasswordPanel extends javax.swing.JPanel {

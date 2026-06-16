@@ -19,14 +19,14 @@ public class LoginPagePanel extends javax.swing.JPanel {
         METHOD
      */
     private java.awt.event.ActionListener onRegistListener;
-    private Consumer<Integer> onLoginSuccessListener;
+    private Consumer<Session> onLoginSuccessListener;
     private AuthService authService = new AuthService();
 
     public void setOnRegisterListener(java.awt.event.ActionListener listener) {
         this.onRegistListener = listener;
     }
 
-    public void setOnLoginSuccessListener(Consumer<Integer> listener) {
+    public void setOnLoginSuccessListener(Consumer<Session> listener) {
         this.onLoginSuccessListener = listener;
     }
 
@@ -203,7 +203,7 @@ public class LoginPagePanel extends javax.swing.JPanel {
         try {
             Session session = authService.authenticate(usernameOrEmail, password);
             if (session != null && onLoginSuccessListener != null) {
-                onLoginSuccessListener.accept(session.getUser().getId());
+                onLoginSuccessListener.accept(session);
             }
         } catch (InvalidLoginCredentialException e) {
             JOptionPane.showMessageDialog(this, "Nama pengguna atau kata sandi salah.", "Gagal", JOptionPane.ERROR_MESSAGE);

@@ -17,6 +17,7 @@ import java.util.List;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import model.Session;
 
 /**
  *
@@ -65,17 +66,30 @@ public class ProfilePanel extends JPanel {
         void onClose();
     }
 
+    public interface ProfileUpdateListener {
+
+        void onProfileUpdated();
+    }
+
+    private ProfileUpdateListener profileUpdateListener;
+
+    public void setProfileUpdateListener(ProfileUpdateListener l) {
+        this.profileUpdateListener = l;
+    }
+
     private LogoutListener logoutListener;
     private CloseListener closeListener;
 
-    public ProfilePanel(int userId) {
+    public ProfilePanel(Session session) {
         setPreferredSize(new Dimension(466, 720));
         setLayout(new BorderLayout());
         setOpaque(false);
 
+        this.currentUser = session.getUser();
+        this.loggedInUserId = this.currentUser.getId();
+
         try {
-            this.currentUser = userControl.get(loggedInUserId);
-            loadUserData(userId); 
+            loadUserData(this.loggedInUserId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -90,7 +104,7 @@ public class ProfilePanel extends JPanel {
                 this.username = currentUser.getUsername() != null ? currentUser.getUsername() : "Username";
                 this.email = currentUser.getEmail() != null ? currentUser.getEmail() : "name@mail.com";
                 this.description = currentUser.getBio() != null ? currentUser.getBio() : "";
-                
+
             }
 
             List<Social> socials = socialControl.findByUserId(userId);
@@ -109,20 +123,20 @@ public class ProfilePanel extends JPanel {
             e.printStackTrace();
         }
     }
-    
+
     private void updatePhotoUI(JLabel photoLabel) {
-    if (currentUser != null && currentUser.getProfilePicture() != null && !currentUser.getProfilePicture().isEmpty()) {
-        File file = new File(currentUser.getProfilePicture());
-        if (file.exists()) {
-            ImageIcon icon = new ImageIcon(file.getAbsolutePath());
-            Image img = icon.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
-            photoLabel.setIcon(new ImageIcon(img));
-            photoLabel.setText(""); // Hapus teks jika gambar ada
-        } else {
-            System.out.println("File tidak ditemukan di: " + file.getAbsolutePath());
+        if (currentUser != null && currentUser.getProfilePicture() != null && !currentUser.getProfilePicture().isEmpty()) {
+            File file = new File(currentUser.getProfilePicture());
+            if (file.exists()) {
+                ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+                Image img = icon.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+                photoLabel.setIcon(new ImageIcon(img));
+                photoLabel.setText("");
+            } else {
+                System.out.println("File tidak ditemukan di: " + file.getAbsolutePath());
+            }
         }
     }
-}
 
     public void setLogoutListener(LogoutListener l) {
         this.logoutListener = l;
@@ -247,6 +261,9 @@ public class ProfilePanel extends JPanel {
                     photoLabel.setText("");
 
                     JOptionPane.showMessageDialog(this, "Foto profil berhasil diperbarui!");
+                    if (profileUpdateListener != null) {
+                        profileUpdateListener.onProfileUpdated();
+                    }
                 }
             } catch (DatabaseException ex) {
                 ex.printStackTrace();
@@ -419,17 +436,15 @@ public class ProfilePanel extends JPanel {
                 new EmptyBorder(4, 6, 4, 6)));
 
         JScrollPane sp = new JScrollPane(ta);
-        sp.setPreferredSize(new Dimension(400, 80)); // Gunakan preferredSize, bukan maximumSize
+        sp.setPreferredSize(new Dimension(400, 80));
         sp.getViewport().setOpaque(false);
 
         JButton okBtn = makeSmallIconButton("Simpan");
         okBtn.setForeground(new Color(0x2ECC71));
 
-        // --- SOLUSI: BUNGKUS DENGAN FLOWLAYOUT KIRI ---
         JPanel editContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         editContainer.setOpaque(false);
 
-        // Sub-panel untuk menyusun Text Area & Tombol secara vertikal
         JPanel innerPanel = new JPanel();
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         innerPanel.setOpaque(false);
@@ -443,7 +458,7 @@ public class ProfilePanel extends JPanel {
 
         editContainer.add(innerPanel);
 
-        wrapper.add(editContainer); // Masukkan ke wrapper utama
+        wrapper.add(editContainer);
         wrapper.revalidate();
         wrapper.repaint();
         ta.requestFocusInWindow();
@@ -462,7 +477,7 @@ public class ProfilePanel extends JPanel {
                 }
             }
 
-            wrapper.remove(editContainer); // Hapus kontainer edit yang baru
+            wrapper.remove(editContainer);
             row.setVisible(true);
             wrapper.revalidate();
             wrapper.repaint();
@@ -704,12 +719,19 @@ public class ProfilePanel extends JPanel {
             JFrame frame = new JFrame("Profile Panel");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
-            int loggedInUserId = 1; // Contoh: User ID yang sedang login
-            ProfilePanel panel = new ProfilePanel(loggedInUserId);
+            control.SessionControl sessionControl = new control.SessionControl();
+            model.Session activeSession = sessionControl.getCurrentSession();
+            ProfilePanel panel = new ProfilePanel(activeSession);
 
-//            ProfilePanel panel = new ProfilePanel();
-            panel.setLogoutListener(()
-                    -> JOptionPane.showMessageDialog(null, "Anda telah logout."));
+            panel.setLogoutListener(() -> {
+                try {
+                    sessionControl.logout();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                frame.dispose();
+            });
+
             panel.setCloseListener(() -> frame.dispose());
 
             frame.add(panel);
@@ -717,5 +739,16 @@ public class ProfilePanel extends JPanel {
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
+//            int loggedInUserId = 1; 
+//            ProfilePanel panel = new ProfilePanel(loggedInUserId);
+//            panel.setLogoutListener(()
+//                    -> JOptionPane.showMessageDialog(null, "Anda telah logout."));
+//            panel.setCloseListener(() -> frame.dispose());
+//
+//            frame.add(panel);
+//            frame.pack();
+//            frame.setLocationRelativeTo(null);
+//            frame.setVisible(true);
+
     }
 }

@@ -120,6 +120,15 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
                 renderMemberAvatars(null);
             }
 
+            try {
+                String hexColor = currentProject.getColor();
+                if (hexColor != null && !hexColor.isBlank()) {
+                    ProjectNameLabel.setForeground(Color.decode(hexColor));
+                }
+            } catch (Exception e) {
+                ProjectNameLabel.setForeground(Color.BLACK);
+            }
+            
         } catch (DatabaseException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
@@ -613,7 +622,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ProjectInfoPanel().setVisible(true);
+                new ProjectInfoPanel(0).setVisible(true);
             }
         });
     }

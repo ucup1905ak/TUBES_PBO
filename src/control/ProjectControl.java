@@ -196,5 +196,11 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
     public UserRole getRole(User u) throws DatabaseException {
         return mDao.getRole(selected.getId(), u.getId());
     }
-
+    
+    public User getOwner() throws DatabaseException {
+        if (this.selected == null) {
+            return null;
+        }
+        return mDao.getOwner(selected.getId());
+    }
 }

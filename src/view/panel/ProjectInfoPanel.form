@@ -333,7 +333,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="MemberLabel" min="-2" pref="145" max="-2" attributes="0"/>
-                          <Component id="MemberProfilePictureLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="MemberAvatarPanel" min="-2" pref="400" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace pref="154" max="32767" attributes="0"/>
                   </Group>
@@ -344,7 +344,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="MemberLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="MemberProfilePictureLabel" pref="44" max="32767" attributes="0"/>
+                      <Component id="MemberAvatarPanel" min="-2" pref="56" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -359,11 +359,15 @@
                 <Property name="text" type="java.lang.String" value="Member"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="MemberProfilePictureLabel">
+            <Container class="javax.swing.JPanel" name="MemberAvatarPanel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="member_pic"/>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
               </Properties>
-            </Component>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+            </Container>
           </SubComponents>
         </Container>
       </SubComponents>

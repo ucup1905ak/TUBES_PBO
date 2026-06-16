@@ -245,8 +245,7 @@ public class KanbanTask extends javax.swing.JPanel
         // TODO add your handling code here:
         String statusChoose = moveCombo.getSelectedItem().toString();
 
-        KanbanCard mainBoard = (KanbanCard) javax.swing.SwingUtilities.getAncestorOfClass(
-         KanbanCard.class,
+        KanbanPanel mainBoard = (KanbanPanel) javax.swing.SwingUtilities.getAncestorOfClass(KanbanPanel.class,
          this);
 
         if (mainBoard != null)

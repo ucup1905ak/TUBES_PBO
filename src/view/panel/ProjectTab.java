@@ -4,10 +4,8 @@
  */
 package view.panel;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.Cursor;
 import model.Project;
 
 /**
@@ -15,18 +13,62 @@ import model.Project;
  * @author farel
  */
 public class ProjectTab extends javax.swing.JPanel {
-    Project project;
+    private static final Color NORMAL_BG = new Color(245, 245, 245);
+    private static final Color HOVER_BG = new Color(225, 225, 225);
+    private static final Color SELECTED_BG = new Color(185, 185, 185);
+
+    private Project project;
+    private boolean selected;
+    private OnSelectListener onSelectListener;
+
+    public interface OnSelectListener {
+        void onSelect(Project project);
+    }
     /**
      * Creates new form ProjectTab
      */
     public ProjectTab() {
         initComponents();
+        initInteraction();
     }
 
     public ProjectTab(Project p) {
         initComponents();
+        initInteraction();
         project = p;
         jLabel1.setText(p.getName());
+    }
+
+    private void initInteraction() {
+        setOpaque(true);
+        setBackground(NORMAL_BG);
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        java.awt.event.MouseAdapter hoverAndSelect = new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                if (!selected) {
+                    setBackground(HOVER_BG);
+                }
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                if (!selected) {
+                    setBackground(NORMAL_BG);
+                }
+            }
+
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (onSelectListener != null && project != null) {
+                    onSelectListener.onSelect(project);
+                }
+            }
+        };
+
+        addMouseListener(hoverAndSelect);
+        jLabel1.addMouseListener(hoverAndSelect);
     }
 
     /**
@@ -82,6 +124,16 @@ public class ProjectTab extends javax.swing.JPanel {
         this.project = p;
         jLabel1.setText(p.getName());
         revalidate();
+        repaint();
+    }
+
+    public void setOnSelectListener(OnSelectListener listener) {
+        this.onSelectListener = listener;
+    }
+
+    public void setSelectedState(boolean selected) {
+        this.selected = selected;
+        setBackground(selected ? SELECTED_BG : NORMAL_BG);
         repaint();
     }
 

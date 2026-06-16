@@ -8,6 +8,7 @@ import dao.ProjectDAO;
 import dao.ProjectMemberDAO;
 import exception.database.DatabaseException;
 import interfaces.IGenericControl;
+import java.util.ArrayList;
 import java.util.List;
 import model.Project;
 import model.User;
@@ -19,7 +20,7 @@ import model.enums.UserRole;
  */
 public class ProjectControl implements IGenericControl<Project, Integer> {
 
-    private Project selected;
+    private static Project selected;
     private final User user;
     private final  ProjectDAO dao = new ProjectDAO();
     private final  ProjectMemberDAO mDao = new ProjectMemberDAO();
@@ -28,20 +29,69 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
         this.user = user;
     }
 
-    
+    /**
+     * Returns currently selected project for this running session.
+     */
     public Project getSelected() {
         return selected;
     }
 
+    /**
+     * Sets current selected project for this running session.
+     */
     public void setSelected(Project selected) {
-        this.selected = selected;
+        ProjectControl.selected = selected;
     }
 
     public User getUser() {
         return user;
     }
 
-    
+    /**
+     * Ensures there is always a valid selected project.
+     * If current selection is null or no longer accessible, it picks the first
+     * accessible project from the current user's project list.
+     */
+    private void ensureSelectedProject() throws DatabaseException {
+        List<Project> list = fetchUserProjects(user);
+        if (list == null || list.isEmpty()) {
+            selected = null;
+            return;
+        }
+
+        if (selected == null) {
+            selected = findFirstProject(list);
+            return;
+        }
+
+        for (Project p : list) {
+            if (p.getId() == selected.getId()) {
+                return;
+            }
+        }
+
+        selected = findFirstProject(list);
+    }
+
+    /**
+     * Returns a non-stale selected project when available.
+     */
+    public Project resolveSelectedProject() throws DatabaseException {
+        ensureSelectedProject();
+        return selected;
+    }
+
+    /**
+     * Selects the first non-null project from list.
+     */
+    private Project findFirstProject(List<Project> list) {
+        for (Project p : list) {
+            if (p != null) {
+                return p;
+            }
+        }
+        return null;
+    }
 
     @Override
     public int  add(Project project) throws DatabaseException {
@@ -77,11 +127,18 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
 
     @Override
     public int delete(Integer id) throws DatabaseException {
-        
-        return dao.delete(id);
+        int result = dao.delete(id);
+        if (selected != null && selected.getId() == id) {
+            selected = null;
+            ensureSelectedProject();
+        }
+        return result;
     }
 
     public List<Project> fetchUserProjects(User u) throws DatabaseException {
+        if (u == null) {
+            return new ArrayList<>();
+        }
         List<Project> list = mDao.getProjectByUser(u.getId());
         for (Project p : list) {    
             p.setMembers(mDao.getUserByProject(p.getId()));
@@ -92,7 +149,19 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
     public boolean setProject(Integer projectId) throws DatabaseException {
         List<Project> list = fetchUserProjects(user);
         Project p = dao.get(projectId);
-        if(list == null || list.contains(p)== false) {
+        if (list == null || p == null) {
+            return false;
+        }
+
+        boolean allowed = false;
+        for (Project item : list) {
+            if (item != null && item.getId() == p.getId()) {
+                allowed = true;
+                break;
+            }
+        }
+
+        if (!allowed) {
             return false;
         }
         selected = p;
@@ -100,32 +169,32 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
     }
 
     public Project getProject() throws DatabaseException {
-        return this.selected;
+        return resolveSelectedProject();
     }
 
     public boolean editSelectedProject() throws DatabaseException {
-        return dao.update(this.selected) == 1;
+        return dao.update(selected) == 1;
         
     }
 
     public boolean deleteSelectedProject() throws DatabaseException {
-        return dao.delete(this.selected.getId()) == 1;
+        return dao.delete(selected.getId()) == 1;
     }
 
     public boolean addMember(User user) throws DatabaseException {
-        return mDao.add(this.selected.getId(), user.getId(), UserRole.TEAM_MEMBER)==1;
+        return mDao.add(selected.getId(), user.getId(), UserRole.TEAM_MEMBER)==1;
     }
 
     public boolean removeMember(User user) throws DatabaseException {
-        return mDao.remove(this.selected.getId(), user.getId())==1;
+        return mDao.remove(selected.getId(), user.getId())==1;
     }
 
     public List<User> getMembers() throws DatabaseException {
-        return mDao.getUserByProject(this.selected.getId());
+        return mDao.getUserByProject(selected.getId());
     }
 
     public UserRole getRole(User u) throws DatabaseException {
-        return mDao.getRole(this.selected.getId(), u.getId());
+        return mDao.getRole(selected.getId(), u.getId());
     }
 
 }

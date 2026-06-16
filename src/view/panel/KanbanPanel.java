@@ -4,19 +4,123 @@
  */
 package view.panel;
 
+import control.ProjectControl;
+import control.SessionControl;
+import control.TaskControl;
+import exception.database.DatabaseException;
+import java.util.List;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import model.Project;
+import model.Task;
+import model.enums.TaskStatus;
+import utility.event.ProjectEventBus;
+import utility.security.Log;
+import view.panel.component.TaskCard;
+
 /**
  *
  * @author Joy
  */
-public class KanbanCard extends javax.swing.JPanel {
+public class KanbanPanel extends javax.swing.JPanel implements interfaces.IProjectObserver {
+//    private String title;
 
+    private TaskStatus status = TaskStatus.DONE;
+    private final SessionControl sessionControl = new SessionControl();
+    private final ProjectControl projectControl = new ProjectControl(sessionControl.getCurrentUser());
+//    public 
     /**
      * Creates new form KanbanCard
      */
-    public KanbanCard()
-    {
+
+    private final TaskControl taskControl = new TaskControl();
+
+    public KanbanPanel() {
         initComponents();
+        refreshLater();
     }
+
+    public KanbanPanel(TaskStatus t) {
+        status = t;
+        initComponents();
+        refreshLater();
+
+    }
+
+    private void refreshLater() {
+        SwingUtilities.invokeLater(this::showTasks);
+    }
+
+    /**
+     * Reloads this Kanban column safely.
+     * Handles empty selection, deleted project, and empty task list.
+     */
+    public final void showTasks() {
+        panelItem.removeAll();
+
+        try {
+            Project selected = projectControl.resolveSelectedProject();
+            if (selected == null) {
+                panelItem.add(new JLabel("No project selected."));
+                revalidate();
+                repaint();
+                return;
+            }
+
+            List<Task> list = taskControl.findByProject(selected.getId());
+            if (list == null || list.isEmpty()) {
+                panelItem.add(new JLabel("No tasks."));
+                revalidate();
+                repaint();
+                return;
+            }
+
+            for (Task t : list) {
+                if (t != null && t.getStatus() == status) {
+                    panelItem.add(new TaskCard(t));
+                }
+            }
+        } catch (DatabaseException | RuntimeException e) {
+            Log.err(e.getMessage());
+            panelItem.removeAll();
+            panelItem.add(new JLabel("Failed to load tasks."));
+        }
+        revalidate();
+        repaint();
+    }
+
+
+
+    @Override
+    public void onProjectAdded(Project project) {
+        if (project != null) {
+            projectControl.setSelected(project);
+        }
+        SwingUtilities.invokeLater(this::showTasks);
+    }
+
+    @Override
+    public void onProjectUpdated(Project project) {
+        SwingUtilities.invokeLater(this::showTasks);
+    }
+
+    @Override
+    public void onProjectDeleted(int projectId) {
+        SwingUtilities.invokeLater(this::showTasks);
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        ProjectEventBus.getInstance().subscribe(this);
+    }
+
+    @Override
+    public void removeNotify() {
+        ProjectEventBus.getInstance().unsubscribe(this);
+        super.removeNotify();
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -25,286 +129,53 @@ public class KanbanCard extends javax.swing.JPanel {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
-        PendingPanel = new Component.RoundedPanel();
-        PendingTitle = new Component.RoundedPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         panelItem = new javax.swing.JPanel();
-        pendingAdd = new javax.swing.JButton();
-        onProgress = new Component.RoundedPanel();
-        OnProgressTitle = new Component.RoundedPanel();
-        jLabel4 = new javax.swing.JLabel();
-        onProgresItem = new javax.swing.JPanel();
-        onProgressAdd = new javax.swing.JButton();
-        Done = new Component.RoundedPanel();
-        doneTitle = new Component.RoundedPanel();
-        jLabel5 = new javax.swing.JLabel();
-        doneItem = new javax.swing.JPanel();
-        doneAdd = new javax.swing.JButton();
 
-        PendingPanel.setBackground(new java.awt.Color(255, 255, 255));
+        setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        setPreferredSize(new java.awt.Dimension(272, 850));
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
-        jLabel1.setText("Pending");
+        jLabel2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText(status.name());
+        jLabel2.setToolTipText("");
+        jLabel2.setAlignmentX(0.5F);
+        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jLabel2.setMaximumSize(new java.awt.Dimension(200, 30));
+        jLabel2.setMinimumSize(new java.awt.Dimension(200, 30));
+        jLabel2.setPreferredSize(new java.awt.Dimension(200, 30));
+        add(jLabel2);
 
-        javax.swing.GroupLayout PendingTitleLayout = new javax.swing.GroupLayout(PendingTitle);
-        PendingTitle.setLayout(PendingTitleLayout);
-        PendingTitleLayout.setHorizontalGroup(
-            PendingTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(PendingTitleLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
-        );
-        PendingTitleLayout.setVerticalGroup(
-            PendingTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PendingTitleLayout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(14, 14, 14))
-        );
-
-        panelItem.setBackground(new java.awt.Color(255, 255, 255));
+        panelItem.setBackground(new java.awt.Color(153, 255, 102));
+        panelItem.setAlignmentX(0.5F);
+        panelItem.setMaximumSize(new java.awt.Dimension(250, 800));
+        panelItem.setMinimumSize(new java.awt.Dimension(250, 800));
+        panelItem.setOpaque(false);
+        panelItem.setPreferredSize(new java.awt.Dimension(250, 800));
         panelItem.setLayout(new javax.swing.BoxLayout(panelItem, javax.swing.BoxLayout.Y_AXIS));
-
-        pendingAdd.setText("Add");
-        pendingAdd.addActionListener(this::pendingAddActionPerformed);
-
-        javax.swing.GroupLayout PendingPanelLayout = new javax.swing.GroupLayout(PendingPanel);
-        PendingPanel.setLayout(PendingPanelLayout);
-        PendingPanelLayout.setHorizontalGroup(
-            PendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(PendingPanelLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addGroup(PendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(PendingPanelLayout.createSequentialGroup()
-                        .addComponent(PendingTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
-                        .addComponent(pendingAdd)))
-                .addContainerGap())
-        );
-        PendingPanelLayout.setVerticalGroup(
-            PendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(PendingPanelLayout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(PendingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PendingTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(PendingPanelLayout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(pendingAdd)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
-        );
-
-        onProgress.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel4.setText("On Progress");
-
-        javax.swing.GroupLayout OnProgressTitleLayout = new javax.swing.GroupLayout(OnProgressTitle);
-        OnProgressTitle.setLayout(OnProgressTitleLayout);
-        OnProgressTitleLayout.setHorizontalGroup(
-            OnProgressTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(OnProgressTitleLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
-        );
-        OnProgressTitleLayout.setVerticalGroup(
-            OnProgressTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OnProgressTitleLayout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addGap(14, 14, 14))
-        );
-
-        onProgresItem.setBackground(new java.awt.Color(255, 255, 255));
-        onProgresItem.setLayout(new javax.swing.BoxLayout(onProgresItem, javax.swing.BoxLayout.Y_AXIS));
-
-        onProgressAdd.setText("Add");
-        onProgressAdd.addActionListener(this::onProgressAddActionPerformed);
-
-        javax.swing.GroupLayout onProgressLayout = new javax.swing.GroupLayout(onProgress);
-        onProgress.setLayout(onProgressLayout);
-        onProgressLayout.setHorizontalGroup(
-            onProgressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(onProgressLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addGroup(onProgressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(onProgresItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(onProgressLayout.createSequentialGroup()
-                        .addComponent(OnProgressTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
-                        .addComponent(onProgressAdd)))
-                .addContainerGap())
-        );
-        onProgressLayout.setVerticalGroup(
-            onProgressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(onProgressLayout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(onProgressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(OnProgressTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(onProgressLayout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(onProgressAdd)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(onProgresItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
-        );
-
-        Done.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel5.setText("Done");
-
-        javax.swing.GroupLayout doneTitleLayout = new javax.swing.GroupLayout(doneTitle);
-        doneTitle.setLayout(doneTitleLayout);
-        doneTitleLayout.setHorizontalGroup(
-            doneTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(doneTitleLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
-        );
-        doneTitleLayout.setVerticalGroup(
-            doneTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, doneTitleLayout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addComponent(jLabel5)
-                .addGap(14, 14, 14))
-        );
-
-        doneItem.setBackground(new java.awt.Color(255, 255, 255));
-        doneItem.setLayout(new javax.swing.BoxLayout(doneItem, javax.swing.BoxLayout.Y_AXIS));
-
-        doneAdd.setText("Add");
-        doneAdd.addActionListener(this::doneAddActionPerformed);
-
-        javax.swing.GroupLayout DoneLayout = new javax.swing.GroupLayout(Done);
-        Done.setLayout(DoneLayout);
-        DoneLayout.setHorizontalGroup(
-            DoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(DoneLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addGroup(DoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(doneItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(DoneLayout.createSequentialGroup()
-                        .addComponent(doneTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
-                        .addComponent(doneAdd)))
-                .addContainerGap())
-        );
-        DoneLayout.setVerticalGroup(
-            DoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(DoneLayout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(DoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(doneTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(DoneLayout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(doneAdd)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(doneItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(54, 54, 54)
-                .addComponent(PendingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49)
-                .addComponent(onProgress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
-                .addComponent(Done, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(63, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(128, 128, 128)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Done, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(onProgress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(PendingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(864, Short.MAX_VALUE))
-        );
+        add(panelItem);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void pendingAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_pendingAddActionPerformed
-    {//GEN-HEADEREND:event_pendingAddActionPerformed
-        java.awt.Window parentWindow = javax.swing.SwingUtilities.getWindowAncestor(
-         this);
-        DialogInputCard dialog = new DialogInputCard(
-         (java.awt.Frame) parentWindow,
-         true);
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-
-        KanbanTask newTask = new KanbanTask();
-
-        if (dialog.isSave())
-        {
-            String newTitle = dialog.getProjectName();
-            String newDesc = dialog.getProjectDesc();
-            String newPrioritas = dialog.getPriority();
-
-            newTask.setTaskData(newTitle,
-             newDesc,
-             newPrioritas);
-            panelItem.add(newTask);
-
-            panelItem.revalidate();
-            panelItem.repaint();
-        }
-
-    }//GEN-LAST:event_pendingAddActionPerformed
-
-    
-    public javax.swing.JPanel getWadahInProgress()
-    {
-        return onProgresItem;
-    }
-    
-    public javax.swing.JPanel getWadahPending()
-    {
-        return panelItem;
-    }
-    
-    public javax.swing.JPanel getWadahDone()
-    {
-        return doneItem;
-    }
-    
-    private void onProgressAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onProgressAddActionPerformed
-    {//GEN-HEADEREND:event_onProgressAddActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_onProgressAddActionPerformed
-
-    private void doneAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_doneAddActionPerformed
-    {//GEN-HEADEREND:event_doneAddActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_doneAddActionPerformed
-
+//    public javax.swing.JPanel getWadahInProgress()
+//    {
+//        return onProgresItem;
+//    }
+//    
+//    public javax.swing.JPanel getWadahPending()
+//    {
+//        return panelItem;
+//    }
+//    
+//    public javax.swing.JPanel getWadahDone()
+//    {
+//        return doneItem;
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private Component.RoundedPanel Done;
-    private Component.RoundedPanel OnProgressTitle;
-    private Component.RoundedPanel PendingPanel;
-    private Component.RoundedPanel PendingTitle;
-    private javax.swing.JButton doneAdd;
-    private javax.swing.JPanel doneItem;
-    private Component.RoundedPanel doneTitle;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JPanel onProgresItem;
-    private Component.RoundedPanel onProgress;
-    private javax.swing.JButton onProgressAdd;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel panelItem;
-    private javax.swing.JButton pendingAdd;
     // End of variables declaration//GEN-END:variables
 }

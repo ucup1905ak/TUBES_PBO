@@ -16,7 +16,7 @@ import model.Project;
  * @author aldio
  */
 public class HomePagePanel extends javax.swing.JPanel {
-
+    
     private ProjectControl control = new ProjectControl(new SessionControl().getCurrentUser());
     private List<Project> projects = null;
     /**
@@ -27,20 +27,23 @@ public class HomePagePanel extends javax.swing.JPanel {
     public HomePagePanel() {
         try {
             projects = control.fetchUserProjects();
-            if(projects  != null){
-                for(Project p : projects){
-                    System.out.println(p.getName());
-                }
-            }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(ContentPanel, e.getMessage());
         }
         initComponents();
         setupFocusClearance();
-
+        addProjects();
         initKanbanBoard();
     }
-
+    private void addProjects(){
+        if(projects == null){
+            projectPanel.add(new JLabel("no project for this user."));
+            return;
+        }
+        for(Project p : projects){
+            projectPanel.add(new ProjectTab(p));
+        }
+    }
     private void initKanbanBoard() {
         // 1. Instansiasi objek KanbanCard (papan utama kanban)
         // Jika letak package-nya berbeda, pastikan import 'Panel.KanbanCard;' sudah ada di bagian atas file
@@ -102,7 +105,7 @@ public class HomePagePanel extends javax.swing.JPanel {
         SideBarPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        projectPanel = new javax.swing.JPanel();
         ContentPanel = new javax.swing.JTabbedPane();
         Kalender = new javax.swing.JPanel();
         Kanban = new javax.swing.JPanel();
@@ -166,16 +169,8 @@ public class HomePagePanel extends javax.swing.JPanel {
         jLabel1.setForeground(new java.awt.Color(162, 0, 33));
         jLabel1.setText("Proyek");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 621, Short.MAX_VALUE)
-        );
+        projectPanel.setMaximumSize(new java.awt.Dimension(500, 10000));
+        projectPanel.setLayout(new javax.swing.BoxLayout(projectPanel, javax.swing.BoxLayout.LINE_AXIS));
 
         javax.swing.GroupLayout SideBarPanelLayout = new javax.swing.GroupLayout(SideBarPanel);
         SideBarPanel.setLayout(SideBarPanelLayout);
@@ -184,7 +179,7 @@ public class HomePagePanel extends javax.swing.JPanel {
             .addGroup(SideBarPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(SideBarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(projectPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(SideBarPanelLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
@@ -199,12 +194,12 @@ public class HomePagePanel extends javax.swing.JPanel {
                     .addComponent(jLabel2)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addComponent(projectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 607, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         for(int i= 0; i < 3 ; i++){
-            jPanel1.add(new JLabel());
+            projectPanel.add(new JLabel());
         }
 
         javax.swing.GroupLayout KalenderLayout = new javax.swing.GroupLayout(Kalender);
@@ -293,6 +288,6 @@ public class HomePagePanel extends javax.swing.JPanel {
     private javax.swing.JPanel TopBarPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel projectPanel;
     // End of variables declaration//GEN-END:variables
 }

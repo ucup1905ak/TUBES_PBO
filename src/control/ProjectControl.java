@@ -80,12 +80,12 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
         return dao.delete(id);
     }
 
-    public List<Project> fetchUserProjects() throws DatabaseException {
-        return mDao.getProjectByUser(user.getId());
+    public List<Project> fetchUserProjects(User u) throws DatabaseException {
+        return mDao.getProjectByUser(u.getId());
     }
 
     public boolean setProject(Integer projectId) throws DatabaseException {
-        List<Project> list = fetchUserProjects();
+        List<Project> list = fetchUserProjects(user);
         Project p = dao.get(projectId);
         if(list == null || list.contains(p)== false) {
             return false;
@@ -99,20 +99,20 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
     }
 
     public boolean editSelectedProject() throws DatabaseException {
-        return dao.update(this.selected) == 1? true:false;
+        return dao.update(this.selected) == 1;
         
     }
 
     public boolean deleteSelectedProject() throws DatabaseException {
-        return dao.delete(this.selected.getId()) == 1? true:false;
+        return dao.delete(this.selected.getId()) == 1;
     }
 
     public boolean addMember(User user) throws DatabaseException {
-        return mDao.add(this.selected.getId(), user.getId(), UserRole.TEAM_MEMBER)==1? true:false;
+        return mDao.add(this.selected.getId(), user.getId(), UserRole.TEAM_MEMBER)==1;
     }
 
     public boolean removeMember(User user) throws DatabaseException {
-        return mDao.remove(this.selected.getId(), user.getId())==1? true:false;
+        return mDao.remove(this.selected.getId(), user.getId())==1;
     }
 
     public List<User> getMembers() throws DatabaseException {

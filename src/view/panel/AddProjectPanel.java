@@ -15,29 +15,26 @@ import model.User;
  * @author Silvanus
  */
 public class AddProjectPanel extends javax.swing.JFrame {
-    private SessionControl sessionControl;
+    private SessionControl sessionControl = new SessionControl();
     private ProjectControl projectControl;
-    private User currentUser;
+//    private User currentUser;
     
     /**
      * Creates new form AddProjectPanel
      */
     public AddProjectPanel() {
         initComponents();
-
-        currentUser = sessionControl.getCurrentUser();
-        projectControl = new ProjectControl();
-        projectControl.setUser(currentUser);
+        projectControl = new ProjectControl(sessionControl.getCurrentUser());
     }
     
     // dapat user dari session pada view yg memanggil panel ini
     public AddProjectPanel(User currentUser) {
         initComponents();
-
-        this.currentUser = currentUser;
-
-        this.projectControl = new ProjectControl();
-        this.projectControl.setUser(currentUser);
+//
+//        this.currentUser = currentUser;
+//
+//        this.projectControl = new ProjectControl();
+//        this.projectControl.setUser(currentUser);
     }
 
     /**

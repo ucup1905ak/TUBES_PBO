@@ -17,6 +17,17 @@ import model.User;
 import service.AuthService;
 
 public class SessionControl {
+    private static SessionControl instance = null;
+    /*
+    * Farel coba coba pake singleton tapi sebenernya untuk implementasi ini gak 
+    * ngaruh sih
+    */
+    public static SessionControl getInstance(){
+        if(instance == null){
+            instance = new SessionControl();
+        }
+        return instance;
+    }
 
     private static Session currentSession = null;
     private static final AuthService authService = new AuthService();

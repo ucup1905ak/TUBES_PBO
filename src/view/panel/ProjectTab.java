@@ -4,6 +4,10 @@
  */
 package view.panel;
 
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import model.Project;
 
 /**
@@ -11,17 +15,20 @@ import model.Project;
  * @author farel
  */
 public class ProjectTab extends javax.swing.JPanel {
-
+    Project project;
     /**
      * Creates new form ProjectTab
      */
     public ProjectTab() {
         initComponents();
     }
+
     public ProjectTab(Project p) {
         initComponents();
+        project = p;
         jLabel1.setText(p.getName());
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -44,8 +51,20 @@ public class ProjectTab extends javax.swing.JPanel {
         add(jLabel1);
 
         jButton1.setText("Edit");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         add(jButton1);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+         new ProjectInfoPanel(project).setVisible(true);
+
+//
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

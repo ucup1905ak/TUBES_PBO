@@ -35,7 +35,7 @@ public class HomePagePanel extends javax.swing.JPanel {
         System.out.println("MASUK");
         initComponents();
         try {
-            projects = projectControl.fetchUserProjects();
+            projects = projectControl.fetchUserProjects(sessionControl.getCurrentUser());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(ContentPanel, e.getMessage());
         }
@@ -67,7 +67,7 @@ public class HomePagePanel extends javax.swing.JPanel {
     }
 
     private void addProjects() {
-        if (projects == null) {
+        if (projects == null || projects.isEmpty()) {
             projectPanel.add(new JLabel("no project for this user."));
             return;
         }
@@ -192,13 +192,18 @@ public class HomePagePanel extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(162, 0, 33));
         jLabel2.setText("+");
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(162, 0, 33));
         jLabel1.setText("Proyek");
 
         projectPanel.setMaximumSize(new java.awt.Dimension(500, 10000));
-        projectPanel.setLayout(new javax.swing.BoxLayout(projectPanel, javax.swing.BoxLayout.LINE_AXIS));
+        projectPanel.setLayout(new javax.swing.BoxLayout(projectPanel, javax.swing.BoxLayout.Y_AXIS));
 
         javax.swing.GroupLayout SideBarPanelLayout = new javax.swing.GroupLayout(SideBarPanel);
         SideBarPanel.setLayout(SideBarPanelLayout);
@@ -320,6 +325,13 @@ public class HomePagePanel extends javax.swing.JPanel {
     private void AddTaskEventButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddTaskEventButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_AddTaskEventButtonActionPerformed
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+
+        new AddProjectPanel().setVisible(true);
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel2MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

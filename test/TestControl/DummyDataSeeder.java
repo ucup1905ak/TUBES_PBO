@@ -19,8 +19,7 @@ public class DummyDataSeeder {
             s.login("ucup@x.com", "123");
             ProjectControl p = new ProjectControl(s.getCurrentUser());
             
-            p.add(new Project("Keren Good", "Hidup JOKOWI"));
-            p.add(new Project("Keren Good", "Hidup JOKOWI"));
+            p.fetchUserProjects();
 
         } catch (Exception e) {
             System.err.println("Seeding failed: " + e.getMessage());

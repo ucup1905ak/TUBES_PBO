@@ -16,30 +16,37 @@ import javax.swing.JPopupMenu;
  */
 public class ProjectInfoPanel extends javax.swing.JFrame {
 
-     private Project project;
-    
+    private Project project;
+
     /**
      * Creates new form ProjectInfoPanel
      */
     public ProjectInfoPanel() {
         initComponents();
-        
         this.project = project;
         loadProjectData();
     }
-    
+
+    public ProjectInfoPanel(Project p) {
+        initComponents();
+        this.project = p;
+        loadProjectData();
+    }
+
     private void loadProjectData() {
-        if (project == null) return;
+        if (project == null) {
+            return;
+        }
 
         //untuk show nama & deskripsi Project
         ProjectNameLabel.setText(project.getName());
         DescriptionTextAre.setText(project.getDescription());
-        
+
         //untuk show Created At
         SimpleDateFormat formatter = new SimpleDateFormat("EEEE, dd MMMM yyyy");
         CreatedAtDateLabel.setText(formatter.format(project.getCreatedAt()));
     }
-    
+
     private void showProjectMenu() {
 
         JPopupMenu menu = new JPopupMenu();
@@ -59,7 +66,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
 
         menu.show(MoreIconLabel, 0, MoreIconLabel.getHeight());
     }
-    
+
     private void editProject() {
         JOptionPane.showMessageDialog(this, "Edit Project");
     }
@@ -332,12 +339,12 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_MoreIconLabelMouseClicked
 
     private void CancelIconLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CancelIconLabelMouseClicked
-        
+
         /*
             ini kan masih window, jadi pake dispose()
             kalo udh imnpelentasi jadi panel pop up di dashboard, keknya pake setVisible(false)
             - widi (16/6)
-        */
+         */
         dispose();
     }//GEN-LAST:event_CancelIconLabelMouseClicked
 

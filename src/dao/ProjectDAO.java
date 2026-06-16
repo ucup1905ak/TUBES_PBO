@@ -30,6 +30,9 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
      * Semua method di sini konsepnya sama kayak UserDAO Dengan meninggikan nama
      * Yesus, semoga bekerja - Widi
      *
+     * Farel : Return ID Project yang baru dibuat, lalu langsung set selected ke project tersebut
+     * 
+     * God Bless You All, Semoga Lancar - Farel
      */
     @Override
     public int add(Project entity) throws DatabaseException {

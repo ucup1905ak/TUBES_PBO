@@ -107,6 +107,19 @@ public class TagBite extends javax.swing.JPanel {
         }
     }
 
+    public void setText(String text) {
+        if (TagTitle != null) {
+            TagTitle.setText(text != null && !text.isBlank() ? text : "Tag");
+        }
+        revalidate();
+        repaint();
+    }
+
+    public void setColor(Color color) {
+        this.dotColor = color != null ? color : new Color(99, 102, 241);
+        repaint();
+    }
+
     @Override
     public Dimension getPreferredSize() {
         FontMetrics fm = getFontMetrics(new Font("Segoe UI", Font.PLAIN, 12));

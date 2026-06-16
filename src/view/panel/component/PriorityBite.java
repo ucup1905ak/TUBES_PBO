@@ -23,16 +23,17 @@ public class PriorityBite extends javax.swing.JPanel {
      */
     public PriorityBite() {
         initComponents();
-        priority = TaskPriority.MEDIUM; // Default priority
+        setPriority(TaskPriority.LOW);
     }
 
     public PriorityBite(TaskPriority priority) {
         initComponents();
-        this.priority = priority;
+        setPriority(priority);
     }
 
     public void setPriority(TaskPriority priority) {
         this.priority = priority;
+        setText();
         repaint(); // Repaint to update the color based on new priority
     }
 
@@ -56,19 +57,10 @@ public class PriorityBite extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void setText() {
-        if (null == this.priority) {
-            title.setText("LOW");
-        } else // For demonstration, return a fixed color. You can modify this to return different colors based on priority level.
-        {
-            switch (this.priority) {
-                case HIGH:
-                    title.setText("HIGH");
-                // return new Color(255, 102, 102); // Light red for high priority
-                case MEDIUM:
-                    title.setText("MEIDUM");
-                default:
-                    title.setText("LOW");
-            }
+        switch (this.priority) {
+            case HIGH -> title.setText("HIGH");
+            case MEDIUM -> title.setText("MEIDUM");
+            default -> title.setText("LOW");
         }
     }
 

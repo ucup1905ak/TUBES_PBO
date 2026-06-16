@@ -4,8 +4,10 @@
  */
 package VIEW;
 
-import java.awt.Color;
-import view.panel.component.TagBite;
+import control.TaskControl;
+import exception.database.DatabaseException;
+import model.Task;
+import model.enums.TaskPriority;
 
 /**
  *
@@ -18,7 +20,20 @@ public class MAIN extends javax.swing.JFrame {
      */
     public MAIN() {
         initComponents();
-//        getContentPane().add(new TagBite("Design", new Color(99, 102, 241)));
+        Task t = null;
+        TaskControl control = new TaskControl();
+        try {
+            t = control.get(5);
+        } catch (DatabaseException ex) {
+            t = null;
+        }
+        if (t == null) {
+            t = new Task();
+            t.setTitle("Sample Task");
+            t.setPriority(TaskPriority.HIGH);
+            t.setDescription("Fallback description: no task with id=1 found.");
+        }
+     
     }
 
     /**
@@ -30,25 +45,17 @@ public class MAIN extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        taskCard1 = new view.panel.component.TaskCard();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(134, 134, 134)
-                .addComponent(taskCard1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(514, Short.MAX_VALUE))
+            .addGap(0, 724, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(94, 94, 94)
-                .addComponent(taskCard1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(118, Short.MAX_VALUE))
+            .addGap(0, 218, Short.MAX_VALUE)
         );
 
         pack();
@@ -90,7 +97,7 @@ public class MAIN extends javax.swing.JFrame {
     }
 
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private view.panel.component.TaskCard taskCard1;
     // End of variables declaration//GEN-END:variables
 }

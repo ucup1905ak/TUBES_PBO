@@ -149,6 +149,25 @@ public class ProjectMemberDAO {
             throw new ResultSetParsingException("Failed to parse User from ResultSet", e);
         }
     }
+    
+    public User getOwner(Integer projectId) throws DatabaseException {
+        Query sql = new Query()
+            .select("u.*")
+            .from("project_members pm")
+            .join("users u", "u.id = pm.user_id")
+            .where(
+                "pm.project_id = ? AND pm.role = ?",
+                projectId,
+                UserRole.PROJECT_OWNER
+            );
+
+        try {
+            List<User> list = db.executeQuery(sql, rs -> mapUser(rs));
+            return list.isEmpty() ? null : list.get(0);
+        } catch (DatabaseException e) {
+            throw e;
+        }
+    }
 
     private Project mapProject(ResultSet rs) throws DatabaseException {
         try {

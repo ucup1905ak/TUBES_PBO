@@ -4,11 +4,15 @@
  */
 package view.panel;
 
+import control.ProjectControl;
+import exception.database.DatabaseException;
+import java.awt.Image;
 import model.Project;
-import java.text.SimpleDateFormat;
+import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import model.User;
 
 /**
  *
@@ -17,27 +21,55 @@ import javax.swing.JPopupMenu;
 public class ProjectInfoPanel extends javax.swing.JFrame {
 
      private Project project;
+     private ProjectControl projectControl;
     
     /**
      * Creates new form ProjectInfoPanel
      */
     public ProjectInfoPanel() {
         initComponents();
-        
+    }
+
+    public ProjectInfoPanel(ProjectControl projectControl, Project project) {
+        this();
+        this.projectControl = projectControl;
         this.project = project;
+
+        if (this.projectControl != null && this.project != null) {
+            this.projectControl.setSelected(this.project);
+        }
+
         loadProjectData();
     }
     
     private void loadProjectData() {
-        if (project == null) return;
+        Project currentProject = project;
 
-        //untuk show nama & deskripsi Project
-        ProjectNameLabel.setText(project.getName());
-        DescriptionTextAre.setText(project.getDescription());
-        
-        //untuk show Created At
-        SimpleDateFormat formatter = new SimpleDateFormat("EEEE, dd MMMM yyyy");
-        CreatedAtDateLabel.setText(formatter.format(project.getCreatedAt()));
+        if (currentProject == null && projectControl != null) {
+            try {
+                currentProject = projectControl.getProject();
+            } catch (DatabaseException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage());
+                return;
+            }
+        }
+
+        if (currentProject == null || projectControl == null) return;
+
+        try {
+            this.project = currentProject;
+
+            ProjectNameLabel.setText(currentProject.getName()); // Nama project
+            DescriptionTextAre.setText(currentProject.getDescription()); // Deskripsi project
+            CreatedAtDateLabel.setText(currentProject.getCreatedAt().toString()); // Tgl dibuat
+            
+            // Profil pic Owner
+            User owner = projectControl.getOwner();
+            setOwnerProfilePicture(owner);
+
+        } catch (DatabaseException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
     }
     
     private void showProjectMenu() {
@@ -70,6 +102,29 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
 
     private void deleteProject() {
         JOptionPane.showMessageDialog(this, "Delete Project");
+    }
+    
+    //Tampil profile Owner
+    private void setOwnerProfilePicture(User owner) {
+        if (owner == null) {
+            OwnerProfilePictureLabel.setIcon(null);
+            OwnerProfilePictureLabel.setText("profile_pic");
+            return;
+        }
+
+        String path = owner.getProfilePicture();
+        if (path == null || path.isBlank()) return;
+
+        ImageIcon icon = new ImageIcon(path);
+
+        Image image = icon.getImage().getScaledInstance(
+            50,
+            50,
+            Image.SCALE_SMOOTH
+        );
+
+        OwnerProfilePictureLabel.setIcon(new ImageIcon(image));
+        OwnerProfilePictureLabel.setText("");
     }
 
     /**
@@ -222,6 +277,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
         OwnerLabel.setText("Owner");
 
         OwnerProfilePictureLabel.setText("profile_pic");
+        OwnerProfilePictureLabel.setPreferredSize(new java.awt.Dimension(50, 50));
 
         javax.swing.GroupLayout OwnerPanelLayout = new javax.swing.GroupLayout(OwnerPanel);
         OwnerPanel.setLayout(OwnerPanelLayout);
@@ -230,8 +286,8 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
             .addGroup(OwnerPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(OwnerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(OwnerProfilePictureLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(OwnerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(OwnerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(OwnerProfilePictureLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         OwnerPanelLayout.setVerticalGroup(
@@ -240,7 +296,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(OwnerLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(OwnerProfilePictureLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                .addComponent(OwnerProfilePictureLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -250,6 +306,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
         MemberLabel.setText("Member");
 
         MemberProfilePictureLabel.setText("member_pic");
+        MemberProfilePictureLabel.setPreferredSize(new java.awt.Dimension(50, 50));
 
         javax.swing.GroupLayout MemberPanelLayout = new javax.swing.GroupLayout(MemberPanel);
         MemberPanel.setLayout(MemberPanelLayout);
@@ -259,7 +316,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(MemberPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(MemberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(MemberProfilePictureLabel))
+                    .addComponent(MemberProfilePictureLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(154, Short.MAX_VALUE))
         );
         MemberPanelLayout.setVerticalGroup(
@@ -267,8 +324,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
             .addGroup(MemberPanelLayout.createSequentialGroup()
                 .addComponent(MemberLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemberProfilePictureLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(MemberProfilePictureLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout ProjectInfoPanelLayout = new javax.swing.GroupLayout(ProjectInfoPanel);

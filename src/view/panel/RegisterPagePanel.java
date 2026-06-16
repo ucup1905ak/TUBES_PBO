@@ -1,7 +1,8 @@
-package panel;
+package view.panel;
 
-import component.*;
 import view.*;
+import view.component.*;
+
 import javax.swing.JComponent;
 import service.AuthService;
 import exception.database.DatabaseException;

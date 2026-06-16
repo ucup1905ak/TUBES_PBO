@@ -3,7 +3,8 @@ package view;
 import java.awt.Color;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
-import panel.*;
+
+import view.panel.*;
 
 public class MainView extends javax.swing.JFrame {
 

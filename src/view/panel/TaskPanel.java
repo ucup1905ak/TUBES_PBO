@@ -6,29 +6,19 @@ package view.panel;
 
 /**
  *
- * @author aldio
+ * @author Joy
  */
-
-import java.awt.BorderLayout;
-import javax.swing.JButton;
-
-
-public class DashboardPanel extends javax.swing.JPanel {
+public class TaskPanel extends javax.swing.JPanel
+{
 
     /**
      * Creates new form DashboardPanel
      */
-    
-    public DashboardPanel() {
+    public TaskPanel()
+    {
         initComponents();
     }
 
-    public javax.swing.JButton getProfileButton() {
-        return jButton1;
-    }
-
-    
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -38,62 +28,90 @@ public class DashboardPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        ProjectPanel = new Component.RoundedPanel();
+        title = new javax.swing.JLabel();
+        descScrollPane = new javax.swing.JScrollPane();
+        desc = new javax.swing.JTextArea();
 
-        setBackground(new java.awt.Color(255, 255, 255));
-        setPreferredSize(new java.awt.Dimension(1280, 720));
+        ProjectPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setPreferredSize(new java.awt.Dimension(1280, 720));
+        title.setFont(new java.awt.Font("Arial Black", 1, 24)); // NOI18N
+        title.setForeground(new java.awt.Color(0, 0, 0));
+        title.setText("Project's Name");
+        title.setAutoscrolls(true);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1280, Short.MAX_VALUE)
+        descScrollPane.setBackground(new java.awt.Color(255, 255, 255));
+        descScrollPane.setBorder(null);
+        descScrollPane.setForeground(new java.awt.Color(0, 0, 0));
+        descScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        descScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        descScrollPane.setEnabled(false);
+        descScrollPane.setFocusable(false);
+        descScrollPane.setRequestFocusEnabled(false);
+        descScrollPane.setVerifyInputWhenFocusTarget(false);
+        descScrollPane.setWheelScrollingEnabled(false);
+
+        desc.setEditable(false);
+        desc.setBackground(new java.awt.Color(255, 255, 255));
+        desc.setColumns(20);
+        desc.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        desc.setForeground(new java.awt.Color(0, 0, 0));
+        desc.setLineWrap(true);
+        desc.setRows(5);
+        desc.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc rhoncus porttitor nisl, ut rhoncus sapien congue vitae. Suspendisse porttitor sed nibh sed vehicula. Fusce placerat velit sem, non placerat lectus finibus et. Praesent dapibus ligula in consequat finibus. Integer blandit lorem sit amet efficitur egestas. Sed sed mauris sit amet leo sodales iaculis quis a est. Etiam et erat erat.\nProin vitae elit at eros porttitor feugiat sit amet nec tortor. Nam lorem dolor, elementum vitae matt");
+        desc.setWrapStyleWord(true);
+        desc.setBorder(null);
+        desc.setCaretPosition(0);
+        desc.setOpaque(false);
+        desc.setRequestFocusEnabled(false);
+        desc.setSelectionColor(new java.awt.Color(255, 255, 255));
+        desc.setVerifyInputWhenFocusTarget(false);
+        descScrollPane.setViewportView(desc);
+
+        javax.swing.GroupLayout ProjectPanelLayout = new javax.swing.GroupLayout(ProjectPanel);
+        ProjectPanel.setLayout(ProjectPanelLayout);
+        ProjectPanelLayout.setHorizontalGroup(
+            ProjectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ProjectPanelLayout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(ProjectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(descScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(123, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 720, Short.MAX_VALUE)
+        ProjectPanelLayout.setVerticalGroup(
+            ProjectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ProjectPanelLayout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(title)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(descScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(187, Short.MAX_VALUE))
         );
-
-        jButton1.setText("Picture");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
+                .addGap(110, 110, 110)
+                .addComponent(ProjectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(2492, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(100, 100, 100)
+                .addComponent(ProjectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(131, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JPanel jPanel1;
+    private Component.RoundedPanel ProjectPanel;
+    private javax.swing.JTextArea desc;
+    private javax.swing.JScrollPane descScrollPane;
+    private javax.swing.JLabel title;
     // End of variables declaration//GEN-END:variables
 }

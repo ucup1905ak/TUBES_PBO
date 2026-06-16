@@ -5,7 +5,7 @@ import exception.database.DatabaseException;
 import interfaces.IGenericControl;
 import java.util.List;
 import model.User;
-import utility.Log;
+import utility.security.Log;
 
 /**
  *

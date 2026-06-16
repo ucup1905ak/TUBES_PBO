@@ -7,7 +7,7 @@ import exception.database.DatabaseException;
 import java.util.List;
 import model.Session;
 import model.User;
-import utility.PasswordHasher;
+import utility.security.PasswordHasher;
 import exception.validation.ValidationException;
 import exception.validation.EmptyFieldException;
 import exception.validation.InvalidInputException;

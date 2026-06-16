@@ -9,6 +9,7 @@ import control.SessionControl;
 import javax.swing.JOptionPane;
 import model.Project;
 import model.User;
+import utility.event.ProjectEventBus;
 
 /**
  *
@@ -24,6 +25,7 @@ public class AddProjectPanel extends javax.swing.JFrame {
      */
     public AddProjectPanel() {
         initComponents();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         projectControl = new ProjectControl(sessionControl.getCurrentUser());
     }
     
@@ -201,7 +203,7 @@ public class AddProjectPanel extends javax.swing.JFrame {
 
             if (result > 0) {
                 JOptionPane.showMessageDialog(this, "Project berhasil ditambahkan!");
-
+                ProjectEventBus.getInstance().notifyProjectAdded(projectControl.getSelected());
                 ProjectNameTextField.setText("");
                 DescTextArea.setText("");
 

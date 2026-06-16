@@ -77,11 +77,16 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
 
     @Override
     public int delete(Integer id) throws DatabaseException {
+        
         return dao.delete(id);
     }
 
     public List<Project> fetchUserProjects(User u) throws DatabaseException {
-        return mDao.getProjectByUser(u.getId());
+        List<Project> list = mDao.getProjectByUser(u.getId());
+        for (Project p : list) {    
+            p.setMembers(mDao.getUserByProject(p.getId()));
+        }
+        return list;
     }
 
     public boolean setProject(Integer projectId) throws DatabaseException {

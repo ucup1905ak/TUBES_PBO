@@ -19,7 +19,7 @@ import model.Project;
 import model.ProjectItem;
 import model.Tag;
 import model.Task;
-import utility.Log;
+import utility.security.Log;
 
 /**
  *

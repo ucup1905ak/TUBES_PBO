@@ -9,6 +9,9 @@ import java.text.SimpleDateFormat;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import control.ProjectControl;
+import control.SessionControl;
+import utility.event.ProjectEventBus;
 
 /**
  *
@@ -17,19 +20,26 @@ import javax.swing.JPopupMenu;
 public class ProjectInfoPanel extends javax.swing.JFrame {
 
     private Project project;
+    private ProjectControl projectControl;
 
     /**
      * Creates new form ProjectInfoPanel
      */
     public ProjectInfoPanel() {
         initComponents();
-        this.project = project;
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        SessionControl sc = new SessionControl();
+        projectControl = new ProjectControl(sc.getCurrentUser());
+        p = projectControl.getSelected();
         loadProjectData();
     }
 
     public ProjectInfoPanel(Project p) {
         initComponents();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         this.project = p;
+        SessionControl sc = new SessionControl();
+        projectControl = new ProjectControl(sc.getCurrentUser());
         loadProjectData();
     }
 
@@ -68,7 +78,39 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
     }
 
     private void editProject() {
-        JOptionPane.showMessageDialog(this, "Edit Project");
+        javax.swing.JTextField nameField = new javax.swing.JTextField(project.getName());
+        javax.swing.JTextArea descField = new javax.swing.JTextArea(
+                project.getDescription() != null ? project.getDescription() : "", 4, 20);
+        descField.setLineWrap(true);
+        descField.setWrapStyleWord(true);
+        javax.swing.JScrollPane descScroll = new javax.swing.JScrollPane(descField);
+
+        Object[] fields = {
+            "Project Name:", nameField,
+            "Description:", descScroll
+        };
+
+        int result = JOptionPane.showConfirmDialog(
+                this, fields, "Edit Project", JOptionPane.OK_CANCEL_OPTION);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String newName = nameField.getText().trim();
+            if (newName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Project name tidak boleh kosong!");
+                return;
+            }
+            project.setName(newName);
+            project.setDescription(descField.getText().trim());
+            project.setUpdatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+            try {
+                projectControl.update(project);
+                loadProjectData();
+                ProjectEventBus.getInstance().notifyProjectUpdated(project);
+                JOptionPane.showMessageDialog(this, "Project berhasil diperbarui!");
+            } catch (exception.database.DatabaseException e) {
+                JOptionPane.showMessageDialog(this, "Gagal memperbarui project: " + e.getMessage());
+            }
+        }
     }
 
     private void manageMembers() {
@@ -76,7 +118,23 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
     }
 
     private void deleteProject() {
-        JOptionPane.showMessageDialog(this, "Delete Project");
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Yakin ingin menghapus project \"" + project.getName() + "\"?",
+                "Hapus Project",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                projectControl.delete(project.getId());
+                ProjectEventBus.getInstance().notifyProjectDeleted(project.getId());
+                JOptionPane.showMessageDialog(this, "Project berhasil dihapus!");
+                dispose();
+            } catch (exception.database.DatabaseException e) {
+                JOptionPane.showMessageDialog(this, "Gagal menghapus project: " + e.getMessage());
+            }
+        }
     }
 
     /**

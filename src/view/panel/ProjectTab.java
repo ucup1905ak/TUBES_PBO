@@ -66,6 +66,24 @@ public class ProjectTab extends javax.swing.JPanel {
 //
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    /**
+     * Returns the ID of the project represented by this tab.
+     * Used by HomePagePanel's observer methods to locate the correct tab.
+     */
+    public int getProjectId() {
+        return project != null ? project.getId() : -1;
+    }
+
+    /**
+     * Updates this tab to reflect the given project's new data.
+     * Called by HomePagePanel.onProjectUpdated().
+     */
+    public void updateProject(Project p) {
+        this.project = p;
+        jLabel1.setText(p.getName());
+        revalidate();
+        repaint();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

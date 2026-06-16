@@ -9,8 +9,8 @@ import java.util.List;
 import model.Social;
 import model.enums.SocialPlatform;
 import service.DatabaseConnection;
-import utility.Log;
-import utility.Query;
+import utility.security.Log;
+import utility.db.Query;
 
 /**
  *

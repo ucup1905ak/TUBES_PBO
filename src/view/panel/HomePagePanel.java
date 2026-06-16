@@ -6,10 +6,12 @@ package view.panel;
 
 import control.ProjectControl;
 import control.SessionControl;
+import interfaces.IProjectObserver;
 import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import model.Project;
+import utility.event.ProjectEventBus;
 
 /**
  *
@@ -21,7 +23,7 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 import model.User;
 
-public class HomePagePanel extends javax.swing.JPanel {
+public class HomePagePanel extends javax.swing.JPanel implements IProjectObserver {
 
     private SessionControl sessionControl = new SessionControl();
     private ProjectControl projectControl = new ProjectControl(sessionControl.getCurrentUser());
@@ -43,7 +45,6 @@ public class HomePagePanel extends javax.swing.JPanel {
         addProjects();
         updateProfileIcon(sessionControl.getCurrentUser());
         initKanbanBoard();
-
     }
 
     public void updateProfileIcon(User currentUser) {
@@ -333,6 +334,64 @@ public class HomePagePanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jLabel2MouseClicked
 
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        ProjectEventBus.getInstance().subscribe(this);
+    }
+
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        ProjectEventBus.getInstance().unsubscribe(this);
+    }
+
+    // ── IProjectObserver implementation ──────────────────────────────────────
+
+    @Override
+    public void onProjectAdded(Project project) {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            projectPanel.add(new ProjectTab(project));
+            projectPanel.revalidate();
+            projectPanel.repaint();
+        });
+    }
+
+    @Override
+    public void onProjectUpdated(Project project) {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            for (java.awt.Component c : projectPanel.getComponents()) {
+                if (c instanceof ProjectTab) {
+                    ProjectTab tab = (ProjectTab) c;
+                    if (tab.getProjectId() == project.getId()) {
+                        tab.updateProject(project);
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onProjectDeleted(int projectId) {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            java.awt.Component toRemove = null;
+            for (java.awt.Component c : projectPanel.getComponents()) {
+                if (c instanceof ProjectTab) {
+                    ProjectTab tab = (ProjectTab) c;
+                    if (tab.getProjectId() == projectId) {
+                        toRemove = tab;
+                        break;
+                    }
+                }
+            }
+            if (toRemove != null) {
+                projectPanel.remove(toRemove);
+                projectPanel.revalidate();
+                projectPanel.repaint();
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddTaskEventButton;

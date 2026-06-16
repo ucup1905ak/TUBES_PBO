@@ -8,8 +8,7 @@ package view.panel;
  *
  * @author Joy
  */
-public class KanbanCard extends javax.swing.JPanel
-{
+public class KanbanCard extends javax.swing.JPanel {
 
     /**
      * Creates new form KanbanCard

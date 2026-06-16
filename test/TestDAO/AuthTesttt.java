@@ -1,7 +1,7 @@
 package TestDAO;
 
 import control.SessionControl;
-import utility.Log;
+import utility.security.Log;
 
 public class AuthTesttt {
 

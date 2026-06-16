@@ -7,8 +7,8 @@ package TestDAO;
 import control.UserControl;
 import java.util.Scanner;
 import model.User;
-import utility.BCrypt;
-import utility.Log;
+import utility.security.BCrypt;
+import utility.security.Log;
 
 /**
  *

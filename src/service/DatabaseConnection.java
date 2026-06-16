@@ -4,12 +4,13 @@
  */
 package service;
 
+import utility.db.Query;
+import utility.security.Log;
 import exception.database.*;
 import interfaces.IDatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import utility.*;
 import interfaces.IRowMapper;
 
 /**

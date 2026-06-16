@@ -1,11 +1,12 @@
 package view.panel;
 
-import service.AuthService;
+import control.SessionControl;
 import view.component.*;
 import model.Session;
 import javax.swing.JOptionPane;
 import exception.authentication.InvalidLoginCredentialException;
 import exception.database.DatabaseException;
+import exception.validation.InvalidFormatException;
 import java.util.function.Consumer;
 
 public class LoginPagePanel extends javax.swing.JPanel {
@@ -19,14 +20,15 @@ public class LoginPagePanel extends javax.swing.JPanel {
         METHOD
      */
     private java.awt.event.ActionListener onRegistListener;
-    private Consumer<Integer> onLoginSuccessListener;
-    private AuthService authService = new AuthService();
+    private Consumer<Session> onLoginSuccessListener;
+//    private AuthService authService = new AuthService();
+    private SessionControl sessionControl = new SessionControl();
 
     public void setOnRegisterListener(java.awt.event.ActionListener listener) {
         this.onRegistListener = listener;
     }
 
-    public void setOnLoginSuccessListener(Consumer<Integer> listener) {
+    public void setOnLoginSuccessListener(Consumer<Session> listener) {
         this.onLoginSuccessListener = listener;
     }
 
@@ -201,14 +203,15 @@ public class LoginPagePanel extends javax.swing.JPanel {
         }
 
         try {
-            Session session = authService.authenticate(usernameOrEmail, password);
-            if (session != null && onLoginSuccessListener != null) {
-                onLoginSuccessListener.accept(session.getUser().getId());
-            }
+//            Session session = authService.authenticate(usernameOrEmail, password);
+            sessionControl.login(usernameOrEmail, password);
+            onLoginSuccessListener.accept(sessionControl.getCurrentSession());
         } catch (InvalidLoginCredentialException e) {
             JOptionPane.showMessageDialog(this, "Nama pengguna atau kata sandi salah.", "Gagal", JOptionPane.ERROR_MESSAGE);
         } catch (DatabaseException e) {
             JOptionPane.showMessageDialog(this, "Terjadi kesalahan pada database.", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (InvalidFormatException e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan Input Format.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_masukButtonActionPerformed
 

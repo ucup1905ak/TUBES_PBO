@@ -20,10 +20,15 @@ import model.enums.UserRole;
 public class ProjectControl implements IGenericControl<Project, Integer> {
 
     private Project selected;
-    private User user;
+    private final User user;
     private ProjectDAO dao = new ProjectDAO();
     private ProjectMemberDAO mDao = new ProjectMemberDAO();
 
+    public ProjectControl(User user) {
+        this.user = user;
+    }
+
+    
     public Project getSelected() {
         return selected;
     }
@@ -36,9 +41,9 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+//    public void setUser(User user) {
+//        this.user = user;
+//    }
 
     @Override
     public int add(Project project) throws DatabaseException {

@@ -1,13 +1,17 @@
 package view;
 
+import control.SessionControl;
 import java.awt.Color;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 
 import view.panel.*;
+import model.Session;
+import control.SessionControl;
 
 public class MainView extends javax.swing.JFrame {
 
+    private SessionControl sesionControl = new SessionControl();
     private JLayeredPane layeredPane;
     private HomePagePanel homePagePanel;
     private ProfilePanel profilePanel;
@@ -35,9 +39,7 @@ public class MainView extends javax.swing.JFrame {
 
     private void showLoadingPanel() {
         LoadingPagePanel loading = new LoadingPagePanel();
-        loading.setOnFinishListener(e -> {
-            showLoginPanel();
-        });
+        loading.setOnFinishListener(e -> {showLoginPanel();});
         setForm(loading);
     }
 
@@ -49,10 +51,14 @@ public class MainView extends javax.swing.JFrame {
         mainBorderPanel.revalidate();
     }
 
+    public view.panel.HomePagePanel getHomePagePanel() {
+        return this.homePagePanel;
+    }
+
     private void showLoginPanel() {
         LoginPagePanel login = new LoginPagePanel();
         login.setOnRegisterListener(e -> showRegisterPanel());
-        login.setOnLoginSuccessListener(userId -> showHomePageView(userId));
+        login.setOnLoginSuccessListener((e) -> {showHomePageView();});
         setForm(login);
     }
 
@@ -65,11 +71,11 @@ public class MainView extends javax.swing.JFrame {
     public void showChangePasswordPanel(int userId) {
         ChangePasswordPanel changePassword = new ChangePasswordPanel();
         changePassword.setCurrentUserId(userId);
-        changePassword.setOnBackListener(e -> showLoginPanel()); // Temporary routing back to login
+        changePassword.setOnBackListener(e -> showLoginPanel());
         setForm(changePassword);
     }
 
-    public void showHomePageView(int userId) {
+    public void showHomePageView() {
         layeredPane.removeAll();
 
         homePagePanel = new HomePagePanel();
@@ -79,8 +85,7 @@ public class MainView extends javax.swing.JFrame {
 
         layeredPane.add(homePagePanel, JLayeredPane.DEFAULT_LAYER);
 
-        profilePanel = new ProfilePanel(userId);
-
+        profilePanel = new ProfilePanel(sesionControl.getCurrentSession());
         profilePanel.setBounds(814, 0, 466, 720);
         profilePanel.setVisible(false);
 
@@ -90,11 +95,50 @@ public class MainView extends javax.swing.JFrame {
             showLoginPanel();
         });
 
+        profilePanel.setProfileUpdateListener(() -> {
+            homePagePanel.updateProfileIcon(sesionControl.getCurrentUser());
+
+            homePagePanel.revalidate();
+            homePagePanel.repaint();
+        });
+
         layeredPane.add(profilePanel, JLayeredPane.PALETTE_LAYER);
 
         layeredPane.repaint();
         layeredPane.revalidate();
     }
+
+//    public void showHomePageView(Session session) {
+//        layeredPane.removeAll();
+//        homePagePanel = new HomePagePanel(session);
+//        homePagePanel.setBounds(0, 0, 1280, 720);
+//        layeredPane.add(homePagePanel, JLayeredPane.DEFAULT_LAYER);
+//        layeredPane.repaint();
+//        mainBorderPanel.revalidate();
+//
+    ////        homePagePanel = new HomePagePanel(userId);
+////        homePagePanel.setBounds(0, 0, 1280, 720);
+////
+////        homePagePanel.setOnProfileClickListener(() -> toggleProfileOverlay(true));
+////
+////        layeredPane.add(homePagePanel, JLayeredPane.DEFAULT_LAYER);
+////
+////        profilePanel = new ProfilePanel(userId);
+////
+////        profilePanel.setBounds(814, 0, 466, 720);
+////        profilePanel.setVisible(false);
+////
+////        profilePanel.setCloseListener(() -> toggleProfileOverlay(false));
+////        profilePanel.setLogoutListener(() -> {
+////            toggleProfileOverlay(false);
+////            showLoginPanel();
+////        });
+////
+////        layeredPane.add(profilePanel, JLayeredPane.PALETTE_LAYER);
+////
+////        layeredPane.repaint();
+////        layeredPane.revalidate();
+//    }
 
     private void toggleProfileOverlay(boolean show) {
         if (profilePanel != null) {

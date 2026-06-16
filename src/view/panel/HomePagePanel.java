@@ -4,61 +4,111 @@
  */
 package view.panel;
 
+import control.ProjectControl;
+import control.SessionControl;
+import java.util.List;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import model.Project;
+
 /**
  *
  * @author aldio
  */
+import model.Session;
+import java.io.File;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+import model.User;
+
 public class HomePagePanel extends javax.swing.JPanel {
 
+    private SessionControl sessionControl = new SessionControl();
+    private ProjectControl projectControl = new ProjectControl(sessionControl.getCurrentUser());
+    private List<Project> projects = null;
     /**
      * Creates new form HomePagePanel
      */
     private onProfileClickListener profileClickListener;
-    
+
     public HomePagePanel() {
+        System.out.println("MASUK");
         initComponents();
+        try {
+            projects = projectControl.fetchUserProjects();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(ContentPanel, e.getMessage());
+        }
         setupFocusClearance();
-        
+        addProjects();
+        updateProfileIcon(sessionControl.getCurrentUser());
         initKanbanBoard();
+
     }
-    
+
+    public void updateProfileIcon(User currentUser) {
+        if (currentUser != null && currentUser.getProfilePicture() != null && !currentUser.getProfilePicture().isEmpty()) {
+            File file = new File(currentUser.getProfilePicture());
+            if (file.exists()) {
+                ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+
+                icon.getImage().flush();
+
+                Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+                Profile.setIcon(new ImageIcon(img));
+                Profile.setText("");
+
+                Profile.revalidate();
+                Profile.repaint();
+            } else {
+                System.out.println("File foto profil tidak ditemukan di: " + file.getAbsolutePath());
+            }
+        }
+    }
+
+    private void addProjects() {
+        if (projects == null) {
+            projectPanel.add(new JLabel("no project for this user."));
+            return;
+        }
+        for (Project p : projects) {
+            projectPanel.add(new ProjectTab(p));
+        }
+    }
+
     private void initKanbanBoard() {
-        // 1. Instansiasi objek KanbanCard (papan utama kanban)
-        // Jika letak package-nya berbeda, pastikan import 'Panel.KanbanCard;' sudah ada di bagian atas file
         KanbanCard papanKanban = new KanbanCard();
-        
-        // 2. Set layout panel 'Kanban' menjadi BorderLayout agar komponen di dalamnya bisa memenuhi ruang tab
+
         Kanban.setLayout(new java.awt.BorderLayout());
-        
-        // 3. Masukkan objek papanKanban tepat di bagian tengah (CENTER)
+
         Kanban.add(papanKanban, java.awt.BorderLayout.CENTER);
-        
-        // 4. Lakukan validasi ulang dan gambar ulang panel agar perubahan langsung muncul saat aplikasi dijalankan
+
         Kanban.revalidate();
         Kanban.repaint();
     }
-    
-    public void setOnProfileClickListener(onProfileClickListener listener){
+
+    public void setOnProfileClickListener(onProfileClickListener listener) {
         this.profileClickListener = listener;
     }
-    
-    public interface onProfileClickListener{
+
+    public interface onProfileClickListener {
+
         void onProfileClick();
     }
-    
+
     private void setupFocusClearance() {
         MainPanel.setFocusable(true);
         TopBarPanel.setFocusable(true);
         SideBarPanel.setFocusable(true);
         ContentPanel.setFocusable(true);
-        
+
         java.awt.event.MouseAdapter clearFocusAdapter = new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 MainPanel.requestFocusInWindow();
             }
         };
-        
+
         this.addMouseListener(clearFocusAdapter);
         MainPanel.addMouseListener(clearFocusAdapter);
         TopBarPanel.addMouseListener(clearFocusAdapter);
@@ -82,9 +132,11 @@ public class HomePagePanel extends javax.swing.JPanel {
         SideBarPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        projectPanel = new javax.swing.JPanel();
         ContentPanel = new javax.swing.JTabbedPane();
         Kalender = new javax.swing.JPanel();
         Kanban = new javax.swing.JPanel();
+        AddTaskEventButton = new javax.swing.JButton();
 
         setAlignmentX(0.0F);
         setAlignmentY(0.0F);
@@ -145,15 +197,21 @@ public class HomePagePanel extends javax.swing.JPanel {
         jLabel1.setForeground(new java.awt.Color(162, 0, 33));
         jLabel1.setText("Proyek");
 
+        projectPanel.setMaximumSize(new java.awt.Dimension(500, 10000));
+        projectPanel.setLayout(new javax.swing.BoxLayout(projectPanel, javax.swing.BoxLayout.LINE_AXIS));
+
         javax.swing.GroupLayout SideBarPanelLayout = new javax.swing.GroupLayout(SideBarPanel);
         SideBarPanel.setLayout(SideBarPanelLayout);
         SideBarPanelLayout.setHorizontalGroup(
             SideBarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SideBarPanelLayout.createSequentialGroup()
+            .addGroup(SideBarPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
-                .addComponent(jLabel2)
+                .addGroup(SideBarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(projectPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(SideBarPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                        .addComponent(jLabel2)))
                 .addContainerGap())
         );
         SideBarPanelLayout.setVerticalGroup(
@@ -163,8 +221,14 @@ public class HomePagePanel extends javax.swing.JPanel {
                 .addGroup(SideBarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel1))
-                .addContainerGap(686, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(projectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 607, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        for(int i= 0; i < 3 ; i++){
+            projectPanel.add(new JLabel());
+        }
 
         javax.swing.GroupLayout KalenderLayout = new javax.swing.GroupLayout(Kalender);
         Kalender.setLayout(KalenderLayout);
@@ -179,15 +243,28 @@ public class HomePagePanel extends javax.swing.JPanel {
 
         ContentPanel.addTab("Tabel", Kalender);
 
+        AddTaskEventButton.setText("tambah");
+        AddTaskEventButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddTaskEventButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout KanbanLayout = new javax.swing.GroupLayout(Kanban);
         Kanban.setLayout(KanbanLayout);
         KanbanLayout.setHorizontalGroup(
             KanbanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1078, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, KanbanLayout.createSequentialGroup()
+                .addContainerGap(973, Short.MAX_VALUE)
+                .addComponent(AddTaskEventButton)
+                .addGap(29, 29, 29))
         );
         KanbanLayout.setVerticalGroup(
             KanbanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 633, Short.MAX_VALUE)
+            .addGroup(KanbanLayout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(AddTaskEventButton)
+                .addContainerGap(591, Short.MAX_VALUE))
         );
 
         ContentPanel.addTab("Kanban", Kanban);
@@ -235,13 +312,18 @@ public class HomePagePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_SearchTxtActionPerformed
 
     private void ProfileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ProfileMouseClicked
-        if(profileClickListener != null){
+        if (profileClickListener != null) {
             profileClickListener.onProfileClick();
         }
     }//GEN-LAST:event_ProfileMouseClicked
 
+    private void AddTaskEventButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddTaskEventButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AddTaskEventButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AddTaskEventButton;
     private javax.swing.JTabbedPane ContentPanel;
     private javax.swing.JPanel Kalender;
     private javax.swing.JPanel Kanban;
@@ -252,5 +334,6 @@ public class HomePagePanel extends javax.swing.JPanel {
     private javax.swing.JPanel TopBarPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel projectPanel;
     // End of variables declaration//GEN-END:variables
 }

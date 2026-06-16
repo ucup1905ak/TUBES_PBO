@@ -10,6 +10,7 @@ import model.Session;
 import control.SessionControl;
 
 public class MainView extends javax.swing.JFrame {
+
     private SessionControl sesionControl = new SessionControl();
     private JLayeredPane layeredPane;
     private HomePagePanel homePagePanel;
@@ -38,9 +39,7 @@ public class MainView extends javax.swing.JFrame {
 
     private void showLoadingPanel() {
         LoadingPagePanel loading = new LoadingPagePanel();
-        loading.setOnFinishListener(e -> {
-            showLoginPanel();
-        });
+        loading.setOnFinishListener(e -> {showLoginPanel();});
         setForm(loading);
     }
 
@@ -59,9 +58,7 @@ public class MainView extends javax.swing.JFrame {
     private void showLoginPanel() {
         LoginPagePanel login = new LoginPagePanel();
         login.setOnRegisterListener(e -> showRegisterPanel());
-        login.setOnLoginSuccessListener(session -> {
-            showHomePageView(session);
-        });
+        login.setOnLoginSuccessListener((e) -> {showHomePageView();});
         setForm(login);
     }
 
@@ -78,17 +75,17 @@ public class MainView extends javax.swing.JFrame {
         setForm(changePassword);
     }
 
-    public void showHomePageView(Session session) {
+    public void showHomePageView() {
         layeredPane.removeAll();
 
-        homePagePanel = new HomePagePanel(session);
+        homePagePanel = new HomePagePanel();
         homePagePanel.setBounds(0, 0, 1280, 720);
 
         homePagePanel.setOnProfileClickListener(() -> toggleProfileOverlay(true));
 
         layeredPane.add(homePagePanel, JLayeredPane.DEFAULT_LAYER);
 
-        profilePanel = new ProfilePanel(session);
+        profilePanel = new ProfilePanel(sesionControl.getCurrentSession());
         profilePanel.setBounds(814, 0, 466, 720);
         profilePanel.setVisible(false);
 
@@ -99,7 +96,7 @@ public class MainView extends javax.swing.JFrame {
         });
 
         profilePanel.setProfileUpdateListener(() -> {
-            homePagePanel.updateProfileIcon(session.getUser());
+            homePagePanel.updateProfileIcon(sesionControl.getCurrentUser());
 
             homePagePanel.revalidate();
             homePagePanel.repaint();

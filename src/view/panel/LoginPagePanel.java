@@ -1,7 +1,6 @@
 package view.panel;
 
 import control.SessionControl;
-import service.AuthService;
 import view.component.*;
 import model.Session;
 import javax.swing.JOptionPane;
@@ -204,10 +203,9 @@ public class LoginPagePanel extends javax.swing.JPanel {
         }
 
         try {
-            Session session = authService.authenticate(usernameOrEmail, password);
-            if (session != null && onLoginSuccessListener != null) {
-                onLoginSuccessListener.accept(session);
-            }
+//            Session session = authService.authenticate(usernameOrEmail, password);
+            sessionControl.login(usernameOrEmail, password);
+            onLoginSuccessListener.accept(sessionControl.getCurrentSession());
         } catch (InvalidLoginCredentialException e) {
             JOptionPane.showMessageDialog(this, "Nama pengguna atau kata sandi salah.", "Gagal", JOptionPane.ERROR_MESSAGE);
         } catch (DatabaseException e) {

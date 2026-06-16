@@ -22,8 +22,9 @@ import javax.swing.ImageIcon;
 import model.User;
 
 public class HomePagePanel extends javax.swing.JPanel {
-    
-    private ProjectControl control = new ProjectControl(new SessionControl().getCurrentUser());
+
+    private SessionControl sessionControl = new SessionControl();
+    private ProjectControl projectControl = new ProjectControl(sessionControl.getCurrentUser());
     private List<Project> projects = null;
     /**
      * Creates new form HomePagePanel
@@ -31,15 +32,16 @@ public class HomePagePanel extends javax.swing.JPanel {
     private onProfileClickListener profileClickListener;
 
     public HomePagePanel() {
+        System.out.println("MASUK");
+        initComponents();
         try {
-            projects = control.fetchUserProjects();
+            projects = projectControl.fetchUserProjects();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(ContentPanel, e.getMessage());
         }
-        initComponents();
         setupFocusClearance();
-addProjects();
-        updateProfileIcon(session.getUser());
+        addProjects();
+        updateProfileIcon(sessionControl.getCurrentUser());
         initKanbanBoard();
 
     }
@@ -49,13 +51,13 @@ addProjects();
             File file = new File(currentUser.getProfilePicture());
             if (file.exists()) {
                 ImageIcon icon = new ImageIcon(file.getAbsolutePath());
-                
+
                 icon.getImage().flush();
 
                 Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
                 Profile.setIcon(new ImageIcon(img));
                 Profile.setText("");
-                
+
                 Profile.revalidate();
                 Profile.repaint();
             } else {
@@ -63,15 +65,17 @@ addProjects();
             }
         }
     }
-    private void addProjects(){
-        if(projects == null){
+
+    private void addProjects() {
+        if (projects == null) {
             projectPanel.add(new JLabel("no project for this user."));
             return;
         }
-        for(Project p : projects){
+        for (Project p : projects) {
             projectPanel.add(new ProjectTab(p));
         }
     }
+
     private void initKanbanBoard() {
         KanbanCard papanKanban = new KanbanCard();
 

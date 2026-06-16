@@ -66,6 +66,9 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
     }
 
     public List<Project> fetchUserProjects() throws DatabaseException {
+        if (user == null) {
+            return List.of();
+        }
         return mDao.getProjectByUser(user.getId());
     }
 
@@ -86,28 +89,52 @@ public class ProjectControl implements IGenericControl<Project, Integer> {
     }
 
     public boolean editSelectedProject() throws DatabaseException {
+        if (this.selected == null) {
+            return false;
+        }
         return dao.update(this.selected) == 1? true:false;
         
     }
 
     public boolean deleteSelectedProject() throws DatabaseException {
+        if (this.selected == null) {
+            return false;
+        }
         return dao.delete(this.selected.getId()) == 1? true:false;
     }
 
     public boolean addMember(User user) throws DatabaseException {
+        if (this.selected == null || user == null) {
+            return false;
+        }
         return mDao.add(this.selected.getId(), user.getId(), UserRole.TEAM_MEMBER)==1? true:false;
     }
 
     public boolean removeMember(User user) throws DatabaseException {
+        if (this.selected == null || user == null) {
+            return false;
+        }
         return mDao.remove(this.selected.getId(), user.getId())==1? true:false;
     }
 
     public List<User> getMembers() throws DatabaseException {
+        if (this.selected == null) {
+            return null;
+        }
         return mDao.getUserByProject(this.selected.getId());
     }
 
     public UserRole getRole() throws DatabaseException {
+        if (this.selected == null || user == null) {
+            return null;
+        }
         return mDao.getRole(this.selected.getId(), user.getId());
     }
-
+    
+    public User getOwner() throws DatabaseException {
+        if (this.selected == null) {
+            return null;
+        }
+        return mDao.getOwner(selected.getId());
+    }
 }

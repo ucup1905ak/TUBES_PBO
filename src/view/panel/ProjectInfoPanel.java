@@ -7,12 +7,16 @@ package view.panel;
 import control.ProjectControl;
 import exception.database.DatabaseException;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import model.Project;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -43,10 +47,47 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
             this.projectControl.setSelected(this.project);
         }
 
-        loadProjectData();
+        loadProjectData(project);
     }
     
-    private void loadProjectData() {
+    //Constructor untuk test koneksi database
+    public ProjectInfoPanel(int projectId) {
+        initComponents();
+
+        try {
+            projectControl = new ProjectControl();
+
+            List<Project> projects = projectControl.fetchAll();
+
+            System.out.println("Jumlah project: " + projects.size());
+
+            if (!projects.isEmpty()) {
+                
+                Project project = projects.get(projectId);
+//
+//                ProjectNameLabel.setText(project.getName());
+//                DescriptionTextAre.setText(project.getDescription());
+//                CreatedAtDateLabel.setText(project.getCreatedAt() != null
+//                    ? project.getCreatedAt().toString()
+//                    : "[DATE]"); // Tgl dibuat
+//
+//                System.out.println("Project berhasil dimuat");
+//                System.out.println(project.getName());
+                
+                projectControl.setSelected(project);
+                loadProjectData(project);
+                
+                User owner = projectControl.getOwner();
+                System.out.println("Owner: " + owner.getFullName());
+                System.out.println("Profile path: " + owner.getProfilePicture());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void loadProjectData(Project project) {
         Project currentProject = project;
 
         if (currentProject == null && projectControl != null) {
@@ -58,18 +99,26 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
             }
         }
 
-        if (currentProject == null || projectControl == null) return;
+        if (currentProject == null) return;
 
         try {
             this.project = currentProject;
 
             ProjectNameLabel.setText(currentProject.getName()); // Nama project
             DescriptionTextAre.setText(currentProject.getDescription()); // Deskripsi project
-            CreatedAtDateLabel.setText(currentProject.getCreatedAt().toString()); // Tgl dibuat
+            CreatedAtDateLabel.setText(currentProject.getCreatedAt() != null
+                    ? currentProject.getCreatedAt().toString()
+                    : "[DATE]"); // Tgl dibuat
             
-            // Profil pic Owner
-            User owner = projectControl.getOwner();
-            setOwnerProfilePicture(owner);
+            if (projectControl != null) {
+                // Profil pic Owner
+                User owner = projectControl.getOwner();
+                setOwnerProfilePicture(owner);
+                loadMemberData();
+            } else {
+                setOwnerProfilePicture(null);
+                renderMemberAvatars(null);
+            }
 
         } catch (DatabaseException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -107,23 +156,107 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
     private void deleteProject() {
         JOptionPane.showMessageDialog(this, "Delete Project");
     }
+
+    private void loadMemberData() {
+        if (projectControl == null) {
+            renderMemberAvatars(null);
+            return;
+        }
+
+        try {
+            List<User> members = projectControl.getMembers();
+            renderMemberAvatars(members);
+        } catch (DatabaseException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
+    private void renderMemberAvatars(List<User> members) {
+        MemberAvatarPanel.removeAll();
+        MemberAvatarPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
+
+        if (members != null) {
+            for (User member : members) {
+                MemberAvatarPanel.add(createMemberAvatarLabel(member));
+            }
+        }
+
+        MemberAvatarPanel.add(createAddMemberLabel());
+        MemberAvatarPanel.revalidate();
+        MemberAvatarPanel.repaint();
+    }
+
+    private JLabel createMemberAvatarLabel(User member) {
+        JLabel avatarLabel = new JLabel();
+        avatarLabel.setPreferredSize(new java.awt.Dimension(50, 50));
+        avatarLabel.setMinimumSize(new java.awt.Dimension(50, 50));
+        avatarLabel.setMaximumSize(new java.awt.Dimension(50, 50));
+        avatarLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
+        if (member == null) {
+            avatarLabel.setIcon(new ImageIcon(createNeutralAvatarIcon(50, 50)));
+            return avatarLabel;
+        }
+
+        String path = member.getProfilePicture();
+        if (path == null || path.isBlank()) {
+            avatarLabel.setIcon(new ImageIcon(createNeutralAvatarIcon(50, 50)));
+            avatarLabel.setToolTipText(member.getFullName());
+            return avatarLabel;
+        }
+
+        ImageIcon icon = new ImageIcon(path);
+        Image circularImage = createCircularImage(icon.getImage(), 50, 50);
+        avatarLabel.setIcon(new ImageIcon(circularImage));
+        avatarLabel.setToolTipText(member.getFullName());
+        return avatarLabel;
+    }
+
+    private JLabel createAddMemberLabel() {
+        JLabel addLabel = new JLabel(new ImageIcon(createAddMemberIcon(50, 50)));
+        addLabel.setPreferredSize(new java.awt.Dimension(50, 50));
+        addLabel.setMinimumSize(new java.awt.Dimension(50, 50));
+        addLabel.setMaximumSize(new java.awt.Dimension(50, 50));
+        addLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        addLabel.setToolTipText("Tambah member");
+        addLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                openMemberEditorPlaceholder();
+            }
+        });
+        return addLabel;
+    }
+
+    private void openMemberEditorPlaceholder() {
+        // buka panel edit member ketika panel edit member sudah tersedia.
+        JOptionPane.showMessageDialog(this, "Panel edit member belum tersedia.");
+    }
     
     //Tampil profile Owner
     private void setOwnerProfilePicture(User owner) {
         if (owner == null) {
+            System.out.println("NULL 1");
             OwnerProfilePictureLabel.setIcon(null);
             OwnerProfilePictureLabel.setText("profile_pic");
             return;
         }
 
         String path = owner.getProfilePicture();
-        if (path == null || path.isBlank()) return;
+        if (path == null || path.isBlank()) {
+            System.out.println("NULL 2");
+            OwnerProfilePictureLabel.setIcon(null);
+            OwnerProfilePictureLabel.setText("profile_pic");
+            return;
+        }
 
         ImageIcon icon = new ImageIcon(path);
         Image circularImage = createCircularImage(icon.getImage(), 50, 50);
 
         OwnerProfilePictureLabel.setIcon(new ImageIcon(circularImage));
         OwnerProfilePictureLabel.setText("");
+
+        System.out.println("Loading image: " + path);
     }
 
     private Image createCircularImage(Image sourceImage, int width, int height) {
@@ -133,6 +266,46 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
             graphics.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
             graphics.setClip(new Ellipse2D.Double(0, 0, width, height));
             graphics.drawImage(sourceImage, 0, 0, width, height, null);
+        } finally {
+            graphics.dispose();
+        }
+        return bufferedImage;
+    }
+
+    private BufferedImage createNeutralAvatarIcon(int width, int height) {
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = bufferedImage.createGraphics();
+        try {
+            graphics.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+            graphics.setColor(new Color(229, 231, 235));
+            graphics.fill(new Ellipse2D.Double(0, 0, width, height));
+            graphics.setColor(new Color(148, 163, 184));
+            graphics.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 20));
+            String text = "?";
+            java.awt.FontMetrics metrics = graphics.getFontMetrics();
+            int textWidth = metrics.stringWidth(text);
+            int textHeight = metrics.getAscent();
+            graphics.drawString(text, (width - textWidth) / 2, (height + textHeight) / 2 - 4);
+        } finally {
+            graphics.dispose();
+        }
+        return bufferedImage;
+    }
+
+    private BufferedImage createAddMemberIcon(int width, int height) {
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = bufferedImage.createGraphics();
+        try {
+            graphics.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+            graphics.setColor(new Color(229, 231, 235));
+            graphics.fill(new Ellipse2D.Double(0, 0, width, height));
+            graphics.setStroke(new java.awt.BasicStroke(3f, java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_ROUND));
+            graphics.setColor(new Color(55, 65, 81));
+            int centerX = width / 2;
+            int centerY = height / 2;
+            int padding = 14;
+            graphics.drawLine(centerX - padding, centerY, centerX + padding, centerY);
+            graphics.drawLine(centerX, centerY - padding, centerX, centerY + padding);
         } finally {
             graphics.dispose();
         }
@@ -165,7 +338,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
         OwnerProfilePictureLabel = new javax.swing.JLabel();
         MemberPanel = new javax.swing.JPanel();
         MemberLabel = new javax.swing.JLabel();
-        MemberProfilePictureLabel = new javax.swing.JLabel();
+        MemberAvatarPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -317,8 +490,8 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
         MemberLabel.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         MemberLabel.setText("Member");
 
-        MemberProfilePictureLabel.setText("member_pic");
-        MemberProfilePictureLabel.setPreferredSize(new java.awt.Dimension(50, 50));
+        MemberAvatarPanel.setBackground(new java.awt.Color(255, 255, 255));
+        MemberAvatarPanel.setOpaque(false);
 
         javax.swing.GroupLayout MemberPanelLayout = new javax.swing.GroupLayout(MemberPanel);
         MemberPanel.setLayout(MemberPanelLayout);
@@ -328,7 +501,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(MemberPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(MemberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(MemberProfilePictureLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(MemberAvatarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
                 .addContainerGap(154, Short.MAX_VALUE))
         );
         MemberPanelLayout.setVerticalGroup(
@@ -336,7 +509,8 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
             .addGroup(MemberPanelLayout.createSequentialGroup()
                 .addComponent(MemberLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemberProfilePictureLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(MemberAvatarPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout ProjectInfoPanelLayout = new javax.swing.GroupLayout(ProjectInfoPanel);
@@ -454,7 +628,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
     private javax.swing.JTextArea DescriptionTextAre;
     private javax.swing.JLabel MemberLabel;
     private javax.swing.JPanel MemberPanel;
-    private javax.swing.JLabel MemberProfilePictureLabel;
+    private javax.swing.JPanel MemberAvatarPanel;
     private javax.swing.JLabel MoreIconLabel;
     private javax.swing.JLabel OwnerLabel;
     private javax.swing.JPanel OwnerPanel;

@@ -72,14 +72,8 @@ public class TagBite extends javax.swing.JPanel {
         // Smooth rendering
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-//        int panelHeight = getHeight();
         // --- Pill background ---
         g2d.setColor(setLightnessHSL(dotColor, 0.8f));
-//        g2d.setColor(new Color(
-//                dotColor.getRed(),
-//                dotColor.getGreen(),
-//                dotColor.getBlue(), 40));
-
         g2d.fillRoundRect(0, 0, w, h, h, h);
 
         // --- Pill border ---
@@ -93,14 +87,7 @@ public class TagBite extends javax.swing.JPanel {
         g2d.setColor(dotColor);
         g2d.fillOval(dotX, dotY, DOT_SIZE, DOT_SIZE);
 
-        g2d.dispose();
-        ////        // --- Draw text ---
-//        g2d.setColor(dotColor.darker());
-//        FontMetrics fm = TagTitle.getFontMetrics(TagTitle.getFont());
-//        int textX = dotX + DOT_SIZE + DOT_GAP;
-//        int textY = (panelHeight - fm.getHeight()) / 2 + fm.getAscent();
-//        g2d.drawString(tagText, textX, textY);
-//        TagTitle.setBounds(textX, textY, WIDTH, HEIGHT);
+
         g2d.dispose();
 
         if (TagTitle != null) {
@@ -121,9 +108,7 @@ public class TagBite extends javax.swing.JPanel {
         int height = 26;
         return new Dimension(width, height);
     }
-// Add this helper method to your class
 
-    // Set lightness to an EXACT value instead of shifting relatively
     private Color setLightnessHSL(Color color, float targetLightness) {
         float r = color.getRed() / 255f;
         float g = color.getGreen() / 255f;
@@ -151,7 +136,6 @@ public class TagBite extends javax.swing.JPanel {
             }
         }
 
-        // ✅ Set to exact target lightness
         l = Math.max(0f, Math.min(1f, targetLightness));
 
         float c = (1 - Math.abs(2 * l - 1)) * s;
@@ -203,17 +187,17 @@ public class TagBite extends javax.swing.JPanel {
         java.awt.EventQueue.invokeLater(() -> {
             javax.swing.JFrame frame = new javax.swing.JFrame("TagBite Preview");
             frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-
+            
             javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 8, 12));
             panel.setBackground(new Color(245, 245, 250));
             panel.setBorder(new EmptyBorder(8, 8, 8, 8));
-
+            
             panel.add(new TagBite("Design", new Color(99, 102, 241)));
             panel.add(new TagBite("Urgent", new Color(239, 68, 68)));
             panel.add(new TagBite("In Review", new Color(245, 158, 11)));
             panel.add(new TagBite("Done", new Color(34, 197, 94)));
             panel.add(new TagBite("Backend", new Color(14, 165, 233)));
-
+            
             frame.setContentPane(panel);
             frame.pack();
             frame.setLocationRelativeTo(null);

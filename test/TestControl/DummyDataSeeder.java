@@ -2,13 +2,8 @@ package TestControl;
 
 import control.ProjectControl;
 import control.SessionControl;
-import dao.*;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 import model.*;
-import model.enums.*;
-import service.AuthService;
+
 
 public class DummyDataSeeder {
 
@@ -18,9 +13,10 @@ public class DummyDataSeeder {
 //        Log.enabled = false;
 
         try {
+            
             SessionControl s = new SessionControl();
 //            s.register("aaa", "LINO", "aaa@gmail.com", "123");
-            s.login("aaa", "123");
+            s.login("ucup@x.com", "123");
             ProjectControl p = new ProjectControl(s.getCurrentUser());
             
             p.add(new Project("Keren Good", "Hidup JOKOWI"));

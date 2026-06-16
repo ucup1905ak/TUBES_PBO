@@ -46,9 +46,9 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
                             entity.getDescription(),
                             entity.getColor()
                     );
-            int rows = db.executeUpdate(sql);
-            Log.create("ProjectDAO.add updated " + rows + " row(s).");
-            return rows;
+            int id = db.executeInsert(sql);
+            Log.create("ProjectDAO.add inserted project id " + id + ".");
+            return id;
         } catch (DatabaseException e) {
             Log.err("ProjectDAO.add failed: " + e.getMessage());
             throw e;
@@ -158,7 +158,7 @@ public class ProjectDAO implements IGenericDAO<Project, Integer>, IRowMapper<Pro
         } catch (SQLException e) {
             Log.err("ProjectDAO.map failed: " + e.getMessage());
             throw new ResultSetParsingException(
-                    "Failed to parse User from ResultSet",
+                    "Failed to parse Project from ResultSet",
                     e
             );
 

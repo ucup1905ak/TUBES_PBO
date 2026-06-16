@@ -29,29 +29,29 @@ public class UserControl implements IGenericControl<User, Integer> {
 
     @Override
     public List<User> fetchAll() throws DatabaseException {
-         Log.create("[Control] : Fetch All User");
+        Log.create("[Control] : Fetch All User");
         return dao.fetchAll();
     }
 
     @Override
     public int update(User user) throws DatabaseException {
-         Log.create("[Control] : Update User");
+        Log.create("[Control] : Update User");
         return dao.update(user);
     }
 
     @Override
     public int delete(Integer id) throws DatabaseException {
-         Log.create("[Control] : Delete User From");
+        Log.create("[Control] : Delete User From");
         return dao.delete(id);
     }
 
     public List<User> search(String keyword) throws DatabaseException {
-         Log.create("[Control] : Search User from");
+        Log.create("[Control] : Search User from");
         return dao.search(keyword);
     }
 
     public int updateProfile(User user) throws DatabaseException {
-         Log.create("[Control] : Update Profile User");
+        Log.create("[Control] : Update Profile User");
         User existingUser = get(user.getId());
 
         if (existingUser == null) {

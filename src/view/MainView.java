@@ -9,7 +9,7 @@ import view.panel.*;
 public class MainView extends javax.swing.JFrame {
 
     private JLayeredPane layeredPane;
-    private DashboardPanel dashboardPanel;
+    private HomePagePanel homePagePanel;
     private ProfilePanel profilePanel;
 
     public MainView() {
@@ -52,7 +52,7 @@ public class MainView extends javax.swing.JFrame {
     private void showLoginPanel() {
         LoginPagePanel login = new LoginPagePanel();
         login.setOnRegisterListener(e -> showRegisterPanel());
-        login.setOnLoginSuccessListener(userId -> showDashboardView(userId));
+        login.setOnLoginSuccessListener(userId -> showHomePageView(userId));
         setForm(login);
     }
 
@@ -69,35 +69,35 @@ public class MainView extends javax.swing.JFrame {
         setForm(changePassword);
     }
 
-    public void showDashboardView(int userId) {
+    public void showHomePageView(int userId) {
         layeredPane.removeAll();
 
-        dashboardPanel = new DashboardPanel();
-        dashboardPanel.setBounds(0, 0, 1280, 720);
-        dashboardPanel.getProfileButton().addActionListener(e -> toggleProfileOverlay(true));
-        
-        layeredPane.add(dashboardPanel, JLayeredPane.DEFAULT_LAYER);
-        
-        profilePanel = new ProfilePanel();
-        
+        homePagePanel = new HomePagePanel();
+        homePagePanel.setBounds(0, 0, 1280, 720);
+
+        homePagePanel.setOnProfileClickListener(() -> toggleProfileOverlay(true));
+
+        layeredPane.add(homePagePanel, JLayeredPane.DEFAULT_LAYER);
+
+        profilePanel = new ProfilePanel(userId);
+
         profilePanel.setBounds(814, 0, 466, 720);
         profilePanel.setVisible(false);
-        
+
         profilePanel.setCloseListener(() -> toggleProfileOverlay(false));
         profilePanel.setLogoutListener(() -> {
             toggleProfileOverlay(false);
             showLoginPanel();
         });
-        
+
         layeredPane.add(profilePanel, JLayeredPane.PALETTE_LAYER);
-        
+
         layeredPane.repaint();
         layeredPane.revalidate();
-        
     }
-    
-    private void toggleProfileOverlay(boolean show){
-        if(profilePanel != null){
+
+    private void toggleProfileOverlay(boolean show) {
+        if (profilePanel != null) {
             profilePanel.setVisible(show);
             layeredPane.repaint();
         }

@@ -158,6 +158,9 @@
                   <Image iconType="3" name="/icon/project_panel/menu_icon.png"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="MoreIconLabelMouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="CancelIconLabel">
               <Properties>
@@ -166,6 +169,9 @@
                   <Image iconType="3" name="/icon/project_panel/x_icon.png"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="CancelIconLabelMouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

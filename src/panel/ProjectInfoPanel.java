@@ -4,17 +4,72 @@
  */
 package panel;
 
+import model.Project;
+import java.text.SimpleDateFormat;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+
 /**
  *
  * @author Silvanus
  */
 public class ProjectInfoPanel extends javax.swing.JFrame {
 
+     private Project project;
+    
     /**
      * Creates new form ProjectInfoPanel
      */
     public ProjectInfoPanel() {
         initComponents();
+        
+        this.project = project;
+        loadProjectData();
+    }
+    
+    private void loadProjectData() {
+        if (project == null) return;
+
+        //untuk show nama & deskripsi Project
+        ProjectNameLabel.setText(project.getName());
+        DescriptionTextAre.setText(project.getDescription());
+        
+        //untuk show Created At
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+        CreatedAtDateLabel.setText(formatter.format(project.getCreatedAt()));
+    }
+    
+    private void showProjectMenu() {
+
+        JPopupMenu menu = new JPopupMenu();
+
+        JMenuItem editProject = new JMenuItem("Edit Project");
+        JMenuItem manageMember = new JMenuItem("Manage Members");
+        JMenuItem deleteProject = new JMenuItem("Delete Project");
+
+        editProject.addActionListener(e -> editProject());
+        manageMember.addActionListener(e -> manageMembers());
+        deleteProject.addActionListener(e -> deleteProject());
+
+        menu.add(editProject);
+        menu.add(manageMember);
+        menu.addSeparator();
+        menu.add(deleteProject);
+
+        menu.show(MoreIconLabel, 0, MoreIconLabel.getHeight());
+    }
+    
+    private void editProject() {
+        JOptionPane.showMessageDialog(this, "Edit Project");
+    }
+
+    private void manageMembers() {
+        JOptionPane.showMessageDialog(this, "Manage Members");
+    }
+
+    private void deleteProject() {
+        JOptionPane.showMessageDialog(this, "Delete Project");
     }
 
     /**
@@ -61,9 +116,19 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
 
         MoreIconLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         MoreIconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/project_panel/menu_icon.png"))); // NOI18N
+        MoreIconLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MoreIconLabelMouseClicked(evt);
+            }
+        });
 
         CancelIconLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         CancelIconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/project_panel/x_icon.png"))); // NOI18N
+        CancelIconLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CancelIconLabelMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout TopPanelLayout = new javax.swing.GroupLayout(TopPanel);
         TopPanel.setLayout(TopPanelLayout);
@@ -261,6 +326,20 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
     private void DescriptionPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DescriptionPanelMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_DescriptionPanelMouseClicked
+
+    private void MoreIconLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MoreIconLabelMouseClicked
+        showProjectMenu();
+    }//GEN-LAST:event_MoreIconLabelMouseClicked
+
+    private void CancelIconLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CancelIconLabelMouseClicked
+        
+        /*
+            ini kan masih window, jadi pake dispose()
+            kalo udh imnpelentasi jadi panel pop up di dashboard, keknya pake setVisible(false)
+            - widi (16/6)
+        */
+        dispose();
+    }//GEN-LAST:event_CancelIconLabelMouseClicked
 
     /**
      * @param args the command line arguments

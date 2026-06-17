@@ -20,6 +20,8 @@ public interface IProjectObserver {
      *
      * @param project the newly created Project with its generated ID populated
      */
+    void onProjectCreated(Project project);
+    
     void onProjectAdded(Project project);
 
     /**

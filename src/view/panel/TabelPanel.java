@@ -8,6 +8,13 @@ package view.panel;
  *
  * @author aldio
  */
+import control.TaskControl;
+import exception.database.DatabaseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import javax.swing.JOptionPane;
+import model.Task;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -32,6 +39,16 @@ public class TabelPanel extends javax.swing.JPanel {
         initCustomUI();
     }
 
+    private int currentProjectId = -1;
+    private String currentProjectName = "";
+
+    public void setProjectContext(int projectId, String projectName) {
+        this.currentProjectId = projectId;
+        this.currentProjectName = projectName;
+
+        loadTaskData();
+    }
+
     private void initCustomUI() {
 
         String[] columns = {"Name", "Tenggat", "Tag", "Status", "Prioritas", "Aksi"};
@@ -54,9 +71,9 @@ public class TabelPanel extends javax.swing.JPanel {
         TabelPreview.getTableHeader().setPreferredSize(new Dimension(0, 40));
         TabelPreview.getTableHeader().setBackground(Color.WHITE);
 
-        TabelPreview.getColumnModel().getColumn(2).setCellRenderer(new ComponentRenderer(0)); // Tag
-        TabelPreview.getColumnModel().getColumn(3).setCellRenderer(new ComponentRenderer(0)); // Status
-        TabelPreview.getColumnModel().getColumn(4).setCellRenderer(new ComponentRenderer(1)); // Prioritas
+        TabelPreview.getColumnModel().getColumn(2).setCellRenderer(new ComponentRenderer(0)); 
+        TabelPreview.getColumnModel().getColumn(3).setCellRenderer(new ComponentRenderer(0)); 
+        TabelPreview.getColumnModel().getColumn(4).setCellRenderer(new ComponentRenderer(1)); 
 
         TabelPreview.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
@@ -67,8 +84,77 @@ public class TabelPanel extends javax.swing.JPanel {
                 label.setForeground(new Color(150, 150, 150));
                 return label;
             }
+        }); 
+
+        TabelPreview.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = TabelPreview.rowAtPoint(evt.getPoint());
+                int col = TabelPreview.columnAtPoint(evt.getPoint());
+
+                if (col == 5 && row >= 0) {
+                    Task selectedTask = (Task) TabelPreview.getValueAt(row, col);
+                    if (selectedTask != null) {
+                        openEditTaskDialog(selectedTask);
+                    }
+                }
+            }
         });
 
+    }
+
+    private void openEditTaskDialog(Task task) {
+        java.awt.Window parentWindow = javax.swing.SwingUtilities.getWindowAncestor(this);
+
+        javax.swing.JDialog dialog = new javax.swing.JDialog(parentWindow, "Edit / Hapus Tugas", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+
+        view.panel.component.EditDeleteTask editTaskPanel = new view.panel.component.EditDeleteTask(task.getId(), currentProjectId, currentProjectName);
+
+        dialog.getContentPane().add(editTaskPanel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+
+        loadTaskData();
+    }
+
+    public void loadTaskData() {
+        if (currentProjectId == -1) {
+            return;
+        }
+
+        try {
+            TaskControl taskControl = new TaskControl();
+            List<Task> taskList = taskControl.findByProject(currentProjectId);
+
+            tableModel.setRowCount(0);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+
+            for (Task task : taskList) {
+                String taskName = task.getTitle();
+
+                String dueDate = "-";
+                if (task.getDueDate() != null) {
+                    dueDate = sdf.format(task.getDueDate());
+                }
+                String tag = "Tag";
+
+                Object status = task.getStatus();
+
+                Object priority = task.getPriority();
+
+                Object aksi = task;
+
+                tableModel.addRow(new Object[]{
+                    taskName, dueDate, tag, status, priority, aksi
+                });
+            }
+
+        } catch (DatabaseException ex) {
+            System.err.println("Gagal memuat task: " + ex.getMessage());
+            JOptionPane.showMessageDialog(this, "Gagal memuat data task dari database.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -152,7 +238,28 @@ public class TabelPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void TambahTugasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TambahTugasActionPerformed
-        // TODO add your handling code here:
+
+        if (currentProjectId == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Silakan pilih project terlebih dahulu pada Sidebar/Tab!",
+                    "Peringatan",
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        java.awt.Window parentWindow = javax.swing.SwingUtilities.getWindowAncestor(this);
+
+        javax.swing.JDialog dialog = new javax.swing.JDialog(parentWindow, "Tambah Tugas Baru", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+
+        view.panel.component.CreateTask createTaskPanel = new view.panel.component.CreateTask(currentProjectId, currentProjectName);
+
+        dialog.getContentPane().add(createTaskPanel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+
+        loadTaskData();
+
     }//GEN-LAST:event_TambahTugasActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

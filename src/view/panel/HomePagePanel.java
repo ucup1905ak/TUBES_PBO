@@ -30,6 +30,7 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
     private ProjectControl projectControl = new ProjectControl(sessionControl.getCurrentUser());
     private List<Project> projects = null;
     private int selectedProjectId = -1;
+    private view.panel.TabelPanel tabelPanel;
     /**
      * Creates new form HomePagePanel
      */
@@ -38,9 +39,9 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
     public HomePagePanel() {
 //        System.out.println("MASUK");
         initComponents();
-        
+
         initTabelPanel();
-        
+
         try {
             projects = projectControl.fetchUserProjects(sessionControl.getCurrentUser());
         } catch (Exception e) {
@@ -101,25 +102,35 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
     }
 
     private void setActiveProject(int projectId, boolean refreshKanban) {
-        selectedProjectId = projectId;
+        this.selectedProjectId = projectId;
+
+        Project selectedProject = null;
+        if (projects != null) {
+            for (Project p : projects) {
+                if (p.getId() == projectId) {
+                    selectedProject = p;
+                    break;
+                }
+            }
+        }
+
+        if (selectedProject != null) {
+            projectControl.setSelected(selectedProject);
+
+            if (this.tabelPanel != null) {
+                this.tabelPanel.setProjectContext(selectedProject.getId(), selectedProject.getName());
+            }
+        }
 
         for (java.awt.Component c : projectPanel.getComponents()) {
             if (c instanceof ProjectTab) {
                 ProjectTab tab = (ProjectTab) c;
-                tab.setSelectedState(tab.getProjectId() == projectId);
-            }
-        }
-
-        try {
-            projectControl.setProject(projectId);
-            if (refreshKanban) {
-                Project selected = projectControl.getSelected();
-                if (selected != null) {
-                    ProjectEventBus.getInstance().notifyProjectUpdated(selected);
+                if (tab.getProjectId() == projectId) {
+                    tab.setSelectedState(true); 
+                } else {
+                    tab.setSelectedState(false); 
                 }
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(ContentPanel, e.getMessage());
         }
     }
 
@@ -161,16 +172,22 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
         SideBarPanel.addMouseListener(clearFocusAdapter);
         ContentPanel.addMouseListener(clearFocusAdapter);
     }
-    
+
     private void initTabelPanel() {
-        Tabel.removeAll();
-        
+//        Tabel.removeAll();
+//
+//        Tabel.setLayout(new java.awt.BorderLayout());
+//
+//        TabelPanel customTabelPanel = new TabelPanel();
+//
+//        Tabel.add(customTabelPanel, java.awt.BorderLayout.CENTER);
+//
+//        Tabel.revalidate();
+//        Tabel.repaint();
+        this.tabelPanel = new view.panel.TabelPanel();
+
         Tabel.setLayout(new java.awt.BorderLayout());
-        
-        TabelPanel customTabelPanel = new TabelPanel();
-        
-        Tabel.add(customTabelPanel, java.awt.BorderLayout.CENTER);
-        
+        Tabel.add(this.tabelPanel, java.awt.BorderLayout.CENTER);
         Tabel.revalidate();
         Tabel.repaint();
     }
@@ -195,7 +212,6 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
         projectPanel = new javax.swing.JPanel();
         ContentPanel = new javax.swing.JTabbedPane();
         Tabel = new javax.swing.JPanel();
-        taskCard1 = new view.panel.component.TaskCard();
         Kanban = new javax.swing.JPanel();
         AddTaskEventButton = new javax.swing.JButton();
         kanbanArea = new javax.swing.JPanel();
@@ -301,17 +317,11 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
         Tabel.setLayout(TabelLayout);
         TabelLayout.setHorizontalGroup(
             TabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TabelLayout.createSequentialGroup()
-                .addGap(36, 36, 36)
-                .addComponent(taskCard1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(784, Short.MAX_VALUE))
+            .addGap(0, 1078, Short.MAX_VALUE)
         );
         TabelLayout.setVerticalGroup(
             TabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TabelLayout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(taskCard1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(403, Short.MAX_VALUE))
+            .addGap(0, 633, Short.MAX_VALUE)
         );
 
         ContentPanel.addTab("Tabel", Tabel);
@@ -476,6 +486,32 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
         });
     }
 
+    @Override
+    public void onProjectCreated(Project p) {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+
+            if (projects == null || projects.isEmpty()) {
+                projectPanel.removeAll();
+            }
+
+            projects.add(p);
+
+            view.panel.ProjectTab tab = new view.panel.ProjectTab(p);
+
+            tab.setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE, tab.getPreferredSize().height));
+            tab.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT); // Rata kiri
+
+            tab.setOnSelectListener(project -> setActiveProject(project.getId(), true));
+
+            projectPanel.add(tab);
+
+            projectPanel.revalidate();
+            projectPanel.repaint();
+
+            setActiveProject(p.getId(), true);
+        });
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddTaskEventButton;
     private javax.swing.JTabbedPane ContentPanel;
@@ -490,6 +526,5 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel kanbanArea;
     private javax.swing.JPanel projectPanel;
-    private view.panel.component.TaskCard taskCard1;
     // End of variables declaration//GEN-END:variables
 }

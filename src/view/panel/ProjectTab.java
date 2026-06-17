@@ -13,6 +13,7 @@ import model.Project;
  * @author farel
  */
 public class ProjectTab extends javax.swing.JPanel {
+
     private static final Color NORMAL_BG = new Color(245, 245, 245);
     private static final Color HOVER_BG = new Color(225, 225, 225);
     private static final Color SELECTED_BG = new Color(185, 185, 185);
@@ -22,8 +23,10 @@ public class ProjectTab extends javax.swing.JPanel {
     private OnSelectListener onSelectListener;
 
     public interface OnSelectListener {
+
         void onSelect(Project project);
     }
+
     /**
      * Creates new form ProjectTab
      */
@@ -40,35 +43,61 @@ public class ProjectTab extends javax.swing.JPanel {
     }
 
     private void initInteraction() {
+//        setOpaque(true);
+//        setBackground(NORMAL_BG);
+//        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+//
+//        java.awt.event.MouseAdapter hoverAndSelect = new java.awt.event.MouseAdapter() {
+//            @Override
+//            public void mouseEntered(java.awt.event.MouseEvent e) {
+//                if (!selected) {
+//                    setBackground(HOVER_BG);
+//                }
+//            }
+//
+//            @Override
+//            public void mouseExited(java.awt.event.MouseEvent e) {
+//                if (!selected) {
+//                    setBackground(NORMAL_BG);
+//                }
+//            }
+//
+//            @Override
+//            public void mouseClicked(java.awt.event.MouseEvent e) {
+//                if (onSelectListener != null && project != null) {
+//                    onSelectListener.onSelect(project);
+//                }
+//            }
+//        };
+//
+//        addMouseListener(hoverAndSelect);
+//        jLabel1.addMouseListener(hoverAndSelect);
         setOpaque(true);
         setBackground(NORMAL_BG);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        java.awt.event.MouseAdapter hoverAndSelect = new java.awt.event.MouseAdapter() {
+        this.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (onSelectListener != null && project != null) {
+                    onSelectListener.onSelect(project); // Memicu setActiveProject di HomePagePanel
+                }
+            }
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
                 if (!selected) {
                     setBackground(HOVER_BG);
                 }
             }
 
             @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
                 if (!selected) {
                     setBackground(NORMAL_BG);
                 }
             }
-
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (onSelectListener != null && project != null) {
-                    onSelectListener.onSelect(project);
-                }
-            }
-        };
-
-        addMouseListener(hoverAndSelect);
-        jLabel1.addMouseListener(hoverAndSelect);
+        });
     }
 
     /**
@@ -103,22 +132,22 @@ public class ProjectTab extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-         new ProjectInfoPanel(project).setVisible(true);
+        new ProjectInfoPanel(project).setVisible(true);
 
 //
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
-     * Returns the ID of the project represented by this tab.
-     * Used by HomePagePanel's observer methods to locate the correct tab.
+     * Returns the ID of the project represented by this tab. Used by
+     * HomePagePanel's observer methods to locate the correct tab.
      */
     public int getProjectId() {
         return project != null ? project.getId() : -1;
     }
 
     /**
-     * Updates this tab to reflect the given project's new data.
-     * Called by HomePagePanel.onProjectUpdated().
+     * Updates this tab to reflect the given project's new data. Called by
+     * HomePagePanel.onProjectUpdated().
      */
     public void updateProject(Project p) {
         this.project = p;

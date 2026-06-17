@@ -90,6 +90,11 @@ public class KanbanPanel extends javax.swing.JPanel implements interfaces.IProje
     }
 
 
+    @Override
+    public void onProjectCreated(model.Project project) {
+        // Biarkan kosong untuk saat ini agar tidak error, 
+        // atau kamu bisa tambahkan logika untuk me-refresh Kanban jika dibutuhkan nanti.
+    }
 
     @Override
     public void onProjectAdded(Project project) {

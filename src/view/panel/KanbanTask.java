@@ -242,41 +242,41 @@ public class KanbanTask extends javax.swing.JPanel
 
     private void moveComboActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_moveComboActionPerformed
     {//GEN-HEADEREND:event_moveComboActionPerformed
-        // TODO add your handling code here:
-        String statusChoose = moveCombo.getSelectedItem().toString();
-
-        KanbanPanel mainBoard = (KanbanPanel) javax.swing.SwingUtilities.getAncestorOfClass(KanbanPanel.class,
-         this);
-
-        if (mainBoard != null)
-        {
-            java.awt.Container wadahLama = this.getParent();
-            javax.swing.JPanel wadahTarget = null;
-
-            switch (statusChoose)
-            {
-                case "Pending":
-                    wadahTarget = mainBoard.getWadahPending();
-                    break;
-                case "On Progress":
-                    wadahTarget = mainBoard.getWadahInProgress();
-                    break;
-
-                case "Done":
-                    wadahTarget = mainBoard.getWadahDone();
-                    break;
-            }
-            if (wadahTarget != null && wadahTarget != wadahLama)
-            {
-                wadahLama.remove(this);
-                wadahTarget.add(this);
-
-                wadahLama.revalidate();
-                wadahLama.repaint();
-                wadahTarget.revalidate();
-                wadahTarget.repaint();
-            }
-        }
+//        // TODO add your handling code here:
+//        String statusChoose = moveCombo.getSelectedItem().toString();
+//
+//        KanbanPanel mainBoard = (KanbanPanel) javax.swing.SwingUtilities.getAncestorOfClass(KanbanPanel.class,
+//         this);
+//
+//        if (mainBoard != null)
+//        {
+//            java.awt.Container wadahLama = this.getParent();
+//            javax.swing.JPanel wadahTarget = null;
+//
+//            switch (statusChoose)
+////            {
+//                case "Pending":
+//                    wadahTarget = mainBoard.getWadahPending();
+//                    break;
+//                case "On Progress":
+//                    wadahTarget = mainBoard.getWadahInProgress();
+//                    break;
+//
+//                case "Done":
+//                    wadahTarget = mainBoard.getWadahDone();
+//                    break;
+//            }
+//            if (wadahTarget != null && wadahTarget != wadahLama)
+//            {
+//                wadahLama.remove(this);
+//                wadahTarget.add(this);
+//
+//                wadahLama.revalidate();
+//                wadahLama.repaint();
+//                wadahTarget.revalidate();
+//                wadahTarget.repaint();
+//            }
+//        }
     }//GEN-LAST:event_moveComboActionPerformed
 
 

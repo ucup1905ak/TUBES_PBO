@@ -6,6 +6,7 @@ package view.panel;
 
 import control.ProjectControl;
 import control.SessionControl;
+import java.awt.Container;
 import javax.swing.JOptionPane;
 import model.Project;
 import model.User;
@@ -52,7 +53,6 @@ public class AddProjectPanel extends javax.swing.JFrame {
         CardTitleLabel = new javax.swing.JLabel();
         ProjectNameTextField = new javax.swing.JTextField();
         ProjectNameLabel = new javax.swing.JLabel();
-        CancelLabel = new javax.swing.JLabel();
         DescPanel = new javax.swing.JPanel();
         DescScrollPane = new javax.swing.JScrollPane();
         DescTextArea = new javax.swing.JTextArea();
@@ -60,7 +60,7 @@ public class AddProjectPanel extends javax.swing.JFrame {
         AddProjectButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(500, 280));
+        setPreferredSize(new java.awt.Dimension(530, 330));
 
         CardTitleLabel.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         CardTitleLabel.setText("Add Poject");
@@ -79,35 +79,28 @@ public class AddProjectPanel extends javax.swing.JFrame {
         ProjectNamePanelLayout.setHorizontalGroup(
             ProjectNamePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ProjectNamePanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addGroup(ProjectNamePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ProjectNameTextField)
+                    .addGroup(ProjectNamePanelLayout.createSequentialGroup()
+                        .addComponent(ProjectNameTextField)
+                        .addContainerGap())
                     .addGroup(ProjectNamePanelLayout.createSequentialGroup()
                         .addGroup(ProjectNamePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(CardTitleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 382, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(ProjectNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 21, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(0, 106, Short.MAX_VALUE))))
         );
         ProjectNamePanelLayout.setVerticalGroup(
             ProjectNamePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ProjectNamePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(CardTitleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(ProjectNameLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ProjectNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-
-        CancelLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        CancelLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/project_panel/x_icon.png"))); // NOI18N
-        CancelLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                CancelLabelMouseClicked(evt);
-            }
-        });
 
         DescTextArea.setColumns(20);
         DescTextArea.setRows(5);
@@ -115,29 +108,6 @@ public class AddProjectPanel extends javax.swing.JFrame {
 
         ProjectDescLabel.setFont(new java.awt.Font("Segoe UI Semibold", 1, 12)); // NOI18N
         ProjectDescLabel.setText("Project Description");
-
-        javax.swing.GroupLayout DescPanelLayout = new javax.swing.GroupLayout(DescPanel);
-        DescPanel.setLayout(DescPanelLayout);
-        DescPanelLayout.setHorizontalGroup(
-            DescPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(DescPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(DescPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(DescScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE)
-                    .addGroup(DescPanelLayout.createSequentialGroup()
-                        .addComponent(ProjectDescLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        DescPanelLayout.setVerticalGroup(
-            DescPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, DescPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(ProjectDescLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(DescScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
 
         AddProjectButton.setBackground(new java.awt.Color(102, 255, 102));
         AddProjectButton.setText("Add");
@@ -147,43 +117,60 @@ public class AddProjectPanel extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout DescPanelLayout = new javax.swing.GroupLayout(DescPanel);
+        DescPanel.setLayout(DescPanelLayout);
+        DescPanelLayout.setHorizontalGroup(
+            DescPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(DescPanelLayout.createSequentialGroup()
+                .addGroup(DescPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, DescPanelLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(AddProjectButton))
+                    .addGroup(DescPanelLayout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addGroup(DescPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(DescPanelLayout.createSequentialGroup()
+                                .addComponent(ProjectDescLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(DescScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        DescPanelLayout.setVerticalGroup(
+            DescPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, DescPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ProjectDescLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(DescScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(AddProjectButton)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(DescPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 6, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addComponent(ProjectNamePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(CancelLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(AddProjectButton)
-                .addGap(14, 14, 14))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(DescPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(ProjectNamePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(CancelLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addComponent(DescPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ProjectNamePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(AddProjectButton)
+                .addComponent(DescPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //TEKAN TOMBOL ADD
     private void AddProjectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddProjectButtonActionPerformed
         String name = ProjectNameTextField.getText().trim();
         String description = DescTextArea.getText().trim();
@@ -206,7 +193,15 @@ public class AddProjectPanel extends javax.swing.JFrame {
                 ProjectEventBus.getInstance().notifyProjectAdded(projectControl.getSelected());
                 ProjectNameTextField.setText("");
                 DescTextArea.setText("");
-
+                
+                // Tutup panel
+                Container parent = getParent();
+                if (parent != null) {
+                    parent.remove(this);
+                    parent.revalidate();
+                    parent.repaint();
+                }
+                
             } else {
                 JOptionPane.showMessageDialog(this, "Gagal menambahkan project!");
             }
@@ -216,10 +211,6 @@ public class AddProjectPanel extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//GEN-LAST:event_AddProjectButtonActionPerformed
-
-    private void CancelLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CancelLabelMouseClicked
-        dispose();
-    }//GEN-LAST:event_CancelLabelMouseClicked
 
     private void ProjectNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProjectNameTextFieldActionPerformed
         // TODO add your handling code here:
@@ -262,7 +253,6 @@ public class AddProjectPanel extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddProjectButton;
-    private javax.swing.JLabel CancelLabel;
     private javax.swing.JLabel CardTitleLabel;
     private javax.swing.JPanel DescPanel;
     private javax.swing.JScrollPane DescScrollPane;

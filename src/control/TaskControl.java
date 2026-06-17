@@ -14,7 +14,7 @@ import model.Task;
 import model.User;
 import model.enums.TaskPriority;
 import model.enums.TaskStatus;
-import utility.Log;
+import utility.security.Log;
 
 /**
  *

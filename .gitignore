@@ -34,3 +34,5 @@ build/test/classes/.netbeans_automatic_build
 build/test/classes/.netbeans_update_resources
 database.properties
 *.form
+
+build/

@@ -20,7 +20,7 @@ import java.util.Objects;
 import model.Attachment;
 import model.ProjectItem;
 import model.enums.AttachmentType;
-import utility.Log;
+import utility.security.Log;
 
 /**
  *

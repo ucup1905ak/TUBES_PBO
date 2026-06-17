@@ -7,7 +7,7 @@ import exception.database.DatabaseException;
 import java.util.List;
 import model.Session;
 import model.User;
-import utility.PasswordHasher;
+import utility.security.PasswordHasher;
 import exception.validation.ValidationException;
 import exception.validation.EmptyFieldException;
 import exception.validation.InvalidInputException;
@@ -21,9 +21,9 @@ import interfaces.IAuthService;
 
 public class AuthService implements IAuthService {
     public static final int EXPIRY =  3600;
-    private final UserDAO userDAO = new UserDAO();
-    private final SessionDAO sessionDAO = new SessionDAO();
-    private final PasswordHasher passwordHasher = new PasswordHasher();
+    private static final UserDAO userDAO = new UserDAO();
+    private static final SessionDAO sessionDAO = new SessionDAO();
+    private static final PasswordHasher passwordHasher = new PasswordHasher();
 
 
     @Override

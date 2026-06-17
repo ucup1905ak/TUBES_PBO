@@ -8,19 +8,20 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.text.SimpleDateFormat;
 import javax.swing.border.EmptyBorder;
 import model.Tag;
 import model.Task;
-import view.*;
-
-
 
 /**
  *
  * @author farel
  */
 public class TaskCard extends javax.swing.JPanel {
+
     private Task task = new Task();
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy");
+
     /**
      * Creates new form TaskCard
      */
@@ -28,9 +29,17 @@ public class TaskCard extends javax.swing.JPanel {
         initComponents();
         setBorder(new EmptyBorder(10, 10, 10, 10));
     }
-    private void addTag(Tag t){
+
+    public TaskCard(Task t) {
+        initComponents();
+        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setTask(t);
+    }
+
+    private void addTag(Tag t) {
         Tags.add(new TagBite(t.getName(), new Color(230, 230, 56)));
     }
+
     public void setTask(Task t) {
         task = (t != null) ? t : new Task();
 
@@ -43,13 +52,25 @@ public class TaskCard extends javax.swing.JPanel {
         if (tagBite2 != null) {
             tagBite2.setText(task.getTitle() != null ? task.getTitle() : "Task");
         }
-        priorityBite2.setPriority(t.getPriority());
-        for(Tag tag: task.getTags()){
-            addTag(tag);
+        if (priorityBite2 != null) {
+            priorityBite2.setPriority(task.getPriority());
+        }
+        if (jLabel2 != null) {
+            jLabel2.setText(task.getDueDate() != null ? DATE_FORMAT.format(task.getDueDate()) : "No due date");
+        }
+        if (Tags != null) {
+            Tags.removeAll();
+            Tags.add(tagBite2);
+        }
+        for (Tag tag : task.getTags()) {
+            if (tag != null) {
+                addTag(tag);
+            }
         }
         revalidate();
         repaint();
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -142,7 +163,7 @@ public class TaskCard extends javax.swing.JPanel {
         gridBagConstraints.gridy = 3;
         add(jLabel3, gridBagConstraints);
 
-        jLabel2.setText(task.getDueDate().toString());
+        jLabel2.setText("No due date");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;

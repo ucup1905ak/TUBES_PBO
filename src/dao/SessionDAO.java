@@ -9,8 +9,8 @@ import java.sql.SQLException;
 import java.util.List;
 import model.*;
 import service.DatabaseConnection;
-import utility.Log;
-import utility.Query;
+import utility.security.Log;
+import utility.db.Query;
 
 /**
  *

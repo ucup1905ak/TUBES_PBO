@@ -14,7 +14,7 @@
 
 
 // Farel : Ini External Module yang aku masukin :)
-package utility;
+package utility.security;
 
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;

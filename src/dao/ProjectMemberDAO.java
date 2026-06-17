@@ -13,8 +13,8 @@ import model.Project;
 import model.User;
 import model.enums.UserRole;
 import service.DatabaseConnection;
-import utility.Log;
-import utility.Query;
+import utility.security.Log;
+import utility.db.Query;
 
 /**
  *

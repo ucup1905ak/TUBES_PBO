@@ -20,7 +20,9 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import model.User;
+import control.ProjectControl;
+import control.SessionControl;
+import utility.event.ProjectEventBus;
 
 /**
  *
@@ -28,112 +30,45 @@ import model.User;
  */
 public class ProjectInfoPanel extends javax.swing.JFrame {
 
-     private Project project;
-     private ProjectControl projectControl;
-    
+    private Project project;
+    private ProjectControl projectControl;
+
     /**
      * Creates new form ProjectInfoPanel
      */
     public ProjectInfoPanel() {
         initComponents();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        SessionControl sc = new SessionControl();
+        projectControl = new ProjectControl(sc.getCurrentUser());
+        this.project = projectControl.getSelected();
+        loadProjectData();
     }
 
-    public ProjectInfoPanel(ProjectControl projectControl, Project project) {
-        this();
-        this.projectControl = projectControl;
-        this.project = project;
-
-        if (this.projectControl != null && this.project != null) {
-            this.projectControl.setSelected(this.project);
-        }
-
-        loadProjectData(project);
-    }
-    
-    //Constructor untuk test koneksi database
-    public ProjectInfoPanel(int projectId) {
+    public ProjectInfoPanel(Project p) {
         initComponents();
-
-        try {
-            projectControl = new ProjectControl();
-
-            List<Project> projects = projectControl.fetchAll();
-
-            System.out.println("Jumlah project: " + projects.size());
-
-            if (!projects.isEmpty()) {
-                
-                Project project = projects.get(projectId);
-//
-//                ProjectNameLabel.setText(project.getName());
-//                DescriptionTextAre.setText(project.getDescription());
-//                CreatedAtDateLabel.setText(project.getCreatedAt() != null
-//                    ? project.getCreatedAt().toString()
-//                    : "[DATE]"); // Tgl dibuat
-//
-//                System.out.println("Project berhasil dimuat");
-//                System.out.println(project.getName());
-                
-                projectControl.setSelected(project);
-                loadProjectData(project);
-                
-                User owner = projectControl.getOwner();
-                System.out.println("Owner: " + owner.getFullName());
-                System.out.println("Profile path: " + owner.getProfilePicture());
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        this.project = p;
+        SessionControl sc = new SessionControl();
+        projectControl = new ProjectControl(sc.getCurrentUser());
+        
+        loadProjectData();
     }
-    
-    private void loadProjectData(Project project) {
-        Project currentProject = project;
 
-        if (currentProject == null && projectControl != null) {
-            try {
-                currentProject = projectControl.getProject();
-            } catch (DatabaseException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage());
-                return;
-            }
+    private void loadProjectData() {
+        if (project == null) {
+            return;
         }
 
-        if (currentProject == null) return;
+        //untuk show nama & deskripsi Project
+        ProjectNameLabel.setText(project.getName());
+        DescriptionTextAre.setText(project.getDescription());
 
-        try {
-            this.project = currentProject;
-
-            ProjectNameLabel.setText(currentProject.getName()); // Nama project
-            DescriptionTextAre.setText(currentProject.getDescription()); // Deskripsi project
-            CreatedAtDateLabel.setText(currentProject.getCreatedAt() != null
-                    ? currentProject.getCreatedAt().toString()
-                    : "[DATE]"); // Tgl dibuat
-            
-            if (projectControl != null) {
-                // Profil pic Owner
-                User owner = projectControl.getOwner();
-                setOwnerProfilePicture(owner);
-                loadMemberData();
-            } else {
-                setOwnerProfilePicture(null);
-                renderMemberAvatars(null);
-            }
-
-            try {
-                String hexColor = currentProject.getColor();
-                if (hexColor != null && !hexColor.isBlank()) {
-                    ProjectNameLabel.setForeground(Color.decode(hexColor));
-                }
-            } catch (Exception e) {
-                ProjectNameLabel.setForeground(Color.BLACK);
-            }
-            
-        } catch (DatabaseException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
+        //untuk show Created At
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+        CreatedAtDateLabel.setText(formatter.format(project.getCreatedAt()));
     }
-    
+
     private void showProjectMenu() {
 
         JPopupMenu menu = new JPopupMenu();
@@ -153,9 +88,41 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
 
         menu.show(MoreIconLabel, 0, MoreIconLabel.getHeight());
     }
-    
+
     private void editProject() {
-        JOptionPane.showMessageDialog(this, "Edit Project");
+        javax.swing.JTextField nameField = new javax.swing.JTextField(project.getName());
+        javax.swing.JTextArea descField = new javax.swing.JTextArea(
+                project.getDescription() != null ? project.getDescription() : "", 4, 20);
+        descField.setLineWrap(true);
+        descField.setWrapStyleWord(true);
+        javax.swing.JScrollPane descScroll = new javax.swing.JScrollPane(descField);
+
+        Object[] fields = {
+            "Project Name:", nameField,
+            "Description:", descScroll
+        };
+
+        int result = JOptionPane.showConfirmDialog(
+                this, fields, "Edit Project", JOptionPane.OK_CANCEL_OPTION);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String newName = nameField.getText().trim();
+            if (newName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Project name tidak boleh kosong!");
+                return;
+            }
+            project.setName(newName);
+            project.setDescription(descField.getText().trim());
+            project.setUpdatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+            try {
+                projectControl.update(project);
+                loadProjectData();
+                ProjectEventBus.getInstance().notifyProjectUpdated(project);
+                JOptionPane.showMessageDialog(this, "Project berhasil diperbarui!");
+            } catch (exception.database.DatabaseException e) {
+                JOptionPane.showMessageDialog(this, "Gagal memperbarui project: " + e.getMessage());
+            }
+        }
     }
 
     private void manageMembers() {
@@ -163,162 +130,23 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
     }
 
     private void deleteProject() {
-        JOptionPane.showMessageDialog(this, "Delete Project");
-    }
-
-    private void loadMemberData() {
-        if (projectControl == null) {
-            renderMemberAvatars(null);
-            return;
-        }
-
-        try {
-            List<User> members = projectControl.getMembers();
-            renderMemberAvatars(members);
-        } catch (DatabaseException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
-    }
-
-    private void renderMemberAvatars(List<User> members) {
-        MemberAvatarPanel.removeAll();
-        MemberAvatarPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 0));
-
-        if (members != null) {
-            for (User member : members) {
-                MemberAvatarPanel.add(createMemberAvatarLabel(member));
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Yakin ingin menghapus project \"" + project.getName() + "\"?",
+                "Hapus Project",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                projectControl.delete(project.getId());
+                ProjectEventBus.getInstance().notifyProjectDeleted(project.getId());
+                JOptionPane.showMessageDialog(this, "Project berhasil dihapus!");
+                dispose();
+            } catch (exception.database.DatabaseException e) {
+                JOptionPane.showMessageDialog(this, "Gagal menghapus project: " + e.getMessage());
             }
         }
-
-        MemberAvatarPanel.add(createAddMemberLabel());
-        MemberAvatarPanel.revalidate();
-        MemberAvatarPanel.repaint();
-    }
-
-    private JLabel createMemberAvatarLabel(User member) {
-        JLabel avatarLabel = new JLabel();
-        avatarLabel.setPreferredSize(new java.awt.Dimension(50, 50));
-        avatarLabel.setMinimumSize(new java.awt.Dimension(50, 50));
-        avatarLabel.setMaximumSize(new java.awt.Dimension(50, 50));
-        avatarLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-
-        if (member == null) {
-            avatarLabel.setIcon(new ImageIcon(createNeutralAvatarIcon(50, 50)));
-            return avatarLabel;
-        }
-
-        String path = member.getProfilePicture();
-        if (path == null || path.isBlank()) {
-            avatarLabel.setIcon(new ImageIcon(createNeutralAvatarIcon(50, 50)));
-            avatarLabel.setToolTipText(member.getFullName());
-            return avatarLabel;
-        }
-
-        ImageIcon icon = new ImageIcon(path);
-        Image circularImage = createCircularImage(icon.getImage(), 50, 50);
-        avatarLabel.setIcon(new ImageIcon(circularImage));
-        avatarLabel.setToolTipText(member.getFullName());
-        return avatarLabel;
-    }
-
-    private JLabel createAddMemberLabel() {
-        JLabel addLabel = new JLabel(new ImageIcon(createAddMemberIcon(50, 50)));
-        addLabel.setPreferredSize(new java.awt.Dimension(50, 50));
-        addLabel.setMinimumSize(new java.awt.Dimension(50, 50));
-        addLabel.setMaximumSize(new java.awt.Dimension(50, 50));
-        addLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        addLabel.setToolTipText("Tambah member");
-        addLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                openMemberEditorPlaceholder();
-            }
-        });
-        return addLabel;
-    }
-
-    private void openMemberEditorPlaceholder() {
-        // buka panel edit member ketika panel edit member sudah tersedia.
-        JOptionPane.showMessageDialog(this, "Panel edit member belum tersedia.");
-    }
-    
-    //Tampil profile Owner
-    private void setOwnerProfilePicture(User owner) {
-        if (owner == null) {
-            System.out.println("NULL 1");
-            OwnerProfilePictureLabel.setIcon(null);
-            OwnerProfilePictureLabel.setText("profile_pic");
-            return;
-        }
-
-        String path = owner.getProfilePicture();
-        if (path == null || path.isBlank()) {
-            System.out.println("NULL 2");
-            OwnerProfilePictureLabel.setIcon(null);
-            OwnerProfilePictureLabel.setText("profile_pic");
-            return;
-        }
-
-        ImageIcon icon = new ImageIcon(path);
-        Image circularImage = createCircularImage(icon.getImage(), 50, 50);
-
-        OwnerProfilePictureLabel.setIcon(new ImageIcon(circularImage));
-        OwnerProfilePictureLabel.setText("");
-
-        System.out.println("Loading image: " + path);
-    }
-
-    private Image createCircularImage(Image sourceImage, int width, int height) {
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = bufferedImage.createGraphics();
-        try {
-            graphics.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-            graphics.setClip(new Ellipse2D.Double(0, 0, width, height));
-            graphics.drawImage(sourceImage, 0, 0, width, height, null);
-        } finally {
-            graphics.dispose();
-        }
-        return bufferedImage;
-    }
-
-    private BufferedImage createNeutralAvatarIcon(int width, int height) {
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = bufferedImage.createGraphics();
-        try {
-            graphics.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-            graphics.setColor(new Color(229, 231, 235));
-            graphics.fill(new Ellipse2D.Double(0, 0, width, height));
-            graphics.setColor(new Color(148, 163, 184));
-            graphics.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 20));
-            String text = "?";
-            java.awt.FontMetrics metrics = graphics.getFontMetrics();
-            int textWidth = metrics.stringWidth(text);
-            int textHeight = metrics.getAscent();
-            graphics.drawString(text, (width - textWidth) / 2, (height + textHeight) / 2 - 4);
-        } finally {
-            graphics.dispose();
-        }
-        return bufferedImage;
-    }
-
-    private BufferedImage createAddMemberIcon(int width, int height) {
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = bufferedImage.createGraphics();
-        try {
-            graphics.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-            graphics.setColor(new Color(229, 231, 235));
-            graphics.fill(new Ellipse2D.Double(0, 0, width, height));
-            graphics.setStroke(new java.awt.BasicStroke(3f, java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_ROUND));
-            graphics.setColor(new Color(55, 65, 81));
-            int centerX = width / 2;
-            int centerY = height / 2;
-            int padding = 14;
-            graphics.drawLine(centerX - padding, centerY, centerX + padding, centerY);
-            graphics.drawLine(centerX, centerY - padding, centerX, centerY + padding);
-        } finally {
-            graphics.dispose();
-        }
-        return bufferedImage;
     }
 
     /**
@@ -583,12 +411,12 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_MoreIconLabelMouseClicked
 
     private void CancelIconLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CancelIconLabelMouseClicked
-        
+
         /*
             ini kan masih window, jadi pake dispose()
             kalo udh imnpelentasi jadi panel pop up di dashboard, keknya pake setVisible(false)
             - widi (16/6)
-        */
+         */
         dispose();
     }//GEN-LAST:event_CancelIconLabelMouseClicked
 

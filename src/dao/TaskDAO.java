@@ -14,8 +14,8 @@ import model.Task;
 import model.User;
 import model.enums.TaskPriority;
 import model.enums.TaskStatus;
-import utility.Log;
-import utility.Query;
+import utility.db.Query;
+import utility.security.Log;
 
 /**
  *
@@ -288,12 +288,12 @@ public class TaskDAO implements IProjectItemDAO<Task>, IRowMapper<Task> {
 
             String priority = rs.getString("priority");
             if (priority != null) {
-                task.setPriority(TaskPriority.valueOf(priority));
+                task.setPriority(TaskPriority.valueOf(normalizeEnumName(priority)));
             }
 
             String status = rs.getString("status");
             if (status != null) {
-                task.setStatus(TaskStatus.valueOf(status));
+                task.setStatus(TaskStatus.valueOf(normalizeEnumName(status)));
             }
 
             task.setStartDate(toDate(rs.getTimestamp("start_date")));
@@ -311,6 +311,10 @@ public class TaskDAO implements IProjectItemDAO<Task>, IRowMapper<Task> {
 
     private java.util.Date toDate(Timestamp timestamp) {
         return timestamp == null ? null : new java.util.Date(timestamp.getTime());
+    }
+
+    private String normalizeEnumName(String value) {
+        return value.trim().toUpperCase().replace('-', '_').replace(' ', '_');
     }
 
     private Timestamp toTimestamp(java.util.Date date) {

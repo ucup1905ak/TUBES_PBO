@@ -8,6 +8,16 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import control.UserControl;
+import control.SocialControl;
+import model.User;
+import model.Social;
+import exception.database.DatabaseException;
+import java.util.List;
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import model.Session;
 
 /**
  *
@@ -23,12 +33,20 @@ public class ProfilePanel extends JPanel {
     private static final Color DIVIDER = new Color(255, 255, 255, 80);
 
     // Data
+    private int loggedInUserId;
     private String fullName = "Nama Lengkap";
     private String username = "Username";
     private String email = "name@mail.com";
     private String description = "";
     private String github = "";
     private String instagram = "";
+
+    // Control
+    private UserControl userControl = new UserControl();
+    private SocialControl socialControl = new SocialControl();
+    private User currentUser;
+    private Social githubSocial;
+    private Social instagramSocial;
 
     // UI references
     private JLabel nameLabel;
@@ -37,7 +55,6 @@ public class ProfilePanel extends JPanel {
     private JLabel instagramLabel;
     private JPanel contentPanel;
 
-    // Callback interfaces
     public interface LogoutListener {
 
         void onLogout();
@@ -48,14 +65,76 @@ public class ProfilePanel extends JPanel {
         void onClose();
     }
 
+    public interface ProfileUpdateListener {
+
+        void onProfileUpdated();
+    }
+
+    private ProfileUpdateListener profileUpdateListener;
+
+    public void setProfileUpdateListener(ProfileUpdateListener l) {
+        this.profileUpdateListener = l;
+    }
+
     private LogoutListener logoutListener;
     private CloseListener closeListener;
 
-    public ProfilePanel() {
+    public ProfilePanel(Session session) {
         setPreferredSize(new Dimension(466, 720));
         setLayout(new BorderLayout());
         setOpaque(false);
+
+        this.currentUser = session.getUser();
+        this.loggedInUserId = this.currentUser.getId();
+
+        try {
+            loadUserData(this.loggedInUserId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         buildUI();
+    }
+
+    private void loadUserData(int userId) {
+        try {
+            currentUser = userControl.get(userId);
+            if (currentUser != null) {
+                this.fullName = currentUser.getFullName() != null ? currentUser.getFullName() : "Nama Lengkap";
+                this.username = currentUser.getUsername() != null ? currentUser.getUsername() : "Username";
+                this.email = currentUser.getEmail() != null ? currentUser.getEmail() : "name@mail.com";
+                this.description = currentUser.getBio() != null ? currentUser.getBio() : "";
+
+            }
+
+            List<Social> socials = socialControl.findByUserId(userId);
+            if (socials != null) {
+                for (Social social : socials) {
+                    if (social.getPlatform().name().equalsIgnoreCase("GITHUB")) {
+                        this.github = social.getUrl() != null ? social.getUrl() : "";
+                        this.githubSocial = social;
+                    } else if (social.getPlatform().name().equalsIgnoreCase("INSTAGRAM")) {
+                        this.instagram = social.getUrl() != null ? social.getUrl() : "";
+                        this.instagramSocial = social;
+                    }
+                }
+            }
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updatePhotoUI(JLabel photoLabel) {
+        if (currentUser != null && currentUser.getProfilePicture() != null && !currentUser.getProfilePicture().isEmpty()) {
+            File file = new File(currentUser.getProfilePicture());
+            if (file.exists()) {
+                ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+                Image img = icon.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+                photoLabel.setIcon(new ImageIcon(img));
+                photoLabel.setText("");
+            } else {
+                System.out.println("File tidak ditemukan di: " + file.getAbsolutePath());
+            }
+        }
     }
 
     public void setLogoutListener(LogoutListener l) {
@@ -66,9 +145,8 @@ public class ProfilePanel extends JPanel {
         this.closeListener = l;
     }
 
-    // ------------------------------------------------------------------ build
     private void buildUI() {
-        // Root gradient panel
+
         JPanel root = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -95,7 +173,6 @@ public class ProfilePanel extends JPanel {
             closeBtn.setFont(new Font("Arial", Font.BOLD, 14));
         }
 
-        // Styling agar tombol tetap transparan dan rapi
         closeBtn.setContentAreaFilled(false);
         closeBtn.setBorderPainted(false);
         closeBtn.setFocusPainted(false);
@@ -117,7 +194,6 @@ public class ProfilePanel extends JPanel {
         topBar.add(closeBtn);
         root.add(topBar, BorderLayout.NORTH);
 
-        // ---- scrollable content ----
         contentPanel = new JPanel();
         contentPanel.setOpaque(false);
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
@@ -142,7 +218,6 @@ public class ProfilePanel extends JPanel {
         scroll.setBorder(null);
         root.add(scroll, BorderLayout.CENTER);
 
-        // ---- logout button (bottom-right) ----
         JPanel bottomBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 14, 10));
         bottomBar.setOpaque(false);
         JButton logoutBtn = makeLogoutButton();
@@ -159,44 +234,92 @@ public class ProfilePanel extends JPanel {
         add(root, BorderLayout.CENTER);
     }
 
-    // ----------------------------------------------------------------- header
+    private void changeProfilePicture(JLabel photoLabel) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Pilih Foto Profil");
+
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Images (JPG, PNG, JPEG)", "jpg", "png", "jpeg"));
+
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            String rawPath = selectedFile.getAbsolutePath();
+            String safePath = rawPath.replace("\\", "/");
+
+            try {
+                if (currentUser != null) {
+
+                    currentUser.setProfilePicture(safePath);
+
+                    userControl.updateProfile(currentUser);
+
+                    ImageIcon icon = new ImageIcon(safePath);
+                    Image img = icon.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+                    photoLabel.setIcon(new ImageIcon(img));
+                    photoLabel.setText("");
+
+                    JOptionPane.showMessageDialog(this, "Foto profil berhasil diperbarui!");
+                    if (profileUpdateListener != null) {
+                        profileUpdateListener.onProfileUpdated();
+                    }
+                }
+            } catch (DatabaseException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Gagal menyimpan foto ke database.", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Gagal memuat gambar.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
     private JPanel buildProfileHeader() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 14, 6));
         panel.setOpaque(false);
 
-        // Photo placeholder
-        JLabel photo = new JLabel("foto profil", SwingConstants.CENTER);
+        JLabel photo = new JLabel("", SwingConstants.CENTER);
+        updatePhotoUI(photo);
         photo.setPreferredSize(new Dimension(70, 70));
         photo.setFont(new Font("Arial", Font.PLAIN, 10));
-        photo.setForeground(new Color(180, 180, 180));
         photo.setBackground(new Color(220, 220, 220));
         photo.setOpaque(true);
         photo.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
+        photo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        photo.setToolTipText("Klik untuk mengganti foto profil");
+
+        if (currentUser != null && currentUser.getProfilePicture() != null && !currentUser.getProfilePicture().isEmpty()) {
+            try {
+                ImageIcon icon = new ImageIcon(currentUser.getProfilePicture());
+                Image img = icon.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+                photo.setIcon(new ImageIcon(img));
+            } catch (Exception e) {
+                photo.setText("foto profil");
+                photo.setForeground(new Color(180, 180, 180));
+            }
+        } else {
+            photo.setText("foto profil");
+            photo.setForeground(new Color(180, 180, 180));
+        }
+
+        photo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                changeProfilePicture(photo);
+            }
+        });
         panel.add(photo);
 
-        // Info column
         JPanel info = new JPanel();
         info.setOpaque(false);
         info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
 
-        // Full name row
-        // Menggunakan FlowLayout dengan gap kiri '4' pixel
         JPanel nameRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         nameRow.setOpaque(false);
-        nameRow.setAlignmentX(Component.LEFT_ALIGNMENT); // <-- 1. PAKSA PANEL NAMA ALIGNMENT KIRI
+        nameRow.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         nameLabel = new JLabel(fullName);
         nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
         nameLabel.setForeground(WHITE);
-
-        try {
-            nameLabel.setIcon(new ImageIcon(getClass().getResource("/icon/user_icon.png")));
-            nameLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-            nameLabel.setVerticalTextPosition(SwingConstants.CENTER);
-            nameLabel.setIconTextGap(8);
-        } catch (Exception e) {
-            System.out.println("Icon Nama Lengkap belum ditemukan.");
-        }
 
         JButton editNameBtn = makeSmallEditButton();
         editNameBtn.addActionListener(e -> startEditName(nameRow, editNameBtn));
@@ -204,8 +327,6 @@ public class ProfilePanel extends JPanel {
         nameRow.add(editNameBtn);
         info.add(nameRow);
 
-        // Username row
-        // <-- BARU: Kita bungkus uLabel ke dalam panel ber-FlowLayout yang sama persis dengan nameRow agar otomatis lurus vertikal -->
         JPanel usernameRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         usernameRow.setOpaque(false);
         usernameRow.setAlignmentX(Component.LEFT_ALIGNMENT); // <-- 2. PAKSA PANEL USERNAME ALIGNMENT KIRI
@@ -213,16 +334,14 @@ public class ProfilePanel extends JPanel {
         JLabel uLabel = new JLabel(username);
         uLabel.setFont(new Font("Arial", Font.BOLD, 13));
         uLabel.setForeground(YELLOW);
-        // Kosongkan border kirinya agar tidak membuat jaraknya ganda (double gap)
         uLabel.setBorder(new EmptyBorder(2, 0, 2, 0));
 
         usernameRow.add(uLabel);
-        info.add(usernameRow); // <-- Masukkan panel barunya ke panel info
+        info.add(usernameRow);
 
-        // Email row
         JPanel emailRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         emailRow.setOpaque(false);
-        emailRow.setAlignmentX(Component.LEFT_ALIGNMENT); // <-- 3. PAKSA PANEL EMAIL ALIGNMENT KIRI
+        emailRow.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel mailIcon = new JLabel("✉");
         mailIcon.setForeground(WHITE);
@@ -238,7 +357,6 @@ public class ProfilePanel extends JPanel {
         return panel;
     }
 
-    // -------------------------------------------------------------- edit name
     private void startEditName(JPanel nameRow, JButton editBtn) {
         nameRow.remove(nameLabel);
         nameRow.remove(editBtn);
@@ -249,7 +367,7 @@ public class ProfilePanel extends JPanel {
         tf.setMaximumSize(new Dimension(180, 28));
         nameRow.add(tf);
 
-        JButton okBtn = makeSmallIconButton("simpan");
+        JButton okBtn = makeSmallIconButton("Simpan");
         okBtn.setForeground(new Color(0x2ECC71));
         nameRow.add(okBtn);
 
@@ -264,6 +382,14 @@ public class ProfilePanel extends JPanel {
                 fullName = val;
             }
             nameLabel.setText(fullName);
+            if (currentUser != null) {
+                currentUser.setFullName(fullName);
+                try {
+                    userControl.updateProfile(currentUser);
+                } catch (DatabaseException ex) {
+                    ex.printStackTrace();
+                }
+            }
             nameRow.remove(tf);
             nameRow.remove(okBtn);
             nameRow.add(nameLabel);
@@ -275,7 +401,6 @@ public class ProfilePanel extends JPanel {
         tf.addActionListener(confirm);
     }
 
-    // ----------------------------------------------------------- description
     private JPanel buildDescriptionRow() {
         JPanel wrapper = new JPanel();
         wrapper.setOpaque(false);
@@ -309,17 +434,15 @@ public class ProfilePanel extends JPanel {
                 new EmptyBorder(4, 6, 4, 6)));
 
         JScrollPane sp = new JScrollPane(ta);
-        sp.setPreferredSize(new Dimension(400, 80)); // Gunakan preferredSize, bukan maximumSize
+        sp.setPreferredSize(new Dimension(400, 80));
         sp.getViewport().setOpaque(false);
 
-        JButton okBtn = makeSmallIconButton("✔ Simpan");
+        JButton okBtn = makeSmallIconButton("Simpan");
         okBtn.setForeground(new Color(0x2ECC71));
 
-        // --- SOLUSI: BUNGKUS DENGAN FLOWLAYOUT KIRI ---
         JPanel editContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         editContainer.setOpaque(false);
 
-        // Sub-panel untuk menyusun Text Area & Tombol secara vertikal
         JPanel innerPanel = new JPanel();
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         innerPanel.setOpaque(false);
@@ -333,7 +456,7 @@ public class ProfilePanel extends JPanel {
 
         editContainer.add(innerPanel);
 
-        wrapper.add(editContainer); // Masukkan ke wrapper utama
+        wrapper.add(editContainer);
         wrapper.revalidate();
         wrapper.repaint();
         ta.requestFocusInWindow();
@@ -343,14 +466,21 @@ public class ProfilePanel extends JPanel {
             description = val;
             descLabel.setText(description.isEmpty() ? "Add description..." : description);
             descLabel.setForeground(description.isEmpty() ? new Color(255, 255, 255, 160) : WHITE);
+            if (currentUser != null) {
+                currentUser.setBio(description);
+                try {
+                    userControl.updateProfile(currentUser);
+                } catch (DatabaseException ex) {
+                    ex.printStackTrace();
+                }
+            }
 
-            wrapper.remove(editContainer); // Hapus kontainer edit yang baru
+            wrapper.remove(editContainer);
             row.setVisible(true);
             wrapper.revalidate();
             wrapper.repaint();
         });
 
-        // Ctrl+Enter confirm
         ta.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK), "confirm");
         ta.getActionMap().put("confirm", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -359,12 +489,11 @@ public class ProfilePanel extends JPanel {
         });
     }
 
-    // --------------------------------------------------------- social media
     private JPanel buildSocialMediaSection() {
         JPanel panel = new JPanel();
         panel.setOpaque(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT); // Pastikan panel utama rata kiri
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel title = new JLabel("Social Media");
         title.setFont(new Font("Arial", Font.BOLD, 18));
@@ -373,24 +502,23 @@ public class ProfilePanel extends JPanel {
         panel.add(title);
         panel.add(Box.createVerticalStrut(10));
 
-        // 1. Inisialisasi Label terlebih dahulu agar tidak memicu error
         githubLabel = new JLabel(github.isEmpty() ? "Add GitHub..." : github);
+        githubLabel.setIcon(new ImageIcon(getClass().getResource("/icon/dashboard_panel/github.png")));
         githubLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         githubLabel.setForeground(github.isEmpty() ? new Color(255, 255, 255, 160) : WHITE);
 
         instagramLabel = new JLabel(instagram.isEmpty() ? "Add Instagram..." : instagram);
+        instagramLabel.setIcon(new ImageIcon(getClass().getResource("/icon/dashboard_panel/instagram.png")));
         instagramLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         instagramLabel.setForeground(instagram.isEmpty() ? new Color(255, 255, 255, 160) : WHITE);
 
-        // 2. Panggil baris GitHub
         JPanel ghRow = buildSocialRow("github", githubLabel);
-        ghRow.setAlignmentX(Component.LEFT_ALIGNMENT); // <-- Paksa baris GitHub rata kiri
+        ghRow.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(ghRow);
         panel.add(Box.createVerticalStrut(8));
 
-        // 3. Panggil baris Instagram
         JPanel igRow = buildSocialRow("instagram", instagramLabel);
-        igRow.setAlignmentX(Component.LEFT_ALIGNMENT); // <-- Paksa baris Instagram rata kiri
+        igRow.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(igRow);
 
         return panel;
@@ -400,21 +528,15 @@ public class ProfilePanel extends JPanel {
         JPanel wrapper = new JPanel();
         wrapper.setOpaque(false);
         wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
-        wrapper.setAlignmentX(Component.LEFT_ALIGNMENT); // <-- Paksa wrapper rata kiri
+        wrapper.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Gunakan FlowLayout kiri untuk menyusun Ikon + Teks + Tombol Edit
         JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         row.setOpaque(false);
-        row.setAlignmentX(Component.LEFT_ALIGNMENT); // <-- Paksa isi row rata kiri
-
-        JLabel iconLabel = new JLabel(type.equalsIgnoreCase("github") ? "⬡ " : "◎ ");
-        iconLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        iconLabel.setForeground(WHITE);
+        row.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JButton editBtn = makeSmallEditButton();
         editBtn.addActionListener(e -> startEditSocial(wrapper, row, type, targetLabel));
 
-        row.add(iconLabel);
         row.add(targetLabel);
         row.add(editBtn);
 
@@ -432,10 +554,9 @@ public class ProfilePanel extends JPanel {
                 BorderFactory.createLineBorder(WHITE, 1),
                 new EmptyBorder(2, 4, 2, 4)));
 
-        JButton okBtn = makeSmallIconButton("✔");
+        JButton okBtn = makeSmallIconButton("");
         okBtn.setForeground(new Color(0x2ECC71));
 
-        // Bungkus form edit dengan FlowLayout rata kiri
         JPanel editContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         editContainer.setOpaque(false);
         editContainer.setAlignmentX(Component.LEFT_ALIGNMENT); // <-- Paksa mode edit rata kiri
@@ -453,9 +574,34 @@ public class ProfilePanel extends JPanel {
             if (type.equalsIgnoreCase("github")) {
                 github = val;
                 targetLabel.setText(github.isEmpty() ? "Add GitHub..." : github);
+
+                try {
+                    if (githubSocial != null) {
+                        githubSocial.setUrl(github);
+                        socialControl.update(githubSocial);
+                    } else {
+                        githubSocial = new Social(currentUser, model.enums.SocialPlatform.GITHUB, github);
+                        socialControl.add(githubSocial);
+                    }
+                } catch (DatabaseException ex) {
+                    ex.printStackTrace();
+                }
+
             } else {
                 instagram = val;
                 targetLabel.setText(instagram.isEmpty() ? "Add Instagram..." : instagram);
+
+                try {
+                    if (instagramSocial != null) {
+                        instagramSocial.setUrl(instagram);
+                        socialControl.update(instagramSocial);
+                    } else {
+                        instagramSocial = new Social(currentUser, model.enums.SocialPlatform.INSTAGRAM, instagram);
+                        socialControl.add(instagramSocial);
+                    }
+                } catch (DatabaseException ex) {
+                    ex.printStackTrace();
+                }
             }
             targetLabel.setForeground(val.isEmpty() ? new Color(255, 255, 255, 160) : WHITE);
 
@@ -469,7 +615,6 @@ public class ProfilePanel extends JPanel {
         tf.addActionListener(confirmAction);
     }
 
-    // --------------------------------------------------------------- helpers
     private JPanel buildDivider() {
         JPanel d = new JPanel() {
             @Override
@@ -560,21 +705,28 @@ public class ProfilePanel extends JPanel {
         btn.setFocusPainted(false);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btn.setPreferredSize(new Dimension(110, 34));
-        // add power icon prefix via label
         btn.setIcon(new ImageIcon(getClass().getResource("/icon/profile_panel/logout.png")));
         return btn;
     }
 
-    // ------------------------------------------------------------------ main
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Profile Panel");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
+            control.SessionControl sessionControl = new control.SessionControl();
+            model.Session activeSession = sessionControl.getCurrentSession();
+            ProfilePanel panel = new ProfilePanel(activeSession);
 
-            ProfilePanel panel = new ProfilePanel();
-            panel.setLogoutListener(()
-                    -> JOptionPane.showMessageDialog(null, "Anda telah logout."));
+            panel.setLogoutListener(() -> {
+                try {
+                    sessionControl.logout();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                frame.dispose();
+            });
+
             panel.setCloseListener(() -> frame.dispose());
 
             frame.add(panel);
@@ -582,5 +734,16 @@ public class ProfilePanel extends JPanel {
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
+//            int loggedInUserId = 1; 
+//            ProfilePanel panel = new ProfilePanel(loggedInUserId);
+//            panel.setLogoutListener(()
+//                    -> JOptionPane.showMessageDialog(null, "Anda telah logout."));
+//            panel.setCloseListener(() -> frame.dispose());
+//
+//            frame.add(panel);
+//            frame.pack();
+//            frame.setLocationRelativeTo(null);
+//            frame.setVisible(true);
+
     }
 }

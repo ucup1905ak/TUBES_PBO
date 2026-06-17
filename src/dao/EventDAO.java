@@ -15,8 +15,8 @@ import java.util.List;
 import model.Event;
 import model.Project;
 import model.User;
-import utility.Log;
-import utility.Query;
+import utility.security.Log;
+import utility.db.Query;
 
 /**
  *

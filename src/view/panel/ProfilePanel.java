@@ -559,7 +559,7 @@ public class ProfilePanel extends JPanel {
 
         JPanel editContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         editContainer.setOpaque(false);
-        editContainer.setAlignmentX(Component.LEFT_ALIGNMENT); // <-- Paksa mode edit rata kiri
+        editContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         editContainer.add(tf);
         editContainer.add(okBtn);

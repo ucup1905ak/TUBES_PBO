@@ -8,24 +8,16 @@ package view.panel;
  *
  * @author aldio
  */
-import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-
-import model.enums.TaskPriority;
+import view.panel.component.CustomHeaderRenderer;
 import view.panel.component.ComponentRenderer;
 
 public class TabelPanel extends javax.swing.JPanel {
@@ -33,85 +25,50 @@ public class TabelPanel extends javax.swing.JPanel {
     /**
      * Creates new form TabelPanel
      */
+    private DefaultTableModel tableModel;
+
     public TabelPanel() {
         initComponents();
         initCustomUI();
     }
 
     private void initCustomUI() {
-        setPreferredSize(new Dimension(1078, 633));
-        removeAll();
-        setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
-
-        // --- PANEL ATAS ---
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        topPanel.setBackground(Color.WHITE);
-        topPanel.setBorder(new EmptyBorder(20, 20, 10, 20));
-
-        JButton addButton = new JButton("+ Tambah Tugas/Acara");
-        addButton.setBackground(new Color(230, 50, 80));
-        addButton.setForeground(Color.WHITE);
-        addButton.setFocusPainted(false);
-        addButton.setFont(new Font("SansSerif", Font.BOLD, 12));
-        addButton.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
-        topPanel.add(addButton);
-
-        add(topPanel, BorderLayout.NORTH);
 
         String[] columns = {"Name", "Tenggat", "Tag", "Status", "Prioritas", "Aksi"};
-        DefaultTableModel model = new DefaultTableModel(columns, 0) {
+        tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
+        TabelPreview.setModel(tableModel);
 
-        JTable table = new JTable(model);
-        table.setRowHeight(40);
-        table.setBackground(Color.WHITE);
-        table.setFillsViewportHeight(true);
-        table.setShowVerticalLines(false);
-        table.setShowHorizontalLines(true);
-        table.setGridColor(new Color(240, 200, 200));
+        TabelPreview.setRowHeight(50);
+        TabelPreview.setBackground(Color.WHITE);
+        TabelPreview.setShowVerticalLines(false);
+        TabelPreview.setShowHorizontalLines(true);
+        TabelPreview.setGridColor(new Color(240, 240, 240));
+        TabelPreview.setBorder(BorderFactory.createEmptyBorder());
 
-        JTableHeader header = table.getTableHeader();
-        header.setBackground(Color.WHITE);
-        header.setForeground(new Color(150, 0, 20));
-        header.setFont(new Font("SansSerif", Font.BOLD, 14));
-        header.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, new Color(150, 0, 20)));
-        ((DefaultTableCellRenderer) header.getDefaultRenderer()).setHorizontalAlignment(JLabel.LEFT);
+        TabelPreview.getTableHeader().setDefaultRenderer(new CustomHeaderRenderer());
+        TabelPreview.getTableHeader().setPreferredSize(new Dimension(0, 40));
+        TabelPreview.getTableHeader().setBackground(Color.WHITE);
 
-        DefaultTableCellRenderer paddingRenderer = new DefaultTableCellRenderer();
-        paddingRenderer.setBorder(new EmptyBorder(0, 10, 0, 0));
-        table.getColumnModel().getColumn(0).setCellRenderer(paddingRenderer);
-        table.getColumnModel().getColumn(1).setCellRenderer(paddingRenderer);
+        TabelPreview.getColumnModel().getColumn(2).setCellRenderer(new ComponentRenderer(0)); // Tag
+        TabelPreview.getColumnModel().getColumn(3).setCellRenderer(new ComponentRenderer(0)); // Status
+        TabelPreview.getColumnModel().getColumn(4).setCellRenderer(new ComponentRenderer(1)); // Prioritas
 
-        table.getColumnModel().getColumn(2).setCellRenderer(new ComponentRenderer(0));
-        table.getColumnModel().getColumn(3).setCellRenderer(new ComponentRenderer(0));
-        table.getColumnModel().getColumn(4).setCellRenderer(new ComponentRenderer(1));
+        TabelPreview.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, "...", isSelected, hasFocus, row, column);
+                label.setHorizontalAlignment(JLabel.CENTER);
+                label.setFont(new Font("Arial", Font.BOLD, 18));
+                label.setForeground(new Color(150, 150, 150));
+                return label;
+            }
+        });
 
-        DefaultTableCellRenderer actionRenderer = new DefaultTableCellRenderer();
-        actionRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(5).setCellRenderer(actionRenderer);
-
-        table.getColumnModel().getColumn(0).setPreferredWidth(300);
-        table.getColumnModel().getColumn(1).setPreferredWidth(150);
-        table.getColumnModel().getColumn(5).setPreferredWidth(50);
-
-        model.addRow(new Object[]{"name 1", "tanggal", "Kerja", "Tertunda", TaskPriority.HIGH, "..."});
-        model.addRow(new Object[]{"Tugas PBO", "25 Okt 2024", "Kuliah", "Selesai", TaskPriority.MEDIUM, "..."});
-        model.addRow(new Object[]{"Rapat Himaforka", "26 Okt 2024", "Organisasi", "Proses", TaskPriority.LOW, "..."});
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBackground(Color.WHITE);
-        scrollPane.getViewport().setBackground(Color.WHITE);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20));
-
-        add(scrollPane, BorderLayout.CENTER);
-
-        revalidate();
-        repaint();
     }
 
     /**
@@ -123,40 +80,85 @@ public class TabelPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        TambahTugas = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        TabelPreview = new javax.swing.JTable();
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(1078, 633));
+
+        TambahTugas.setBackground(new java.awt.Color(245, 47, 87));
+        TambahTugas.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        TambahTugas.setForeground(new java.awt.Color(237, 237, 244));
+        TambahTugas.setText("+ Tugas");
+        TambahTugas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TambahTugasActionPerformed(evt);
+            }
+        });
+
+        TabelPreview.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        TabelPreview.setGridColor(new java.awt.Color(162, 0, 33));
+        jScrollPane1.setViewportView(TabelPreview);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1066, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TambahTugas, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(TambahTugas, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-//    public static void main(String[] args) {
-//        try {
-//            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        // Jalankan testing panel
-//        java.awt.EventQueue.invokeLater(() -> {
-//            javax.swing.JFrame frame = new javax.swing.JFrame("Testing Tabel Panel");
-//            frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-//
-//            // Masukkan TabelPanel ke dalam frame
-//            TabelPanel panel = new TabelPanel();
-//            frame.add(panel);
-//
-//            // pack() akan menyesuaikan ukuran frame mengikuti 1078x633
-//            frame.pack();
-//            frame.setLocationRelativeTo(null); // Tampilkan di tengah layar
-//            frame.setVisible(true);
-//        });
-//    }
+    private void TambahTugasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TambahTugasActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TambahTugasActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable TabelPreview;
+    private javax.swing.JButton TambahTugas;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

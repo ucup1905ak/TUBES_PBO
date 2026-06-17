@@ -38,6 +38,9 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
     public HomePagePanel() {
 //        System.out.println("MASUK");
         initComponents();
+        
+        initTabelPanel();
+        
         try {
             projects = projectControl.fetchUserProjects(sessionControl.getCurrentUser());
         } catch (Exception e) {
@@ -158,6 +161,19 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
         SideBarPanel.addMouseListener(clearFocusAdapter);
         ContentPanel.addMouseListener(clearFocusAdapter);
     }
+    
+    private void initTabelPanel() {
+        Tabel.removeAll();
+        
+        Tabel.setLayout(new java.awt.BorderLayout());
+        
+        TabelPanel customTabelPanel = new TabelPanel();
+        
+        Tabel.add(customTabelPanel, java.awt.BorderLayout.CENTER);
+        
+        Tabel.revalidate();
+        Tabel.repaint();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -178,7 +194,8 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
         jLabel1 = new javax.swing.JLabel();
         projectPanel = new javax.swing.JPanel();
         ContentPanel = new javax.swing.JTabbedPane();
-        Kalender = new javax.swing.JPanel();
+        Tabel = new javax.swing.JPanel();
+        taskCard1 = new view.panel.component.TaskCard();
         Kanban = new javax.swing.JPanel();
         AddTaskEventButton = new javax.swing.JButton();
         kanbanArea = new javax.swing.JPanel();
@@ -280,18 +297,24 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
             projectPanel.add(new JLabel());
         }
 
-        javax.swing.GroupLayout KalenderLayout = new javax.swing.GroupLayout(Kalender);
-        Kalender.setLayout(KalenderLayout);
-        KalenderLayout.setHorizontalGroup(
-            KalenderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1078, Short.MAX_VALUE)
+        javax.swing.GroupLayout TabelLayout = new javax.swing.GroupLayout(Tabel);
+        Tabel.setLayout(TabelLayout);
+        TabelLayout.setHorizontalGroup(
+            TabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(TabelLayout.createSequentialGroup()
+                .addGap(36, 36, 36)
+                .addComponent(taskCard1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(784, Short.MAX_VALUE))
         );
-        KalenderLayout.setVerticalGroup(
-            KalenderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 633, Short.MAX_VALUE)
+        TabelLayout.setVerticalGroup(
+            TabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(TabelLayout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(taskCard1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(403, Short.MAX_VALUE))
         );
 
-        ContentPanel.addTab("Tabel", Kalender);
+        ContentPanel.addTab("Tabel", Tabel);
 
         Kanban.setLayout(new java.awt.GridBagLayout());
 
@@ -456,16 +479,17 @@ public class HomePagePanel extends javax.swing.JPanel implements IProjectObserve
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddTaskEventButton;
     private javax.swing.JTabbedPane ContentPanel;
-    private javax.swing.JPanel Kalender;
     private javax.swing.JPanel Kanban;
     private javax.swing.JPanel MainPanel;
     private javax.swing.JLabel Profile;
     private javax.swing.JTextField SearchTxt;
     private javax.swing.JPanel SideBarPanel;
+    private javax.swing.JPanel Tabel;
     private javax.swing.JPanel TopBarPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel kanbanArea;
     private javax.swing.JPanel projectPanel;
+    private view.panel.component.TaskCard taskCard1;
     // End of variables declaration//GEN-END:variables
 }

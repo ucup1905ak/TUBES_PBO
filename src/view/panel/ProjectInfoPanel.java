@@ -4,24 +4,13 @@
  */
 package view.panel;
 
-import control.ProjectControl;
-import exception.database.DatabaseException;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.FlowLayout;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.geom.Ellipse2D;
-import java.awt.image.BufferedImage;
-import java.util.List;
 import model.Project;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import control.ProjectControl;
 import control.SessionControl;
+import java.text.SimpleDateFormat;
 import utility.event.ProjectEventBus;
 
 /**
@@ -450,7 +439,7 @@ public class ProjectInfoPanel extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ProjectInfoPanel(0).setVisible(true);
+                new ProjectInfoPanel().setVisible(true);
             }
         });
     }
